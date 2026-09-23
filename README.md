@@ -51,3 +51,11 @@ Multimodal_Sentiment_Prediction/
 ```bash
 python data_analysis_code/run_all.py
 ```
+
+问题一数据预处理：
+
+```bash
+python data_progressing/problem1_preprocess.py
+```
+
+详细参数和输出说明见`data_progressing/README.md`。
