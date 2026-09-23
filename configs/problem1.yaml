@@ -76,5 +76,5 @@
   },
   "output": {"dtype": "float32", "compressed": true, "overwrite": false},
   "validation": {"reject_non_finite": true, "require_all_samples": true, "max_timestamp_error_sec": 0.11},
-  "visualization": {"representative_samples": 3, "image_width": 1200, "image_height": 760}
+  "visualization": {"representative_sample_id": "", "min_representative_face_detection_rate": 0.80, "image_width": 1200, "image_height": 760}
 }
