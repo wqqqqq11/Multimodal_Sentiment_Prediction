@@ -4,3 +4,4 @@ outputs/
 /docs
 /strategy
 __pycache__/
+.codex_doc_review
