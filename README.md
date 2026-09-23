@@ -173,6 +173,6 @@ python -m pytest tests/problem2 -q
 - `data_progressing/problem2_preprocess.py`：全量预处理入口；
 - `data_progressing/problem2_validate.py`：独立验收入口；
 - `tests/problem2/`：掩码语义、异常值处理和数据契约测试；
-- `strategy/problem2_preprocessing.md`：数学定义、处理依据、防泄漏规则与模型接入说明。
+- `strategy/problem2_modeling.md`：问题二变量、假设、公式推导、训练求解、缺失规律分析与模型接入说明。
 
 主要数据产物位于`datasets/preprocessed_data/problem2/`，审计报告位于`outputs/problem2/preprocessing/`。训练输入不使用附件2独有的768维`text`字段，从而保证与附件3字段同构。
