@@ -1,6 +1,7 @@
 {
   "successful_samples": 100,
-  "representative_sample": "-NFrJFQijFE$_$1",
+  "representative_sample": "-UacrmKiTn4$_$10",
+  "representative_selection_rule": "人脸检测率不低于 80% 的成功样本中，不确定性中位数附近的样本（该样本检测率 100%）。",
   "mean_objective": 2.0354062302338956,
   "mean_uncertainty": 0.3055062123292521,
   "p90_uncertainty": 0.34435266113130236,

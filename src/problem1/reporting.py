@@ -69,7 +69,7 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
 - 单调违例总数：{summary['total_monotonic_violations']}。
 - 单调投影前违例总数：{summary['total_preprojection_monotonic_violations']}；最终值只用于确认约束满足。
 - 提前达到共识容差的样本比例：{convergence:.2f}%（未提前停止并不表示失败，只表示运行到配置的迭代上限）。
-- 代表性样本：`{summary['representative_sample']}`。
+- 代表性样本：`{summary['representative_sample']}`。选择规则：{summary.get('representative_selection_rule', '不确定性中位数附近的样本。')}
 
 `aligned_dataset.npz` 是可直接用于后续情感预测的定长张量；每个样本目录中的 `mapping.json` 用于回溯词元、音频窗和视频帧，`metrics.json` 用于论文消融与误差分析。
 

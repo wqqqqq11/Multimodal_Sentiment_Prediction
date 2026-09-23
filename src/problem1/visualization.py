@@ -130,8 +130,42 @@ def _heatmap_chart(cfg: Problem1Config, sample_id: str, path: Path) -> None:
     plt.close(figure)
 
 
+def _face_detection_rates(cfg: Problem1Config) -> dict[str, float]:
+    report_path = cfg.path("feature_root") / "validation_report.json"
+    if not report_path.is_file():
+        return {}
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    return {
+        str(item["sample_id"]): float(item.get("vision_detection_rate", 0.0))
+        for item in report.get("samples", [])
+        if "vision_detection_rate" in item
+    }
+
+
+def _select_representative(cfg: Problem1Config, successful: list[dict[str, Any]]) -> tuple[str, str]:
+    """Prefer a face-visible sample, with an optional manual override."""
+    configured = str(cfg.section("visualization").get("representative_sample_id") or "").strip()
+    available = {item["sample_id"] for item in successful}
+    if configured:
+        if configured not in available:
+            raise ValueError(f"指定的代表性样本不在成功结果中: {configured}")
+        return configured, "配置文件 visualization.representative_sample_id 指定的样本。"
+    threshold = float(cfg.section("visualization").get("min_representative_face_detection_rate", 0.80))
+    rates = _face_detection_rates(cfg)
+    faced = [item for item in successful if rates.get(item["sample_id"], 0.0) >= threshold]
+    pool = faced or successful
+    chosen = sorted(pool, key=lambda item: float(item["mean_uncertainty"]))[len(pool) // 2]["sample_id"]
+    if faced:
+        rate = rates.get(chosen, 0.0)
+        return chosen, (
+            f"人脸检测率不低于 {threshold:.0%} 的成功样本中，不确定性中位数附近的样本"
+            f"（该样本检测率 {rate:.0%}）。"
+        )
+    return chosen, "没有达到人脸检测率要求的样本，退回全部成功样本的不确定性中位数。"
+
+
 def _representative_validation(cfg: Problem1Config, sample_id: str, figure_path: Path,
-                               table_path: Path, report_path: Path) -> None:
+                               table_path: Path, report_path: Path, selection_rule: str) -> None:
     """Create an auditable text/audio/video correspondence card for one typical sample."""
     plt, sns = _plot_modules()
     sample_dir = cfg.path("aligned_root") / "samples" / safe_id(sample_id)
@@ -241,7 +275,7 @@ def _representative_validation(cfg: Problem1Config, sample_id: str, figure_path:
     displayed = [rows[int(index)] for index in anchors]
     lines = [
         "# 问题一典型样本时序对齐验证", "",
-        f"- 样本编号：`{sample_id}`", "- 选择规则：全部成功样本中不确定性中位数附近的样本。",
+        f"- 样本编号：`{sample_id}`", f"- 选择规则：{selection_rule}",
         f"- 共识时间点：{len(rows)}；下表展示{len(displayed)}个均匀抽取的核验锚点。", "",
         "|共识位置|时间/s|文本片段|语音峰值时段/s|视频峰值帧与时段/s|不确定性|",
         "|---:|---:|---|---|---|---:|",
@@ -273,7 +307,7 @@ def create_visualizations(cfg: Problem1Config, records: list[dict[str, Any]],
         payload = json.loads(metrics_path.read_text(encoding="utf-8"))
         histories.append(payload["history"])
         metrics_payloads.append(payload["metrics"])
-    representative = sorted(successful, key=lambda item: item["mean_uncertainty"])[len(successful) // 2]["sample_id"]
+    representative, selection_rule = _select_representative(cfg, successful)
     paths = {
         "quality_overview": figures / "01_alignment_quality_overview.png",
         "convergence": figures / "02_consensus_convergence.png",
@@ -287,7 +321,7 @@ def create_visualizations(cfg: Problem1Config, records: list[dict[str, Any]],
     _convergence_chart(histories, paths["convergence"])
     _heatmap_chart(cfg, representative, paths["representative_heatmap"])
     _representative_validation(cfg, representative, paths["representative_validation"],
-                               representative_table, representative_report)
+                               representative_table, representative_report, selection_rule)
     uncertainty_values = np.asarray([item["mean_uncertainty"] for item in successful], dtype=float)
     modality_uncertainty = {
         name: float(np.mean([metrics["mean_uncertainty_by_modality"][name] for metrics in metrics_payloads]))
@@ -312,6 +346,7 @@ def create_visualizations(cfg: Problem1Config, records: list[dict[str, Any]],
     tolerance = float(cfg.section("alignment")["sinkhorn_tolerance"])
     summary = {
         "successful_samples": len(successful), "representative_sample": representative,
+        "representative_selection_rule": selection_rule,
         "mean_objective": float(np.mean([item["objective"] for item in successful])),
         "mean_uncertainty": float(uncertainty_values.mean()),
         "p90_uncertainty": float(np.quantile(uncertainty_values, 0.90)),
