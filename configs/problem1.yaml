@@ -27,6 +27,10 @@
     "sample_rate": 16000,
     "max_seconds": 35.0,
     "max_steps": 300,
+    "vad_enabled": true,
+    "vad_threshold": 0.15,
+    "vad_noise_percentile": 20.0,
+    "vad_margin_db": 3.0,
     "local_files_only": false
   },
   "vision": {
@@ -54,7 +58,8 @@
     "max_consensus_steps": 50,
     "soft_dtw_gamma": [0.05, 0.10, 0.20],
     "sinkhorn_epsilon": 0.08,
-    "sinkhorn_iterations": 5000,
+    "audio_sinkhorn_epsilon": 0.08,
+    "sinkhorn_iterations": 10000,
     "sinkhorn_tolerance": 0.0001,
     "semantic_weight": 0.55,
     "time_weight": 0.30,
@@ -62,6 +67,7 @@
     "path_prior_weight": 0.30,
     "monotone_projection_weight": 0.80,
     "time_bands": [0.15, 0.25, 0.40],
+    "audio_time_bands": [0.08, 0.15, 0.25],
     "consensus_iterations": 8,
     "consensus_tolerance": 0.0001,
     "smooth_weight": 0.10,

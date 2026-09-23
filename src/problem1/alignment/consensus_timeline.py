@@ -56,6 +56,18 @@ def _evidence_indices(plan: np.ndarray, column: int, mass: float) -> tuple[np.nd
     return chosen, float(conditional[chosen].sum())
 
 
+def _weighted_quantile(values: np.ndarray, weights: np.ndarray, quantile: float) -> float:
+    """Return a deterministic weighted quantile for an ordered temporal axis."""
+    order = np.argsort(values)
+    ordered_values = np.asarray(values, dtype=np.float64)[order]
+    ordered_weights = np.asarray(weights, dtype=np.float64)[order]
+    cumulative = np.cumsum(ordered_weights)
+    total = float(cumulative[-1]) if cumulative.size else 0.0
+    if total <= 0:
+        return float(ordered_values[0]) if ordered_values.size else 0.0
+    return float(np.interp(float(quantile), cumulative / total, ordered_values))
+
+
 def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
                  logger: logging.Logger | None = None) -> AlignmentResult:
     logger = logger or logging.getLogger("problem1.alignment")
@@ -92,11 +104,15 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
     # then held as a monotonic prior during the alternating Sinkhorn/barycenter updates.
     priors: dict[str, np.ndarray] = {}
     soft_values: dict[str, list[float]] = {}
-    bands = list(align_cfg["time_bands"])
+    bands_by_modality = {
+        name: list(align_cfg.get(f"{name}_time_bands", align_cfg["time_bands"]))
+        for name in MODALITIES
+    }
     gammas = list(align_cfg["soft_dtw_gamma"])
     for name in MODALITIES:
         paths, values = [], []
         sequence = sequences[name]
+        bands = bands_by_modality[name]
         for index, signature in enumerate(scales[name]):
             cost = _pairwise_cost(signature, consensus, sequence.positions, target_positions,
                                   effective_quality[name], float(bands[index]), align_cfg)
@@ -117,6 +133,7 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
         time_candidates, time_weights = [], []
         for name in MODALITIES:
             sequence = sequences[name]
+            bands = bands_by_modality[name]
             scale_costs = [_pairwise_cost(signature, consensus, sequence.positions, target_positions,
                                           effective_quality[name], float(bands[index]), align_cfg)
                            for index, signature in enumerate(scales[name])]
@@ -126,11 +143,14 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
             # Missing visual frames retain an auditable zero feature row, but receive
             # only Sinkhorn's numerical epsilon mass and therefore cannot steer alignment.
             source_mass = effective_quality[name]
+            epsilon = float(align_cfg.get(f"{name}_sinkhorn_epsilon", align_cfg["sinkhorn_epsilon"]))
             plan, transport_metrics = sinkhorn(
-                fused, source_mass, target_mass, epsilon=float(align_cfg["sinkhorn_epsilon"]),
+                fused, source_mass, target_mass, epsilon=epsilon,
                 iterations=int(align_cfg["sinkhorn_iterations"]),
                 tolerance=float(align_cfg["sinkhorn_tolerance"]),
             )
+            transport_metrics["epsilon_used"] = epsilon
+            transport_metrics["time_bands_used"] = [float(value) for value in bands]
             semantic_plan = plan.copy()
             semantic_expected = np.sum(
                 semantic_plan * np.arange(semantic_plan.shape[0])[:, None], axis=0
@@ -184,12 +204,32 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
 
     uncertainty_parts = []
     uncertainty_by_modality: dict[str, float] = {}
+    temporal_diagnostics: dict[str, dict[str, float]] = {}
     for name in MODALITIES:
         conditional = plans[name] / np.maximum(plans[name].sum(axis=0, keepdims=True), 1e-12)
         entropy = -np.sum(conditional * np.log(np.maximum(conditional, 1e-30)), axis=0)
         normalized_entropy = entropy / max(np.log(max(2, conditional.shape[0])), 1e-8)
         uncertainty_parts.append(normalized_entropy)
         uncertainty_by_modality[name] = float(normalized_entropy.mean())
+        centers = (sequences[name].positions * duration if name == "text" else
+                   0.5 * (sequences[name].start + sequences[name].end))
+        expected_time = np.sum(conditional * centers[:, None], axis=0)
+        temporal_std = np.sqrt(np.sum(conditional * (centers[:, None] - expected_time) ** 2, axis=0))
+        lower = np.asarray([_weighted_quantile(centers, conditional[:, column], 0.05)
+                            for column in range(steps)])
+        upper = np.asarray([_weighted_quantile(centers, conditional[:, column], 0.95)
+                            for column in range(steps)])
+        peak_rows = np.argmax(conditional, axis=0)
+        peak_offsets = np.abs(centers[peak_rows] - consensus_time)
+        interval = max(float(align_cfg["consensus_interval_sec"]), 1e-8)
+        temporal_diagnostics[name] = {
+            "mean_temporal_std_sec": float(temporal_std.mean()),
+            "mean_normalized_temporal_uncertainty": float(np.clip(temporal_std / interval, 0.0, 1.0).mean()),
+            "mean_weighted_90pct_span_sec": float(np.mean(upper - lower)),
+            "p90_weighted_90pct_span_sec": float(np.quantile(upper - lower, 0.90)),
+            "mean_peak_offset_sec": float(peak_offsets.mean()),
+            "p90_peak_offset_sec": float(np.quantile(peak_offsets, 0.90)),
+        }
     uncertainty = np.average(np.stack(uncertainty_parts), axis=0, weights=modality_weights)
     mappings: list[dict[str, Any]] = []
     for column in range(steps):
@@ -200,6 +240,8 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
             sequence = sequences[name]
             conditional = plans[name][:, column] / max(float(plans[name][:, column].sum()), 1e-12)
             peak_row = int(np.argmax(conditional))
+            centers = (sequence.positions * duration if name == "text" else
+                       0.5 * (sequence.start + sequence.end))
             item["modalities"][name] = {
                 "source_row_indices": indices.tolist(), "source_indices": sequence.source_index[indices].tolist(),
                 "source_start": float(sequence.start[indices].min()), "source_end": float(sequence.end[indices].max()),
@@ -209,6 +251,8 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
                 "peak_start": float(sequence.start[peak_row]),
                 "peak_end": float(sequence.end[peak_row]),
                 "peak_probability": float(conditional[peak_row]),
+                "weighted_05_time": _weighted_quantile(centers, conditional, 0.05),
+                "weighted_95_time": _weighted_quantile(centers, conditional, 0.95),
             }
         mappings.append(item)
     residual = max(float(value["marginal_residual"]) for value in metrics_by_modality.values())
@@ -225,6 +269,7 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
         "objective": history[-1]["objective"], "consensus_delta": history[-1]["consensus_delta"],
         "mean_uncertainty": float(uncertainty.mean()), "max_marginal_residual": residual,
         "mean_uncertainty_by_modality": uncertainty_by_modality,
+        "temporal_diagnostics_by_modality": temporal_diagnostics,
         "raw_max_marginal_residual": raw_residual, "sinkhorn_converged": sinkhorn_converged,
         "modality_quality": modality_quality, "modality_weights": dict(zip(MODALITIES, modality_weights.tolist())),
         "soft_dtw_values": soft_values, "sinkhorn": metrics_by_modality,

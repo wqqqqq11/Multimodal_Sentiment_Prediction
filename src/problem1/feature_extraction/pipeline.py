@@ -16,7 +16,7 @@ from importlib.metadata import PackageNotFoundError, version
 import cv2
 import numpy as np
 
-from ..config import Problem1Config
+from ..config import Problem1Config, feature_fingerprint
 from ..io import atomic_csv, atomic_json, load_feature, safe_id, save_feature
 from .audio.extractor import extract_audio
 from .text.extractor import extract_text
@@ -102,10 +102,13 @@ def run_feature_extraction(cfg: Problem1Config, *, overwrite: bool = False, limi
     previous_config = output / "resolved_config.json"
     if previous_config.exists() and not overwrite:
         try:
-            previous_fingerprint = json.loads(previous_config.read_text(encoding="utf-8"))["fingerprint"]
-        except (OSError, KeyError, json.JSONDecodeError):
+            previous_payload = json.loads(previous_config.read_text(encoding="utf-8"))
+            previous_fingerprint = previous_payload.get("feature_fingerprint")
+            if previous_fingerprint is None and isinstance(previous_payload.get("config"), dict):
+                previous_fingerprint = feature_fingerprint(previous_payload["config"])
+        except (OSError, json.JSONDecodeError):
             previous_fingerprint = None
-        if previous_fingerprint != cfg.fingerprint:
+        if previous_fingerprint != cfg.feature_fingerprint:
             logger.warning("配置指纹已变化，禁止复用旧特征并自动重新提取")
             overwrite = True
     logger.info("特征提取开始: 样本=%d, workers=%d, overwrite=%s", len(manifest), workers, overwrite)
@@ -127,7 +130,11 @@ def run_feature_extraction(cfg: Problem1Config, *, overwrite: bool = False, limi
               "text_steps", "text_dimension", "text_quality_mean", "audio_steps", "audio_dimension",
               "audio_quality_mean", "vision_steps", "vision_dimension", "vision_quality_mean"]
     atomic_csv(output / "feature_manifest.csv", records, fields)
-    atomic_json(output / "resolved_config.json", {"fingerprint": cfg.fingerprint, "config": cfg.raw})
+    atomic_json(output / "resolved_config.json", {
+        "fingerprint": cfg.fingerprint,
+        "feature_fingerprint": cfg.feature_fingerprint,
+        "config": cfg.raw,
+    })
     atomic_json(output / "model_versions.json", {"python": platform.python_version(), "numpy": np.__version__,
                                                    "opencv": cv2.__version__,
                                                    "torch": _installed_version("torch"),

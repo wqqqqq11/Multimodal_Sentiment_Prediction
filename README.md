@@ -132,6 +132,8 @@ python scripts/problem1/solve_problem1.py --skip-features --overwrite-alignment
 - `outputs/problem1/reports/representative_sample_validation.md`：典型样本核验说明。
 - `outputs/problem1/figures/`：对齐质量、收敛曲线和代表性传输矩阵。
 
+音频特征使用WavLM卷积感受野生成可核验时间戳，并以自适应能量VAD降低静音段对传输计划的干扰。报告同时保留离散传输熵与按秒计算的时间不确定性；跨模态比较应优先使用后者。
+
 所有参数统一由 `configs/problem1.yaml` 管理。完整环境要求记录在根目录 `requirements.txt`。并发数分别由 `runtime.workers` 和 `runtime.alignment_workers` 控制；预训练模型在进程内共享且推理段加锁，媒体读取和样本编排仍可并发。错误会写入独立审计文件，严格模式下任一失败都会返回非零退出码。
 
 配置发生变化时，代码会比较配置指纹并拒绝复用旧特征和旧对齐结果。当前目录中此前由基线后端产生的结果只能视为历史结果；安装依赖后必须执行：

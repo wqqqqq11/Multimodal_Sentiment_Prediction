@@ -3,6 +3,7 @@ import numpy as np
 
 from src.problem1.alignment.sinkhorn import sinkhorn
 from src.problem1.alignment.soft_dtw import soft_dtw_occupancy
+from src.problem1.alignment.consensus_timeline import _weighted_quantile
 from src.problem1.visualization import _matplotlib_plain_text
 
 
@@ -27,6 +28,12 @@ class AlignmentPrimitiveTest(unittest.TestCase):
 
     def test_sample_id_is_safe_for_matplotlib_mathtext(self):
         self.assertEqual(_matplotlib_plain_text("-3g5yACwYnA$_$13"), r"-3g5yACwYnA\$_\$13")
+
+    def test_weighted_temporal_quantile_uses_transport_mass(self):
+        values = np.asarray([0.0, 0.5, 1.0])
+        weights = np.asarray([0.05, 0.90, 0.05])
+        self.assertAlmostEqual(_weighted_quantile(values, weights, 0.50), 0.25)
+        self.assertAlmostEqual(_weighted_quantile(values, weights, 0.95), 0.50)
 
 
 if __name__ == "__main__":

@@ -13,6 +13,29 @@ class ConfigError(ValueError):
     pass
 
 
+def _hash_payload(payload: Any) -> str:
+    encoded = json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def feature_fingerprint(raw: dict[str, Any]) -> str:
+    """Hash only settings that can change extracted feature artifacts."""
+    runtime = raw.get("runtime", {})
+    output = raw.get("output", {})
+    payload = {
+        "project_seed": raw.get("project", {}).get("seed"),
+        "text": raw.get("text"),
+        "audio": raw.get("audio"),
+        "vision": raw.get("vision"),
+        "runtime": {
+            "device": runtime.get("device"),
+            "mixed_precision": runtime.get("mixed_precision"),
+        },
+        "output": {"dtype": output.get("dtype")},
+    }
+    return _hash_payload(payload)
+
+
 @dataclass(frozen=True)
 class Problem1Config:
     project_root: Path
@@ -34,8 +57,11 @@ class Problem1Config:
 
     @property
     def fingerprint(self) -> str:
-        payload = json.dumps(self.raw, ensure_ascii=False, sort_keys=True).encode("utf-8")
-        return hashlib.sha256(payload).hexdigest()
+        return _hash_payload(self.raw)
+
+    @property
+    def feature_fingerprint(self) -> str:
+        return feature_fingerprint(self.raw)
 
 
 def _validate_probability(value: Any, key: str, *, inclusive_zero: bool = True) -> float:
@@ -73,6 +99,13 @@ def load_config(path: str | Path) -> Problem1Config:
             raise ConfigError(f"{modality}.revision 不能为空，必须固定safetensors权重修订版本")
         if section.get("use_safetensors") is not True:
             raise ConfigError(f"{modality}.use_safetensors 必须为true，禁止回退到.bin权重")
+    audio = cfg.section("audio")
+    _validate_probability(audio["vad_threshold"], "audio.vad_threshold")
+    noise_percentile = float(audio["vad_noise_percentile"])
+    if not 0 <= noise_percentile < 100:
+        raise ConfigError("audio.vad_noise_percentile 必须位于[0,100)")
+    if float(audio["vad_margin_db"]) < 0:
+        raise ConfigError("audio.vad_margin_db 必须>=0")
     model_path = cfg.section("vision").get("landmarker_model_path")
     if not isinstance(model_path, str) or not model_path:
         raise ConfigError("vision.landmarker_model_path 不能为空")
@@ -92,6 +125,13 @@ def load_config(path: str | Path) -> Problem1Config:
     _validate_probability(cfg.section("alignment")["monotone_projection_weight"],
                           "alignment.monotone_projection_weight")
     _validate_probability(cfg.section("alignment")["evidence_mass"], "alignment.evidence_mass", inclusive_zero=False)
+    alignment = cfg.section("alignment")
+    if float(alignment["audio_sinkhorn_epsilon"]) <= 0:
+        raise ConfigError("alignment.audio_sinkhorn_epsilon 必须>0")
+    for key in ("time_bands", "audio_time_bands"):
+        bands = [float(value) for value in alignment[key]]
+        if len(bands) != 3 or any(value <= 0 or value > 1 for value in bands):
+            raise ConfigError(f"alignment.{key} 必须是三个位于(0,1]的数")
     weights = [float(x) for x in cfg.section("multiscale")["scale_weights"]]
     if len(weights) != 3 or any(x < 0 for x in weights) or abs(sum(weights) - 1.0) > 1e-6:
         raise ConfigError("multiscale.scale_weights 必须为和等于1的三个非负数")

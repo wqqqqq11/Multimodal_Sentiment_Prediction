@@ -41,6 +41,14 @@ def validate_features(cfg: Problem1Config, *, limit: int | None = None) -> dict[
         if len(sequences) == 3:
             item["audio_visual_end_delta_sec"] = abs(float(sequences["audio"].end[-1]) - float(sequences["vision"].end[-1]))
             item["all_finite"] = all(np.isfinite(value.features).all() for value in sequences.values())
+            speech_ratio = float(sequences["audio"].metadata.get("speech_activity_ratio", 1.0))
+            item["audio_speech_activity_ratio"] = speech_ratio
+            speech_warning_threshold = float(
+                cfg.section("validation").get("min_speech_activity_ratio_warning", 0.10)
+            )
+            if speech_ratio < speech_warning_threshold:
+                warnings.append({"sample_id": sample_id, "modality": "audio",
+                                 "warning": f"有效语音活动比例偏低: {speech_ratio:.1%}"})
             detection_rate = float(sequences["vision"].metadata.get("detection_rate", 0.0))
             item["vision_detection_rate"] = detection_rate
             warning_threshold = float(cfg.section("vision")["min_face_detection_rate_warning"])
