@@ -155,3 +155,24 @@ python data_progressing/problem1_preprocess.py
 ```
 
 详细参数和输出说明见`data_progressing/README.md`。
+
+## 问题二数据预处理
+
+问题二使用附件2对齐版训练特征和附件3对齐版局部缺失专项测试。文本统一采用两套数据都具备的`text_bert`接口，音频和视觉执行仅由训练集有效观测位置拟合的分位数裁剪与IQR稳健缩放。流水线显式区分内容、CLS/SEP结构位置、padding、自然零值以及人工或检测缺失，并生成完整教师—缺失学生一一配对的连续片段掩码库。
+
+```powershell
+python data_progressing/problem2_preprocess.py --overwrite
+python data_progressing/problem2_validate.py
+python -m pytest tests/problem2 -q
+```
+
+代码与配置：
+
+- `configs/problem2.yaml`：数据路径、稳健缩放、缺失分布和验收阈值；
+- `data_progressing/problem2/`：掩码、缩放、质量特征、预处理和验收实现；
+- `data_progressing/problem2_preprocess.py`：全量预处理入口；
+- `data_progressing/problem2_validate.py`：独立验收入口；
+- `tests/problem2/`：掩码语义、异常值处理和数据契约测试；
+- `strategy/problem2_preprocessing.md`：数学定义、处理依据、防泄漏规则与模型接入说明。
+
+主要数据产物位于`datasets/preprocessed_data/problem2/`，审计报告位于`outputs/problem2/preprocessing/`。训练输入不使用附件2独有的768维`text`字段，从而保证与附件3字段同构。

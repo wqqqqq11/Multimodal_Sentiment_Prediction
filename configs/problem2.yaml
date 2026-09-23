@@ -1,0 +1,62 @@
+{
+  "project": {
+    "name": "problem2_mask_aware_distillation",
+    "version": "1.0.0",
+    "seed": 2026
+  },
+  "paths": {
+    "dataset02_aligned": "datasets/original_data_from_the_competition_organizer/dataset02/aligned_50.pkl",
+    "dataset03_aligned_dir": "datasets/original_data_from_the_competition_organizer/dataset03/aligned",
+    "preprocessed_root": "datasets/preprocessed_data/problem2",
+    "output_root": "outputs/problem2"
+  },
+  "data": {
+    "version": "aligned",
+    "max_steps": 50,
+    "audio_dim": 74,
+    "vision_dim": 35,
+    "zero_epsilon": 1e-8,
+    "exclude_cls_sep_from_acoustic_visual": true
+  },
+  "scaling": {
+    "modalities": ["audio", "vision"],
+    "lower_quantile": 0.005,
+    "upper_quantile": 0.995,
+    "scale": "iqr",
+    "minimum_scale": 1e-6,
+    "normalized_clip": 8.0
+  },
+  "missingness": {
+    "mask_bank_size": 4,
+    "pattern_probabilities": {
+      "audio": 0.20,
+      "vision": 0.20,
+      "audio_vision": 0.60
+    },
+    "ratio_min": 0.05,
+    "ratio_max": 0.48,
+    "ratio_beta_alpha": 2.0,
+    "ratio_beta_beta": 4.0,
+    "position_probabilities": {
+      "begin": 0.3333333333,
+      "middle": 0.3333333334,
+      "end": 0.3333333333
+    },
+    "min_observed_steps_after_mask": 2
+  },
+  "quality": {
+    "severe_natural_zero_ratio": 0.80,
+    "warn_clipped_element_ratio": 0.05,
+    "reject_label_disagreement": true
+  },
+  "output": {
+    "dtype": "float32",
+    "compressed": true,
+    "overwrite": false
+  },
+  "validation": {
+    "strict": true,
+    "expected_dataset03_samples": 30,
+    "require_finite": true
+  }
+}
