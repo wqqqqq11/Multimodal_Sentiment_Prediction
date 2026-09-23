@@ -17,6 +17,7 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
     convergence = 100.0 * np.mean([bool(item["converged"]) for item in good]) if good else 0.0
     audit = summary["acceptance_audit"]
     modality_uncertainty = summary["mean_uncertainty_by_modality"]
+    temporal = summary["temporal_diagnostics_by_modality"]
     text = f"""# 问题一模型求解报告
 
 ## 1. 数据输入
@@ -55,12 +56,14 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
 ## 4. 结果输出与诊断
 
 - 样本覆盖率：{audit['sample_coverage_rate']:.2%}；重复ID：{audit['duplicate_sample_id_count']}；缺失ID：{len(audit['missing_sample_ids'])}。
-- 特征完整性校验：{'通过' if audit['feature_validation_passed'] else '未通过'}；错误 {audit['feature_validation_error_count']} 项，质量警告 {audit['feature_validation_warning_count']} 项。
+- 特征完整性校验：{'通过' if audit['feature_validation_passed'] else '未通过'}；错误 {audit['feature_validation_error_count']} 项，质量警告 {audit['feature_validation_warning_count']} 项（分模态：{audit['feature_validation_warning_count_by_modality']}）。
 - 映射与填充验收通过率：{audit['mapping_audit_pass_rate']:.2%}；映射/填充错误 {audit['mapping_error_count']} 项。
-- 配置指纹一致性：{'通过' if audit['resolved_config_fingerprint_match'] else '未通过'}。
+- 特征/对齐配置指纹一致性：{'通过' if audit['feature_config_fingerprint_match'] and audit['resolved_config_fingerprint_match'] else '未通过'}。
 - 平均目标函数：{summary['mean_objective']:.6f}。
 - 对齐不确定性：均值 {summary['mean_uncertainty']:.6f}，P90 {summary['p90_uncertainty']:.6f}，最大值 {summary['max_uncertainty']:.6f}；不确定性≥0.40的样本 {summary['high_uncertainty_sample_count']} 个。
 - 分模态平均不确定性：文本 {modality_uncertainty['text']:.6f}，音频 {modality_uncertainty['audio']:.6f}，视觉 {modality_uncertainty['vision']:.6f}。
+- 上述值是离散传输熵，受各模态时间步密度影响，不作为跨模态准确率。时间尺度感知不确定性（时间标准差/共识间隔）：文本 {temporal['text']['mean_normalized_temporal_uncertainty']:.6f}，音频 {temporal['audio']['mean_normalized_temporal_uncertainty']:.6f}，视觉 {temporal['vision']['mean_normalized_temporal_uncertainty']:.6f}。
+- 音频时间诊断：平均时间标准差 {temporal['audio']['mean_temporal_std_sec']:.4f}s；加权90%区间均值 {temporal['audio']['mean_weighted_90pct_span_sec']:.4f}s；峰值偏差均值 {temporal['audio']['mean_peak_offset_sec']:.4f}s。
 - 原始 Sinkhorn 收敛率：{summary['raw_sinkhorn_convergence_rate']:.2%}；样本级三模态全部收敛率：{summary['sample_sinkhorn_convergence_rate']:.2%}。
 - 最大原始边缘残差：{summary['max_raw_marginal_residual']:.6e}；边缘修正后的最大残差：{summary['max_marginal_residual']:.6e}。
 - 单调违例总数：{summary['total_monotonic_violations']}。
@@ -74,7 +77,7 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
 
 ## 5. 图表结论口径
 
-- 图 1 左侧展示赛方要求对应的覆盖、特征、映射和收敛通过率，右侧单独展示三模态不确定性分布。
+- 图 1 左侧展示赛方要求对应的覆盖、特征、映射和收敛通过率，右侧展示按秒计算后归一化的三模态时间不确定性分布。
 - 图 2 展示样本目标函数的中位归一化收敛轨迹，用于判断共识迭代是否稳定。
 - 图 3 展示代表性样本三模态传输矩阵；亮色质量沿近对角单调带分布时，说明时间顺序得到保留。
 - 图 4 是赛方要求的典型样本验证图：上方展示可回溯的文本片段、语音峰值时段和视频源帧，下方展示三类特征在统一共识时间轴上的对应关系及位置级不确定性。

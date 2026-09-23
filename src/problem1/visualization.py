@@ -41,7 +41,9 @@ def _quality_chart(cfg: Problem1Config, records: list[dict[str, Any]], audit: di
         metrics = json.loads(metrics_path.read_text(encoding="utf-8"))["metrics"]
         consensus_passes.append(bool(metrics["converged"]))
         for name in modality_uncertainty:
-            modality_uncertainty[name].append(float(metrics["mean_uncertainty_by_modality"][name]))
+            modality_uncertainty[name].append(float(
+                metrics["temporal_diagnostics_by_modality"][name]["mean_normalized_temporal_uncertainty"]
+            ))
             raw_residuals.append(float(metrics["sinkhorn"][name]["raw_marginal_residual"]))
     pass_rates = np.asarray([
         float(audit.get("sample_coverage_rate", 0.0)),
@@ -63,13 +65,13 @@ def _quality_chart(cfg: Problem1Config, records: list[dict[str, Any]], audit: di
                      f"{value:.1%}", ha="center", va="bottom", fontsize=11)
     axes[1].boxplot([modality_uncertainty[name] for name in modality_uncertainty],
                     tick_labels=["Text", "Audio", "Vision"], showmeans=True)
-    axes[1].set_title("Normalized alignment uncertainty", pad=14, weight="bold")
-    axes[1].set_ylabel("Normalized entropy [0, 1] (lower is sharper)")
+    axes[1].set_title("Time-aware alignment uncertainty", pad=14, weight="bold")
+    axes[1].set_ylabel("Temporal std / consensus interval [0, 1]")
     axes[1].set_ylim(0, 1)
     figure.suptitle("Problem 1 Acceptance and Alignment Diagnostics", weight="bold", y=0.99)
     figure.subplots_adjust(bottom=0.22, top=0.86, wspace=0.25)
     figure.text(0.5, 0.045,
-                "Coverage and audit metrics verify deliverables; uncertainty is reported separately and is not an accuracy score.",
+                "Time-aware uncertainty is measured in seconds before normalization, avoiding bias from modality sequence length.",
                 ha="center", fontsize=11)
     figure.savefig(path, dpi=220, bbox_inches="tight")
     plt.close(figure)
@@ -168,15 +170,15 @@ def _representative_validation(cfg: Problem1Config, sample_id: str, figure_path:
             "text_fragment": snippet,
             "audio_peak_start_sec": float(sequences["audio"].start[audio_peak]),
             "audio_peak_end_sec": float(sequences["audio"].end[audio_peak]),
-            "audio_90pct_start_sec": float(modalities["audio"]["source_start"]),
-            "audio_90pct_end_sec": float(modalities["audio"]["source_end"]),
+            "audio_90pct_start_sec": float(modalities["audio"]["weighted_05_time"]),
+            "audio_90pct_end_sec": float(modalities["audio"]["weighted_95_time"]),
             "video_peak_frame_index": int(sequences["vision"].source_index[vision_peak]),
             "video_peak_start_sec": float(sequences["vision"].start[vision_peak]),
             "video_peak_end_sec": float(sequences["vision"].end[vision_peak]),
             "video_90pct_frame_start": min(video_source_indices),
             "video_90pct_frame_end": max(video_source_indices),
-            "video_90pct_start_sec": float(modalities["vision"]["source_start"]),
-            "video_90pct_end_sec": float(modalities["vision"]["source_end"]),
+            "video_90pct_start_sec": float(modalities["vision"]["weighted_05_time"]),
+            "video_90pct_end_sec": float(modalities["vision"]["weighted_95_time"]),
         })
     atomic_csv(table_path, rows)
 
@@ -291,6 +293,20 @@ def create_visualizations(cfg: Problem1Config, records: list[dict[str, Any]],
         name: float(np.mean([metrics["mean_uncertainty_by_modality"][name] for metrics in metrics_payloads]))
         for name in ("text", "audio", "vision")
     }
+    temporal_diagnostics = {
+        name: {
+            metric: float(np.mean([
+                values["temporal_diagnostics_by_modality"][name][metric]
+                for values in metrics_payloads
+            ]))
+            for metric in (
+                "mean_temporal_std_sec", "mean_normalized_temporal_uncertainty",
+                "mean_weighted_90pct_span_sec", "p90_weighted_90pct_span_sec",
+                "mean_peak_offset_sec", "p90_peak_offset_sec",
+            )
+        }
+        for name in ("text", "audio", "vision")
+    }
     raw_residuals = [float(metrics["sinkhorn"][name]["raw_marginal_residual"])
                      for metrics in metrics_payloads for name in ("text", "audio", "vision")]
     tolerance = float(cfg.section("alignment")["sinkhorn_tolerance"])
@@ -302,6 +318,7 @@ def create_visualizations(cfg: Problem1Config, records: list[dict[str, Any]],
         "max_uncertainty": float(uncertainty_values.max()),
         "high_uncertainty_sample_count": int(np.sum(uncertainty_values >= 0.40)),
         "mean_uncertainty_by_modality": modality_uncertainty,
+        "temporal_diagnostics_by_modality": temporal_diagnostics,
         "raw_sinkhorn_convergence_rate": float(np.mean(np.asarray(raw_residuals) <= tolerance)),
         "sample_sinkhorn_convergence_rate": float(np.mean([metrics["sinkhorn_converged"] for metrics in metrics_payloads])),
         "max_raw_marginal_residual": float(max(raw_residuals)),

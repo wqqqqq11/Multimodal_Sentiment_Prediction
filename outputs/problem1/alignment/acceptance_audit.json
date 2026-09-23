@@ -8,13 +8,18 @@
   "unexpected_sample_ids": [],
   "feature_validation_passed": true,
   "feature_validation_error_count": 0,
-  "feature_validation_warning_count": 14,
+  "feature_validation_warning_count": 16,
+  "feature_validation_warning_count_by_modality": {
+    "vision": 14,
+    "audio": 2
+  },
   "mapping_audit_passed_samples": 100,
   "mapping_audit_pass_rate": 1.0,
   "mapping_error_count": 0,
   "padding_violation_count": 0,
   "global_errors": [],
-  "config_fingerprint": "41d6e764bf9690e6eca25b71512a9b1f52428acb61f0a7dac8b05d2a697ccc06",
+  "config_fingerprint": "d4014d277a8ef7473cfa19305dbd93a4d7f87f0801ce29d92a09d1a15b1af95e",
   "resolved_config_fingerprint_match": true,
+  "feature_config_fingerprint_match": true,
   "overall_passed": true
 }

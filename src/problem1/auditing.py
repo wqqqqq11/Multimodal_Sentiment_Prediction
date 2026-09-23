@@ -30,6 +30,8 @@ def audit_problem1(cfg: Problem1Config, records: list[dict[str, Any]]) -> dict[s
 
     validation_path = cfg.path("feature_root") / "validation_report.json"
     validation = json.loads(validation_path.read_text(encoding="utf-8"))
+    feature_resolved_path = cfg.path("feature_root") / "resolved_config.json"
+    feature_resolved = json.loads(feature_resolved_path.read_text(encoding="utf-8")) if feature_resolved_path.exists() else {}
     resolved_path = cfg.path("aligned_root") / "resolved_config.json"
     resolved = json.loads(resolved_path.read_text(encoding="utf-8")) if resolved_path.exists() else {}
 
@@ -160,6 +162,11 @@ def audit_problem1(cfg: Problem1Config, records: list[dict[str, Any]]) -> dict[s
     unexpected_ids = sorted(set(record_ids) - expected_set)
     full_coverage = not missing_ids and not unexpected_ids and duplicate_count == 0
     fingerprint_match = resolved.get("fingerprint") == cfg.fingerprint
+    feature_fingerprint_match = feature_resolved.get("feature_fingerprint") == cfg.feature_fingerprint
+    warning_counts: dict[str, int] = {}
+    for warning in validation.get("warnings", []):
+        modality = str(warning.get("modality", "unknown"))
+        warning_counts[modality] = warning_counts.get(modality, 0) + 1
     summary = {
         "expected_samples": len(expected_ids),
         "processed_samples": len(records),
@@ -171,6 +178,7 @@ def audit_problem1(cfg: Problem1Config, records: list[dict[str, Any]]) -> dict[s
         "feature_validation_passed": bool(validation.get("passed", False)),
         "feature_validation_error_count": int(validation.get("error_count", 0)),
         "feature_validation_warning_count": int(validation.get("warning_count", 0)),
+        "feature_validation_warning_count_by_modality": warning_counts,
         "mapping_audit_passed_samples": passed_samples,
         "mapping_audit_pass_rate": passed_samples / max(len(audit_rows), 1),
         "mapping_error_count": total_mapping_errors + len(global_errors),
@@ -178,9 +186,11 @@ def audit_problem1(cfg: Problem1Config, records: list[dict[str, Any]]) -> dict[s
         "global_errors": global_errors,
         "config_fingerprint": cfg.fingerprint,
         "resolved_config_fingerprint_match": fingerprint_match,
+        "feature_config_fingerprint_match": feature_fingerprint_match,
         "overall_passed": bool(
             full_coverage and len(successful) == len(records) and validation.get("passed", False)
             and passed_samples == len(audit_rows) and not global_errors and fingerprint_match
+            and feature_fingerprint_match
         ),
     }
     report_root = cfg.path("alignment_output_root")
