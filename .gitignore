@@ -1,0 +1,6 @@
+.venv/
+datasets/
+outputs/
+/docs
+/strategy
+__pycache__/
