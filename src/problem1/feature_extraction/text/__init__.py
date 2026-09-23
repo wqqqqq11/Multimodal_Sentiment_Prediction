@@ -1,1 +1,1 @@
-# 文本特征提取包占位。
+"""DeBERTa text feature extraction."""

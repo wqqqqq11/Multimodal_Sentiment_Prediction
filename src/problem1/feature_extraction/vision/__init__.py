@@ -1,1 +1,1 @@
-# 视觉特征提取包占位。
+"""MediaPipe and ConvNeXt visual feature extraction."""

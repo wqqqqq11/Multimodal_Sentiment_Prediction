@@ -5,3 +5,5 @@ outputs/
 /strategy
 __pycache__/
 .codex_doc_review
+/models
+/.uv-cache

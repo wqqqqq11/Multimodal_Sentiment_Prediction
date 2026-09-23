@@ -1,1 +1,1 @@
-# 三模态特征提取包占位。
+"""Strict pretrained tri-modal feature extraction."""

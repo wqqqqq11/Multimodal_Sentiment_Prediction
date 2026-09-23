@@ -1,1 +1,1 @@
-# 问题一建模代码包占位。
+"""Problem 1 competition solution package."""

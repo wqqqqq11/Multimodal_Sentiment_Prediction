@@ -1,1 +1,1 @@
-# 音频特征提取包占位。
+"""WavLM audio feature extraction."""

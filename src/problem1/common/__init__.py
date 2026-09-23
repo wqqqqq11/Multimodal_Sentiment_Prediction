@@ -1,1 +1,1 @@
-# 问题一公共工具包占位。
+"""Shared runtime, batching and reproducibility utilities."""

@@ -1,2 +1,74 @@
-# 问题一统一配置文件占位。
-# 三模态特征提取、对齐、运行环境、输入输出及验收参数将在实现时集中定义于此。
+{
+  "project": {"name": "problem1_multimodal_alignment", "version": "1.0.0", "seed": 2026},
+  "paths": {
+    "preprocessed_root": "datasets/preprocessed_data/problem1",
+    "feature_root": "datasets/preprocessed_data/problem1/features",
+    "aligned_root": "datasets/preprocessed_data/problem1/aligned",
+    "alignment_output_root": "outputs/problem1/alignment",
+    "output_root": "outputs/problem1"
+  },
+  "runtime": {"workers": 8, "alignment_workers": 8, "device": "auto", "mixed_precision": true, "resume": true, "strict": true, "log_level": "INFO"},
+  "text": {
+    "backend": "deberta_v3",
+    "model_name": "microsoft/deberta-v3-base",
+    "revision": "refs/pr/14",
+    "use_safetensors": true,
+    "cache_dir": "models/huggingface",
+    "max_length": 256,
+    "layer_mix_last_n": 4,
+    "local_files_only": false
+  },
+  "audio": {
+    "backend": "wavlm",
+    "model_name": "microsoft/wavlm-base-plus",
+    "revision": "refs/pr/2",
+    "use_safetensors": true,
+    "cache_dir": "models/huggingface",
+    "sample_rate": 16000,
+    "max_seconds": 35.0,
+    "max_steps": 300,
+    "local_files_only": false
+  },
+  "vision": {
+    "backend": "mediapipe_timm",
+    "landmarker_model_path": "models/mediapipe/face_landmarker.task",
+    "appearance_model_name": "convnext_tiny.fb_in22k_ft_in1k",
+    "cache_dir": "models/huggingface",
+    "num_faces": 1,
+    "min_face_detection_confidence": 0.50,
+    "min_face_presence_confidence": 0.50,
+    "min_tracking_confidence": 0.50,
+    "face_padding_ratio": 0.12,
+    "no_face_policy": "full_frame_appearance",
+    "face_quality_base": 0.65,
+    "scene_quality_base": 0.18,
+    "quality_exposure_weight": 0.20,
+    "quality_sharpness_weight": 0.15,
+    "quality_sharpness_reference": 120.0,
+    "min_face_detection_rate_warning": 0.20,
+    "local_files_only": false
+  },
+  "multiscale": {"common_dimension": 16, "text_radii": [0, 1, 2], "audio_radii": [2, 6, 12], "vision_radii": [0, 1, 2], "scale_weights": [0.4, 0.35, 0.25]},
+  "alignment": {
+    "consensus_interval_sec": 0.5,
+    "max_consensus_steps": 50,
+    "soft_dtw_gamma": [0.05, 0.10, 0.20],
+    "sinkhorn_epsilon": 0.08,
+    "sinkhorn_iterations": 300,
+    "sinkhorn_tolerance": 0.0001,
+    "semantic_weight": 0.55,
+    "time_weight": 0.30,
+    "quality_weight": 0.15,
+    "path_prior_weight": 0.30,
+    "monotone_projection_weight": 0.80,
+    "time_bands": [0.15, 0.25, 0.40],
+    "consensus_iterations": 8,
+    "consensus_tolerance": 0.0001,
+    "smooth_weight": 0.10,
+    "quality_floor": 0.10,
+    "evidence_mass": 0.90
+  },
+  "output": {"dtype": "float32", "compressed": true, "overwrite": false},
+  "validation": {"reject_non_finite": true, "require_all_samples": true, "max_timestamp_error_sec": 0.11},
+  "visualization": {"representative_samples": 3, "image_width": 1200, "image_height": 760}
+}
