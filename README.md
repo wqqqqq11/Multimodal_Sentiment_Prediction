@@ -125,8 +125,11 @@ python scripts/problem1/solve_problem1.py --skip-features --overwrite-alignment
 - `datasets/preprocessed_data/problem1/aligned/aligned_dataset.npz`：可供后续模型直接读取的定长张量。
 - `datasets/preprocessed_data/problem1/aligned/samples/<sample_id>/mapping.json`：共识点至三模态源证据的映射。
 - `outputs/problem1/alignment/alignment_manifest.csv`：问题一模型求解状态、收敛性和对齐质量指标。
+- `outputs/problem1/alignment/acceptance_audit.csv/json`：100条样本覆盖、映射、有效长度和零填充验收结果。
 - `outputs/problem1/alignment/alignment_errors.json`：模型求解失败样本及异常信息。
 - `outputs/problem1/reports/model_solution.md`：参数、步骤、诊断指标和论文结论素材。
+- `outputs/problem1/reports/representative_sample_alignment.csv`：典型样本逐共识位置的文本、语音和视频对应关系。
+- `outputs/problem1/reports/representative_sample_validation.md`：典型样本核验说明。
 - `outputs/problem1/figures/`：对齐质量、收敛曲线和代表性传输矩阵。
 
 所有参数统一由 `configs/problem1.yaml` 管理。完整环境要求记录在根目录 `requirements.txt`。并发数分别由 `runtime.workers` 和 `runtime.alignment_workers` 控制；预训练模型在进程内共享且推理段加锁，媒体读取和样本编排仍可并发。错误会写入独立审计文件，严格模式下任一失败都会返回非零退出码。

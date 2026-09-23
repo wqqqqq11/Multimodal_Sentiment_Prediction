@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.problem1.alignment.pipeline import run_alignment
+from src.problem1.auditing import audit_problem1
 from src.problem1.common.reproducibility import configure_logging, seed_everything
 from src.problem1.config import load_config
 from src.problem1.feature_extraction.pipeline import run_feature_extraction
@@ -42,8 +43,11 @@ def main() -> int:
         logger.info("步骤2/4 参数初始化: config_fingerprint=%s", cfg.fingerprint[:12])
         logger.info("步骤3/4 模型调用")
         records = run_alignment(cfg, overwrite=args.overwrite_alignment, limit=args.limit, logger=logger)
-        logger.info("步骤4/4 结果输出与可视化")
-        summary = create_visualizations(cfg, records)
+        logger.info("步骤4/4 验收审计、结果输出与典型样本可视化")
+        audit = audit_problem1(cfg, records)
+        if not audit["overall_passed"] and args.limit is None:
+            raise RuntimeError(f"问题一验收审计失败: {audit['mapping_error_count']}项映射/填充错误")
+        summary = create_visualizations(cfg, records, audit)
         write_solution_report(cfg, records, summary)
         print(json.dumps(summary, ensure_ascii=False, indent=2))
         return 0

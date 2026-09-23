@@ -131,10 +131,16 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
                 iterations=int(align_cfg["sinkhorn_iterations"]),
                 tolerance=float(align_cfg["sinkhorn_tolerance"]),
             )
+            semantic_plan = plan.copy()
+            semantic_expected = np.sum(
+                semantic_plan * np.arange(semantic_plan.shape[0])[:, None], axis=0
+            ) / target_mass
+            transport_metrics["preprojection_monotonic_violations"] = int(
+                np.sum(np.diff(semantic_expected) < -1e-8)
+            )
             projection_weight = float(align_cfg.get("monotone_projection_weight", 0.0))
             if projection_weight > 0:
                 increasing = monotone_coupling(source_mass, target_mass)
-                semantic_plan = plan
                 while True:
                     plan = (1.0 - projection_weight) * semantic_plan + projection_weight * increasing
                     expected_index = np.sum(plan * np.arange(plan.shape[0])[:, None], axis=0) / target_mass
@@ -149,6 +155,9 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
                 transport_metrics["transport_cost"] = float(np.sum(plan * fused))
                 transport_metrics["entropy"] = -float(np.sum(plan * np.log(np.maximum(plan, 1e-30))))
                 transport_metrics["monotone_projection_weight_used"] = projection_weight
+                transport_metrics["projection_total_variation"] = float(
+                    0.5 * np.sum(np.abs(plan - semantic_plan))
+                )
             plans[name] = plan
             metrics_by_modality[name] = transport_metrics
             aligned_current[name] = (plan.T @ scales[name][0]) / target_mass[:, None]
@@ -174,10 +183,13 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
             break
 
     uncertainty_parts = []
+    uncertainty_by_modality: dict[str, float] = {}
     for name in MODALITIES:
         conditional = plans[name] / np.maximum(plans[name].sum(axis=0, keepdims=True), 1e-12)
         entropy = -np.sum(conditional * np.log(np.maximum(conditional, 1e-30)), axis=0)
-        uncertainty_parts.append(entropy / max(np.log(max(2, conditional.shape[0])), 1e-8))
+        normalized_entropy = entropy / max(np.log(max(2, conditional.shape[0])), 1e-8)
+        uncertainty_parts.append(normalized_entropy)
+        uncertainty_by_modality[name] = float(normalized_entropy.mean())
     uncertainty = np.average(np.stack(uncertainty_parts), axis=0, weights=modality_weights)
     mappings: list[dict[str, Any]] = []
     for column in range(steps):
@@ -186,13 +198,25 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
         for name in MODALITIES:
             indices, covered = _evidence_indices(plans[name], column, float(align_cfg["evidence_mass"]))
             sequence = sequences[name]
+            conditional = plans[name][:, column] / max(float(plans[name][:, column].sum()), 1e-12)
+            peak_row = int(np.argmax(conditional))
             item["modalities"][name] = {
                 "source_row_indices": indices.tolist(), "source_indices": sequence.source_index[indices].tolist(),
                 "source_start": float(sequence.start[indices].min()), "source_end": float(sequence.end[indices].max()),
                 "covered_mass": covered,
+                "peak_source_row_index": peak_row,
+                "peak_source_index": int(sequence.source_index[peak_row]),
+                "peak_start": float(sequence.start[peak_row]),
+                "peak_end": float(sequence.end[peak_row]),
+                "peak_probability": float(conditional[peak_row]),
             }
         mappings.append(item)
     residual = max(float(value["marginal_residual"]) for value in metrics_by_modality.values())
+    raw_residual = max(float(value["raw_marginal_residual"]) for value in metrics_by_modality.values())
+    sinkhorn_converged = all(
+        float(value["raw_marginal_residual"]) <= float(align_cfg["sinkhorn_tolerance"])
+        for value in metrics_by_modality.values()
+    )
     expected = {name: np.sum(plans[name] * np.arange(plans[name].shape[0])[:, None], axis=0) / target_mass
                 for name in MODALITIES}
     monotonic_violations = {name: int(np.sum(np.diff(values) < -1e-8)) for name, values in expected.items()}
@@ -200,6 +224,8 @@ def align_sample(sequences: dict[str, FeatureSequence], cfg: Problem1Config,
         "duration_sec": duration, "consensus_steps": steps, "iterations": len(history), "converged": converged,
         "objective": history[-1]["objective"], "consensus_delta": history[-1]["consensus_delta"],
         "mean_uncertainty": float(uncertainty.mean()), "max_marginal_residual": residual,
+        "mean_uncertainty_by_modality": uncertainty_by_modality,
+        "raw_max_marginal_residual": raw_residual, "sinkhorn_converged": sinkhorn_converged,
         "modality_quality": modality_quality, "modality_weights": dict(zip(MODALITIES, modality_weights.tolist())),
         "soft_dtw_values": soft_values, "sinkhorn": metrics_by_modality,
         "monotonic_violations": monotonic_violations,

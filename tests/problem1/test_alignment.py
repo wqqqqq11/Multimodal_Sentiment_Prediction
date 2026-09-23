@@ -22,6 +22,7 @@ class AlignmentPrimitiveTest(unittest.TestCase):
         plan, metrics = sinkhorn(cost, a, b, epsilon=0.15, iterations=500, tolerance=1e-7)
         np.testing.assert_allclose(plan.sum(axis=1), a / a.sum(), atol=2e-6)
         np.testing.assert_allclose(plan.sum(axis=0), b / b.sum(), atol=2e-6)
+        self.assertLessEqual(metrics["raw_marginal_residual"], 1e-7)
         self.assertLess(metrics["marginal_residual"], 2e-6)
 
     def test_sample_id_is_safe_for_matplotlib_mathtext(self):

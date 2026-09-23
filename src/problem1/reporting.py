@@ -15,6 +15,8 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
     multi = cfg.section("multiscale")
     text_cfg, audio_cfg, vision_cfg = cfg.section("text"), cfg.section("audio"), cfg.section("vision")
     convergence = 100.0 * np.mean([bool(item["converged"]) for item in good]) if good else 0.0
+    audit = summary["acceptance_audit"]
+    modality_uncertainty = summary["mean_uncertainty_by_modality"]
     text = f"""# 问题一模型求解报告
 
 ## 1. 数据输入
@@ -32,7 +34,7 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
 - 多尺度半径：文本 {multi['text_radii']}，音频 {multi['audio_radii']}，视觉 {multi['vision_radii']}。
 - 尺度权重：{multi['scale_weights']}；公共时序签名维数：{multi['common_dimension']}。
 - Soft-DTW 平滑参数 γ：{alignment['soft_dtw_gamma']}。
-- Sinkhorn 熵正则 ε：{alignment['sinkhorn_epsilon']}，最大迭代 {alignment['sinkhorn_iterations']}，容差 {alignment['sinkhorn_tolerance']}。
+- Sinkhorn 熵正则 ε：{alignment['sinkhorn_epsilon']}，最大迭代 {alignment['sinkhorn_iterations']}，原始边缘残差容差 {alignment['sinkhorn_tolerance']}。
 - 代价权重（语义/时间/质量）：{alignment['semantic_weight']} / {alignment['time_weight']} / {alignment['quality_weight']}。
 - 单调投影权重：{alignment['monotone_projection_weight']}（Sinkhorn 语义耦合与一维递增分位耦合的凸组合）。
 - 共识时间轴最长 {alignment['max_consensus_steps']} 点，间隔目标 {alignment['consensus_interval_sec']} 秒。
@@ -52,19 +54,35 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
 
 ## 4. 结果输出与诊断
 
+- 样本覆盖率：{audit['sample_coverage_rate']:.2%}；重复ID：{audit['duplicate_sample_id_count']}；缺失ID：{len(audit['missing_sample_ids'])}。
+- 特征完整性校验：{'通过' if audit['feature_validation_passed'] else '未通过'}；错误 {audit['feature_validation_error_count']} 项，质量警告 {audit['feature_validation_warning_count']} 项。
+- 映射与填充验收通过率：{audit['mapping_audit_pass_rate']:.2%}；映射/填充错误 {audit['mapping_error_count']} 项。
+- 配置指纹一致性：{'通过' if audit['resolved_config_fingerprint_match'] else '未通过'}。
 - 平均目标函数：{summary['mean_objective']:.6f}。
-- 平均对齐不确定性：{summary['mean_uncertainty']:.6f}（越低越确定）。
-- 最大边缘残差：{summary['max_marginal_residual']:.6e}（越低越满足质量守恒）。
+- 对齐不确定性：均值 {summary['mean_uncertainty']:.6f}，P90 {summary['p90_uncertainty']:.6f}，最大值 {summary['max_uncertainty']:.6f}；不确定性≥0.40的样本 {summary['high_uncertainty_sample_count']} 个。
+- 分模态平均不确定性：文本 {modality_uncertainty['text']:.6f}，音频 {modality_uncertainty['audio']:.6f}，视觉 {modality_uncertainty['vision']:.6f}。
+- 原始 Sinkhorn 收敛率：{summary['raw_sinkhorn_convergence_rate']:.2%}；样本级三模态全部收敛率：{summary['sample_sinkhorn_convergence_rate']:.2%}。
+- 最大原始边缘残差：{summary['max_raw_marginal_residual']:.6e}；边缘修正后的最大残差：{summary['max_marginal_residual']:.6e}。
 - 单调违例总数：{summary['total_monotonic_violations']}。
+- 单调投影前违例总数：{summary['total_preprojection_monotonic_violations']}；最终值只用于确认约束满足。
 - 提前达到共识容差的样本比例：{convergence:.2f}%（未提前停止并不表示失败，只表示运行到配置的迭代上限）。
 - 代表性样本：`{summary['representative_sample']}`。
 
 `aligned_dataset.npz` 是可直接用于后续情感预测的定长张量；每个样本目录中的 `mapping.json` 用于回溯词元、音频窗和视频帧，`metrics.json` 用于论文消融与误差分析。
 
+`acceptance_audit.csv/json` 给出100条样本的覆盖、映射、有效长度和零填充验收结果。原始残差用于判断迭代求解是否收敛；修正后残差用于确认最终传输计划严格满足边缘约束，两者不再混用。
+
 ## 5. 图表结论口径
 
-- 图 1 比较平均不确定性、边缘残差和单调违例，三者越低表示对齐越可靠。
+- 图 1 左侧展示赛方要求对应的覆盖、特征、映射和收敛通过率，右侧单独展示三模态不确定性分布。
 - 图 2 展示样本目标函数的中位归一化收敛轨迹，用于判断共识迭代是否稳定。
 - 图 3 展示代表性样本三模态传输矩阵；亮色质量沿近对角单调带分布时，说明时间顺序得到保留。
+- 图 4 是赛方要求的典型样本验证图：上方展示可回溯的文本片段、语音峰值时段和视频源帧，下方展示三类特征在统一共识时间轴上的对应关系及位置级不确定性。
+
+## 6. 典型样本核验材料
+
+- 逐共识位置明细：`{summary['representative_alignment_table']}`。
+- 图文核验说明：`{summary['representative_validation_report']}`。
+- 典型样本图：`{summary['figures']['representative_validation']}`。
 """
     atomic_text(cfg.path("output_root") / "reports" / "model_solution.md", text)
