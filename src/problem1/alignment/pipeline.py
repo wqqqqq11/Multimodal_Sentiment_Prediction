@@ -62,6 +62,8 @@ def _align_one(row: dict[str, str], cfg: Problem1Config, overwrite: bool,
             "label_cls": int(row["label_cls"]), "consensus_steps": int(metrics["consensus_steps"]),
             "iterations": int(metrics["iterations"]), "converged": bool(metrics["converged"]),
             "objective": float(metrics["objective"]), "mean_uncertainty": float(metrics["mean_uncertainty"]),
+            "raw_max_marginal_residual": float(metrics["raw_max_marginal_residual"]),
+            "sinkhorn_converged": bool(metrics["sinkhorn_converged"]),
             "max_marginal_residual": float(metrics["max_marginal_residual"]),
             "monotonic_violations": sum(int(x) for x in metrics["monotonic_violations"].values()),
             "elapsed_sec": round(time.perf_counter() - started, 4), "error": "",
@@ -134,7 +136,8 @@ def run_alignment(cfg: Problem1Config, *, overwrite: bool = False, limit: int | 
                             record["mean_uncertainty"], record["elapsed_sec"])
     records.sort(key=lambda item: item["sample_id"])
     fields = ["sample_id", "status", "label_reg", "label_cls", "consensus_steps", "iterations", "converged",
-              "objective", "mean_uncertainty", "max_marginal_residual", "monotonic_violations", "elapsed_sec", "error"]
+              "objective", "mean_uncertainty", "raw_max_marginal_residual", "sinkhorn_converged",
+              "max_marginal_residual", "monotonic_violations", "elapsed_sec", "error"]
     report_root = cfg.path("alignment_output_root")
     atomic_csv(report_root / "alignment_manifest.csv", records, fields)
     atomic_json(resolved, {"fingerprint": cfg.fingerprint, "config": cfg.raw})

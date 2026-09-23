@@ -11,6 +11,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from src.problem1.alignment.pipeline import run_alignment
+from src.problem1.auditing import audit_problem1
 from src.problem1.common.reproducibility import configure_logging, seed_everything
 from src.problem1.config import load_config
 from src.problem1.reporting import write_solution_report
@@ -28,7 +29,10 @@ def main() -> int:
     seed_everything(int(cfg.section("project")["seed"]))
     try:
         records = run_alignment(cfg, overwrite=args.overwrite, limit=args.limit, logger=logger)
-        summary = create_visualizations(cfg, records)
+        audit = audit_problem1(cfg, records)
+        if not audit["overall_passed"] and args.limit is None:
+            raise RuntimeError(f"问题一验收审计失败: {audit['mapping_error_count']}项映射/填充错误")
+        summary = create_visualizations(cfg, records, audit)
         write_solution_report(cfg, records, summary)
         logger.info("对齐完成: 样本=%d, mean_uncertainty=%.6f", len(records), summary["mean_uncertainty"])
         return 0

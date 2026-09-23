@@ -1,0 +1,514 @@
+2026-09-23 14:07:37,220 | INFO | MainThread | 模型求解开始: 样本=1, alignment_workers=2, overwrite=True
+2026-09-23 14:07:37,286 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 1/8: objective=0.818212, delta=0.109445
+2026-09-23 14:07:37,290 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 2/8: objective=0.779896, delta=0.023924
+2026-09-23 14:07:37,293 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 3/8: objective=0.777773, delta=0.008312
+2026-09-23 14:07:37,297 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 4/8: objective=0.777431, delta=0.003155
+2026-09-23 14:07:37,300 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 5/8: objective=0.777343, delta=0.001494
+2026-09-23 14:07:37,304 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 6/8: objective=0.777313, delta=0.000787
+2026-09-23 14:07:37,308 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 7/8: objective=0.777302, delta=0.000427
+2026-09-23 14:07:37,311 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 8/8: objective=0.777297, delta=0.000234
+2026-09-23 14:07:37,322 | INFO | MainThread | [1/1] -3g5yACwYnA$_$13 completed: objective=0.777297, uncertainty=0.3726 (0.10s)
+2026-09-23 14:07:37,404 | INFO | MainThread | 对齐完成: 样本=1, mean_uncertainty=0.372551
+2026-09-23 14:08:31,726 | INFO | MainThread | 模型求解开始: 样本=1, alignment_workers=2, overwrite=True
+2026-09-23 14:08:31,813 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 1/8: objective=0.820373, delta=0.109444
+2026-09-23 14:08:31,838 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 2/8: objective=0.782873, delta=0.023798
+2026-09-23 14:08:31,863 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 3/8: objective=0.781072, delta=0.008189
+2026-09-23 14:08:31,890 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 4/8: objective=0.780874, delta=0.003159
+2026-09-23 14:08:31,914 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 5/8: objective=0.780842, delta=0.001537
+2026-09-23 14:08:31,938 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 6/8: objective=0.780826, delta=0.000831
+2026-09-23 14:08:31,962 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 7/8: objective=0.780818, delta=0.000462
+2026-09-23 14:08:31,986 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 8/8: objective=0.780813, delta=0.000259
+2026-09-23 14:08:31,997 | INFO | MainThread | [1/1] -3g5yACwYnA$_$13 completed: objective=0.780813, uncertainty=0.3725 (0.27s)
+2026-09-23 14:08:32,078 | INFO | MainThread | 对齐完成: 样本=1, mean_uncertainty=0.372545
+2026-09-23 14:10:35,575 | INFO | MainThread | 模型求解开始: 样本=3, alignment_workers=2, overwrite=True
+2026-09-23 14:10:35,769 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 1/8: objective=1.152681, delta=0.123423
+2026-09-23 14:10:35,813 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 1/8: objective=1.195834, delta=0.102951
+2026-09-23 14:10:35,834 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 2/8: objective=1.115460, delta=0.007048
+2026-09-23 14:10:35,887 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 3/8: objective=1.115708, delta=0.000812
+2026-09-23 14:10:35,925 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 2/8: objective=1.188425, delta=0.007410
+2026-09-23 14:10:35,955 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 4/8: objective=1.115767, delta=0.000100
+2026-09-23 14:10:35,969 | INFO | MainThread | [1/3] -3g5yACwYnA$_$13 completed: objective=1.115767, uncertainty=0.3134 (0.39s)
+2026-09-23 14:10:36,112 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 3/8: objective=1.188867, delta=0.003193
+2026-09-23 14:10:36,184 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 4/8: objective=1.188981, delta=0.001901
+2026-09-23 14:10:36,200 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 1/8: objective=1.083599, delta=0.076438
+2026-09-23 14:10:36,259 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 5/8: objective=1.189032, delta=0.001128
+2026-09-23 14:10:36,313 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 2/8: objective=1.062327, delta=0.005827
+2026-09-23 14:10:36,348 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 6/8: objective=1.189059, delta=0.000658
+2026-09-23 14:10:36,419 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 7/8: objective=1.189073, delta=0.000379
+2026-09-23 14:10:36,443 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 3/8: objective=1.062043, delta=0.001455
+2026-09-23 14:10:36,499 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 8/8: objective=1.189081, delta=0.000216
+2026-09-23 14:10:36,513 | INFO | MainThread | [2/3] -3g5yACwYnA$_$2 completed: objective=1.189081, uncertainty=0.2373 (0.94s)
+2026-09-23 14:10:36,539 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 4/8: objective=1.061967, delta=0.000681
+2026-09-23 14:10:36,606 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 5/8: objective=1.061941, delta=0.000353
+2026-09-23 14:10:36,676 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 6/8: objective=1.061931, delta=0.000181
+2026-09-23 14:10:36,744 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 7/8: objective=1.061927, delta=0.000091
+2026-09-23 14:10:36,758 | INFO | MainThread | [3/3] -3g5yACwYnA$_$3 completed: objective=1.061927, uncertainty=0.2351 (0.79s)
+2026-09-23 14:10:36,892 | INFO | MainThread | 对齐完成: 样本=3, mean_uncertainty=0.261935
+2026-09-23 14:11:48,245 | INFO | MainThread | 模型求解开始: 样本=3, alignment_workers=2, overwrite=True
+2026-09-23 14:11:48,448 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 1/8: objective=1.214801, delta=0.130118
+2026-09-23 14:11:48,491 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 1/8: objective=1.374632, delta=0.115445
+2026-09-23 14:11:48,512 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 2/8: objective=1.173682, delta=0.001794
+2026-09-23 14:11:48,564 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 3/8: objective=1.173770, delta=0.000072
+2026-09-23 14:11:48,577 | INFO | MainThread | [1/3] -3g5yACwYnA$_$13 completed: objective=1.173770, uncertainty=0.3115 (0.33s)
+2026-09-23 14:11:48,596 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 2/8: objective=1.353845, delta=0.002038
+2026-09-23 14:11:48,750 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 3/8: objective=1.353778, delta=0.000081
+2026-09-23 14:11:48,764 | INFO | MainThread | [2/3] -3g5yACwYnA$_$2 completed: objective=1.353778, uncertainty=0.2413 (0.52s)
+2026-09-23 14:11:48,785 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 1/8: objective=1.189637, delta=0.087351
+2026-09-23 14:11:48,852 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 2/8: objective=1.161562, delta=0.001901
+2026-09-23 14:11:48,926 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 3/8: objective=1.161432, delta=0.000119
+2026-09-23 14:11:48,996 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 4/8: objective=1.161426, delta=0.000010
+2026-09-23 14:11:49,008 | INFO | MainThread | [3/3] -3g5yACwYnA$_$3 completed: objective=1.161426, uncertainty=0.2460 (0.43s)
+2026-09-23 14:11:49,125 | INFO | MainThread | 对齐完成: 样本=3, mean_uncertainty=0.266263
+2026-09-23 14:15:34,754 | INFO | MainThread | 模型求解开始: 样本=100, alignment_workers=2, overwrite=True
+2026-09-23 14:15:34,933 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 1/8: objective=1.232627, delta=0.130103
+2026-09-23 14:15:34,972 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 1/8: objective=1.414424, delta=0.115499
+2026-09-23 14:15:34,994 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 2/8: objective=1.192400, delta=0.001797
+2026-09-23 14:15:35,041 | INFO | p1-align_0 | -3g5yACwYnA$_$13 对齐迭代 3/8: objective=1.192497, delta=0.000072
+2026-09-23 14:15:35,061 | INFO | MainThread | [1/100] -3g5yACwYnA$_$13 completed: objective=1.192497, uncertainty=0.3138 (0.31s)
+2026-09-23 14:15:35,064 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 2/8: objective=1.390832, delta=0.002037
+2026-09-23 14:15:35,240 | INFO | p1-align_1 | -3g5yACwYnA$_$2 对齐迭代 3/8: objective=1.390674, delta=0.000080
+2026-09-23 14:15:35,253 | INFO | MainThread | [2/100] -3g5yACwYnA$_$2 completed: objective=1.390674, uncertainty=0.2460 (0.50s)
+2026-09-23 14:15:35,360 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 1/8: objective=1.208381, delta=0.087355
+2026-09-23 14:15:35,416 | INFO | p1-align_1 | -3g5yACwYnA$_$9 对齐迭代 1/8: objective=1.405417, delta=0.154247
+2026-09-23 14:15:35,469 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 2/8: objective=1.178372, delta=0.001892
+2026-09-23 14:15:35,503 | INFO | p1-align_1 | -3g5yACwYnA$_$9 对齐迭代 2/8: objective=1.337878, delta=0.005507
+2026-09-23 14:15:35,578 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 3/8: objective=1.178159, delta=0.000119
+2026-09-23 14:15:35,587 | INFO | p1-align_1 | -3g5yACwYnA$_$9 对齐迭代 3/8: objective=1.337759, delta=0.000256
+2026-09-23 14:15:35,679 | INFO | p1-align_1 | -3g5yACwYnA$_$9 对齐迭代 4/8: objective=1.337758, delta=0.000015
+2026-09-23 14:15:35,693 | INFO | MainThread | [3/100] -3g5yACwYnA$_$9 completed: objective=1.337758, uncertainty=0.3032 (0.44s)
+2026-09-23 14:15:35,697 | INFO | p1-align_0 | -3g5yACwYnA$_$3 对齐迭代 4/8: objective=1.178149, delta=0.000010
+2026-09-23 14:15:35,714 | INFO | MainThread | [4/100] -3g5yACwYnA$_$3 completed: objective=1.178149, uncertainty=0.2485 (0.65s)
+2026-09-23 14:15:35,845 | INFO | p1-align_0 | -571d8cVauQ$_$0 对齐迭代 1/8: objective=1.480784, delta=0.131184
+2026-09-23 14:15:35,877 | INFO | p1-align_1 | -3nNcZdcdvU$_$5 对齐迭代 1/8: objective=1.615709, delta=0.145673
+2026-09-23 14:15:35,901 | INFO | p1-align_0 | -571d8cVauQ$_$0 对齐迭代 2/8: objective=1.436067, delta=0.002681
+2026-09-23 14:15:35,944 | INFO | p1-align_0 | -571d8cVauQ$_$0 对齐迭代 3/8: objective=1.435894, delta=0.000080
+2026-09-23 14:15:35,958 | INFO | MainThread | [5/100] -571d8cVauQ$_$0 completed: objective=1.435894, uncertainty=0.2998 (0.24s)
+2026-09-23 14:15:35,968 | INFO | p1-align_1 | -3nNcZdcdvU$_$5 对齐迭代 2/8: objective=1.551981, delta=0.005088
+2026-09-23 14:15:36,132 | INFO | p1-align_1 | -3nNcZdcdvU$_$5 对齐迭代 3/8: objective=1.552454, delta=0.000068
+2026-09-23 14:15:36,146 | INFO | MainThread | [6/100] -3nNcZdcdvU$_$5 completed: objective=1.552454, uncertainty=0.2877 (0.45s)
+2026-09-23 14:15:36,272 | INFO | p1-align_0 | -571d8cVauQ$_$5 对齐迭代 1/8: objective=1.211543, delta=0.115432
+2026-09-23 14:15:36,335 | INFO | p1-align_1 | -6rXp3zJ3kc$_$8 对齐迭代 1/8: objective=1.442140, delta=0.104569
+2026-09-23 14:15:36,381 | INFO | p1-align_0 | -571d8cVauQ$_$5 对齐迭代 2/8: objective=1.164561, delta=0.003592
+2026-09-23 14:15:36,425 | INFO | p1-align_1 | -6rXp3zJ3kc$_$8 对齐迭代 2/8: objective=1.398816, delta=0.001619
+2026-09-23 14:15:36,483 | INFO | p1-align_0 | -571d8cVauQ$_$5 对齐迭代 3/8: objective=1.164360, delta=0.000308
+2026-09-23 14:15:36,514 | INFO | p1-align_1 | -6rXp3zJ3kc$_$8 对齐迭代 3/8: objective=1.398785, delta=0.000043
+2026-09-23 14:15:36,528 | INFO | MainThread | [7/100] -6rXp3zJ3kc$_$8 completed: objective=1.398785, uncertainty=0.2766 (0.38s)
+2026-09-23 14:15:36,642 | INFO | p1-align_1 | -9y-fZ3swSY$_$0 对齐迭代 1/8: objective=1.815231, delta=0.129781
+2026-09-23 14:15:36,655 | INFO | p1-align_0 | -571d8cVauQ$_$5 对齐迭代 4/8: objective=1.164346, delta=0.000032
+2026-09-23 14:15:36,671 | INFO | MainThread | [8/100] -571d8cVauQ$_$5 completed: objective=1.164346, uncertainty=0.2603 (0.71s)
+2026-09-23 14:15:36,743 | INFO | p1-align_0 | -9y-fZ3swSY$_$4 对齐迭代 1/8: objective=1.294929, delta=0.122667
+2026-09-23 14:15:36,753 | INFO | p1-align_1 | -9y-fZ3swSY$_$0 对齐迭代 2/8: objective=1.744265, delta=0.002648
+2026-09-23 14:15:36,792 | INFO | p1-align_0 | -9y-fZ3swSY$_$4 对齐迭代 2/8: objective=1.260114, delta=0.000729
+2026-09-23 14:15:36,838 | INFO | p1-align_0 | -9y-fZ3swSY$_$4 对齐迭代 3/8: objective=1.260257, delta=0.000008
+2026-09-23 14:15:36,839 | INFO | p1-align_1 | -9y-fZ3swSY$_$0 对齐迭代 3/8: objective=1.744174, delta=0.000211
+2026-09-23 14:15:36,856 | INFO | MainThread | [9/100] -9y-fZ3swSY$_$4 completed: objective=1.260257, uncertainty=0.3862 (0.18s)
+2026-09-23 14:15:36,938 | INFO | p1-align_1 | -9y-fZ3swSY$_$0 对齐迭代 4/8: objective=1.744172, delta=0.000019
+2026-09-23 14:15:36,951 | INFO | p1-align_0 | -9y-fZ3swSY$_$8 对齐迭代 1/8: objective=1.397329, delta=0.115338
+2026-09-23 14:15:36,966 | INFO | MainThread | [10/100] -9y-fZ3swSY$_$0 completed: objective=1.744172, uncertainty=0.3522 (0.44s)
+2026-09-23 14:15:37,146 | INFO | p1-align_0 | -9y-fZ3swSY$_$8 对齐迭代 2/8: objective=1.345315, delta=0.003123
+2026-09-23 14:15:37,202 | INFO | p1-align_0 | -9y-fZ3swSY$_$8 对齐迭代 3/8: objective=1.345199, delta=0.000119
+2026-09-23 14:15:37,252 | INFO | p1-align_0 | -9y-fZ3swSY$_$8 对齐迭代 4/8: objective=1.345196, delta=0.000005
+2026-09-23 14:15:37,262 | INFO | MainThread | [11/100] -9y-fZ3swSY$_$8 completed: objective=1.345196, uncertainty=0.3335 (0.41s)
+2026-09-23 14:15:37,377 | INFO | p1-align_1 | -AUZQgSxyPQ$_$2 对齐迭代 1/8: objective=1.790419, delta=0.118977
+2026-09-23 14:15:37,400 | INFO | p1-align_0 | -HeZS2-Prhc$_$2 对齐迭代 1/8: objective=1.387472, delta=0.119541
+2026-09-23 14:15:37,464 | INFO | p1-align_0 | -HeZS2-Prhc$_$2 对齐迭代 2/8: objective=1.338900, delta=0.001042
+2026-09-23 14:15:37,534 | INFO | p1-align_1 | -AUZQgSxyPQ$_$2 对齐迭代 2/8: objective=1.746167, delta=0.002935
+2026-09-23 14:15:37,541 | INFO | p1-align_0 | -HeZS2-Prhc$_$2 对齐迭代 3/8: objective=1.338898, delta=0.000028
+2026-09-23 14:15:37,554 | INFO | MainThread | [12/100] -HeZS2-Prhc$_$2 completed: objective=1.338898, uncertainty=0.2786 (0.29s)
+2026-09-23 14:15:37,635 | INFO | p1-align_0 | -HwX2H8Z4hY$_$2 对齐迭代 1/8: objective=1.156684, delta=0.139296
+2026-09-23 14:15:37,680 | INFO | p1-align_0 | -HwX2H8Z4hY$_$2 对齐迭代 2/8: objective=1.081349, delta=0.001204
+2026-09-23 14:15:37,725 | INFO | p1-align_0 | -HwX2H8Z4hY$_$2 对齐迭代 3/8: objective=1.081235, delta=0.000030
+2026-09-23 14:15:37,737 | INFO | MainThread | [13/100] -HwX2H8Z4hY$_$2 completed: objective=1.081235, uncertainty=0.3558 (0.18s)
+2026-09-23 14:15:37,740 | INFO | p1-align_1 | -AUZQgSxyPQ$_$2 对齐迭代 3/8: objective=1.746278, delta=0.000170
+2026-09-23 14:15:37,837 | INFO | p1-align_0 | -HwX2H8Z4hY$_$5 对齐迭代 1/8: objective=1.877548, delta=0.148174
+2026-09-23 14:15:37,888 | INFO | p1-align_0 | -HwX2H8Z4hY$_$5 对齐迭代 2/8: objective=1.792722, delta=0.001821
+2026-09-23 14:15:37,941 | INFO | p1-align_0 | -HwX2H8Z4hY$_$5 对齐迭代 3/8: objective=1.792430, delta=0.000045
+2026-09-23 14:15:37,952 | INFO | MainThread | [14/100] -HwX2H8Z4hY$_$5 completed: objective=1.792430, uncertainty=0.3149 (0.21s)
+2026-09-23 14:15:37,959 | INFO | p1-align_1 | -AUZQgSxyPQ$_$2 对齐迭代 4/8: objective=1.746282, delta=0.000012
+2026-09-23 14:15:38,002 | INFO | MainThread | [15/100] -AUZQgSxyPQ$_$2 completed: objective=1.746282, uncertainty=0.2435 (1.04s)
+2026-09-23 14:15:38,092 | INFO | p1-align_0 | -HwX2H8Z4hY$_$6 对齐迭代 1/8: objective=1.316333, delta=0.111540
+2026-09-23 14:15:38,137 | INFO | p1-align_0 | -HwX2H8Z4hY$_$6 对齐迭代 2/8: objective=1.277474, delta=0.002632
+2026-09-23 14:15:38,161 | INFO | p1-align_1 | -HwX2H8Z4hY$_$9 对齐迭代 1/8: objective=1.586135, delta=0.122107
+2026-09-23 14:15:38,191 | INFO | p1-align_0 | -HwX2H8Z4hY$_$6 对齐迭代 3/8: objective=1.277519, delta=0.000121
+2026-09-23 14:15:38,238 | INFO | p1-align_0 | -HwX2H8Z4hY$_$6 对齐迭代 4/8: objective=1.277519, delta=0.000006
+2026-09-23 14:15:38,255 | INFO | MainThread | [16/100] -HwX2H8Z4hY$_$6 completed: objective=1.277519, uncertainty=0.3203 (0.30s)
+2026-09-23 14:15:38,255 | INFO | p1-align_1 | -HwX2H8Z4hY$_$9 对齐迭代 2/8: objective=1.547500, delta=0.001940
+2026-09-23 14:15:38,385 | INFO | p1-align_1 | -HwX2H8Z4hY$_$9 对齐迭代 3/8: objective=1.547630, delta=0.000080
+2026-09-23 14:15:38,394 | INFO | p1-align_0 | -I_e4mIh0yE$_$1 对齐迭代 1/8: objective=1.408340, delta=0.118457
+2026-09-23 14:15:38,410 | INFO | MainThread | [17/100] -HwX2H8Z4hY$_$9 completed: objective=1.547630, uncertainty=0.3141 (0.41s)
+2026-09-23 14:15:38,529 | INFO | p1-align_0 | -I_e4mIh0yE$_$1 对齐迭代 2/8: objective=1.360979, delta=0.001426
+2026-09-23 14:15:38,559 | INFO | p1-align_1 | -I_e4mIh0yE$_$3 对齐迭代 1/8: objective=1.419268, delta=0.115342
+2026-09-23 14:15:38,610 | INFO | p1-align_0 | -I_e4mIh0yE$_$1 对齐迭代 3/8: objective=1.360803, delta=0.000076
+2026-09-23 14:15:38,623 | INFO | MainThread | [18/100] -I_e4mIh0yE$_$1 completed: objective=1.360803, uncertainty=0.2983 (0.37s)
+2026-09-23 14:15:38,687 | INFO | p1-align_1 | -I_e4mIh0yE$_$3 对齐迭代 2/8: objective=1.378646, delta=0.003031
+2026-09-23 14:15:38,782 | INFO | p1-align_1 | -I_e4mIh0yE$_$3 对齐迭代 3/8: objective=1.378882, delta=0.000097
+2026-09-23 14:15:38,786 | INFO | p1-align_0 | -MeTTeMJBNc$_$0 对齐迭代 1/8: objective=1.717981, delta=0.145237
+2026-09-23 14:15:38,803 | INFO | MainThread | [19/100] -I_e4mIh0yE$_$3 completed: objective=1.378882, uncertainty=0.2950 (0.39s)
+2026-09-23 14:15:38,899 | INFO | p1-align_1 | -MeTTeMJBNc$_$13 对齐迭代 1/8: objective=1.687120, delta=0.172652
+2026-09-23 14:15:38,922 | INFO | p1-align_0 | -MeTTeMJBNc$_$0 对齐迭代 2/8: objective=1.639453, delta=0.006411
+2026-09-23 14:15:38,965 | INFO | p1-align_1 | -MeTTeMJBNc$_$13 对齐迭代 2/8: objective=1.593263, delta=0.004520
+2026-09-23 14:15:39,019 | INFO | p1-align_1 | -MeTTeMJBNc$_$13 对齐迭代 3/8: objective=1.593052, delta=0.000196
+2026-09-23 14:15:39,030 | INFO | p1-align_0 | -MeTTeMJBNc$_$0 对齐迭代 3/8: objective=1.639715, delta=0.000396
+2026-09-23 14:15:39,077 | INFO | p1-align_1 | -MeTTeMJBNc$_$13 对齐迭代 4/8: objective=1.593038, delta=0.000010
+2026-09-23 14:15:39,089 | INFO | MainThread | [20/100] -MeTTeMJBNc$_$13 completed: objective=1.593038, uncertainty=0.3516 (0.29s)
+2026-09-23 14:15:39,184 | INFO | p1-align_0 | -MeTTeMJBNc$_$0 对齐迭代 4/8: objective=1.639739, delta=0.000019
+2026-09-23 14:15:39,197 | INFO | MainThread | [21/100] -MeTTeMJBNc$_$0 completed: objective=1.639739, uncertainty=0.2949 (0.57s)
+2026-09-23 14:15:39,297 | INFO | p1-align_0 | -NFrJFQijFE$_$1 对齐迭代 1/8: objective=1.255498, delta=0.079364
+2026-09-23 14:15:39,325 | INFO | p1-align_1 | -MeTTeMJBNc$_$7 对齐迭代 1/8: objective=2.033871, delta=0.124027
+2026-09-23 14:15:39,361 | INFO | p1-align_0 | -NFrJFQijFE$_$1 对齐迭代 2/8: objective=1.239375, delta=0.000833
+2026-09-23 14:15:39,414 | INFO | p1-align_0 | -NFrJFQijFE$_$1 对齐迭代 3/8: objective=1.239236, delta=0.000069
+2026-09-23 14:15:39,426 | INFO | MainThread | [22/100] -NFrJFQijFE$_$1 completed: objective=1.239236, uncertainty=0.3286 (0.23s)
+2026-09-23 14:15:39,500 | INFO | p1-align_1 | -MeTTeMJBNc$_$7 对齐迭代 2/8: objective=2.001244, delta=0.005859
+2026-09-23 14:15:39,568 | INFO | p1-align_0 | -NFrJFQijFE$_$2 对齐迭代 1/8: objective=1.724413, delta=0.115875
+2026-09-23 14:15:39,633 | INFO | p1-align_1 | -MeTTeMJBNc$_$7 对齐迭代 3/8: objective=2.000839, delta=0.000133
+2026-09-23 14:15:39,681 | INFO | p1-align_0 | -NFrJFQijFE$_$2 对齐迭代 2/8: objective=1.648222, delta=0.004813
+2026-09-23 14:15:39,755 | INFO | p1-align_0 | -NFrJFQijFE$_$2 对齐迭代 3/8: objective=1.648039, delta=0.000305
+2026-09-23 14:15:39,773 | INFO | p1-align_1 | -MeTTeMJBNc$_$7 对齐迭代 4/8: objective=2.000836, delta=0.000011
+2026-09-23 14:15:39,786 | INFO | MainThread | [23/100] -MeTTeMJBNc$_$7 completed: objective=2.000836, uncertainty=0.3037 (0.70s)
+2026-09-23 14:15:39,869 | INFO | p1-align_0 | -NFrJFQijFE$_$2 对齐迭代 4/8: objective=1.648035, delta=0.000034
+2026-09-23 14:15:39,886 | INFO | p1-align_1 | -RfYyzHpjk4$_$11 对齐迭代 1/8: objective=1.423724, delta=0.125455
+2026-09-23 14:15:39,895 | INFO | MainThread | [24/100] -NFrJFQijFE$_$2 completed: objective=1.648035, uncertainty=0.3348 (0.47s)
+2026-09-23 14:15:39,982 | INFO | p1-align_1 | -RfYyzHpjk4$_$11 对齐迭代 2/8: objective=1.370312, delta=0.001893
+2026-09-23 14:15:40,007 | INFO | p1-align_0 | -RfYyzHpjk4$_$2 对齐迭代 1/8: objective=1.186334, delta=0.138620
+2026-09-23 14:15:40,052 | INFO | p1-align_1 | -RfYyzHpjk4$_$11 对齐迭代 3/8: objective=1.370166, delta=0.000040
+2026-09-23 14:15:40,064 | INFO | MainThread | [25/100] -RfYyzHpjk4$_$11 completed: objective=1.370166, uncertainty=0.3156 (0.28s)
+2026-09-23 14:15:40,072 | INFO | p1-align_0 | -RfYyzHpjk4$_$2 对齐迭代 2/8: objective=1.123103, delta=0.001959
+2026-09-23 14:15:40,165 | INFO | p1-align_0 | -RfYyzHpjk4$_$2 对齐迭代 3/8: objective=1.122919, delta=0.000066
+2026-09-23 14:15:40,174 | INFO | p1-align_1 | -RfYyzHpjk4$_$8 对齐迭代 1/8: objective=1.590681, delta=0.162239
+2026-09-23 14:15:40,192 | INFO | MainThread | [26/100] -RfYyzHpjk4$_$2 completed: objective=1.122919, uncertainty=0.3655 (0.30s)
+2026-09-23 14:15:40,319 | INFO | p1-align_1 | -RfYyzHpjk4$_$8 对齐迭代 2/8: objective=1.520381, delta=0.004423
+2026-09-23 14:15:40,367 | INFO | p1-align_1 | -RfYyzHpjk4$_$8 对齐迭代 3/8: objective=1.520286, delta=0.000029
+2026-09-23 14:15:40,377 | INFO | MainThread | [27/100] -RfYyzHpjk4$_$8 completed: objective=1.520286, uncertainty=0.3380 (0.31s)
+2026-09-23 14:15:40,461 | INFO | p1-align_1 | -THoVjtIkeU$_$2 对齐迭代 1/8: objective=1.603420, delta=0.122421
+2026-09-23 14:15:40,483 | INFO | p1-align_0 | -THoVjtIkeU$_$12 对齐迭代 1/8: objective=1.808708, delta=0.122160
+2026-09-23 14:15:40,509 | INFO | p1-align_1 | -THoVjtIkeU$_$2 对齐迭代 2/8: objective=1.549135, delta=0.000479
+2026-09-23 14:15:40,551 | INFO | p1-align_1 | -THoVjtIkeU$_$2 对齐迭代 3/8: objective=1.549097, delta=0.000005
+2026-09-23 14:15:40,564 | INFO | MainThread | [28/100] -THoVjtIkeU$_$2 completed: objective=1.549097, uncertainty=0.3536 (0.19s)
+2026-09-23 14:15:40,673 | INFO | p1-align_0 | -THoVjtIkeU$_$12 对齐迭代 2/8: objective=1.749966, delta=0.003436
+2026-09-23 14:15:40,717 | INFO | p1-align_1 | -THoVjtIkeU$_$6 对齐迭代 1/8: objective=2.046712, delta=0.161703
+2026-09-23 14:15:40,788 | INFO | p1-align_0 | -THoVjtIkeU$_$12 对齐迭代 3/8: objective=1.749955, delta=0.000230
+2026-09-23 14:15:40,800 | INFO | p1-align_1 | -THoVjtIkeU$_$6 对齐迭代 2/8: objective=1.938259, delta=0.003777
+2026-09-23 14:15:40,878 | INFO | p1-align_1 | -THoVjtIkeU$_$6 对齐迭代 3/8: objective=1.938184, delta=0.000096
+2026-09-23 14:15:40,891 | INFO | MainThread | [29/100] -THoVjtIkeU$_$6 completed: objective=1.938184, uncertainty=0.3371 (0.33s)
+2026-09-23 14:15:40,907 | INFO | p1-align_0 | -THoVjtIkeU$_$12 对齐迭代 4/8: objective=1.749962, delta=0.000016
+2026-09-23 14:15:40,970 | INFO | MainThread | [30/100] -THoVjtIkeU$_$12 completed: objective=1.749962, uncertainty=0.2758 (0.78s)
+2026-09-23 14:15:41,072 | INFO | p1-align_1 | -UUCSKoHeMA$_$0 对齐迭代 1/8: objective=1.691904, delta=0.120092
+2026-09-23 14:15:41,103 | INFO | p1-align_0 | -UacrmKiTn4$_$10 对齐迭代 1/8: objective=1.930007, delta=0.140998
+2026-09-23 14:15:41,147 | INFO | p1-align_1 | -UUCSKoHeMA$_$0 对齐迭代 2/8: objective=1.647691, delta=0.002984
+2026-09-23 14:15:41,180 | INFO | p1-align_0 | -UacrmKiTn4$_$10 对齐迭代 2/8: objective=1.855248, delta=0.006939
+2026-09-23 14:15:41,221 | INFO | p1-align_1 | -UUCSKoHeMA$_$0 对齐迭代 3/8: objective=1.647766, delta=0.000098
+2026-09-23 14:15:41,237 | INFO | MainThread | [31/100] -UUCSKoHeMA$_$0 completed: objective=1.647766, uncertainty=0.2995 (0.35s)
+2026-09-23 14:15:41,297 | INFO | p1-align_0 | -UacrmKiTn4$_$10 对齐迭代 3/8: objective=1.855452, delta=0.000143
+2026-09-23 14:15:41,331 | INFO | p1-align_1 | -UacrmKiTn4$_$4 对齐迭代 1/8: objective=1.762957, delta=0.149314
+2026-09-23 14:15:41,371 | INFO | p1-align_1 | -UacrmKiTn4$_$4 对齐迭代 2/8: objective=1.692400, delta=0.005256
+2026-09-23 14:15:41,392 | INFO | p1-align_0 | -UacrmKiTn4$_$10 对齐迭代 4/8: objective=1.855463, delta=0.000009
+2026-09-23 14:15:41,406 | INFO | MainThread | [32/100] -UacrmKiTn4$_$10 completed: objective=1.855463, uncertainty=0.3087 (0.44s)
+2026-09-23 14:15:41,424 | INFO | p1-align_1 | -UacrmKiTn4$_$4 对齐迭代 3/8: objective=1.692649, delta=0.000079
+2026-09-23 14:15:41,462 | INFO | MainThread | [33/100] -UacrmKiTn4$_$4 completed: objective=1.692649, uncertainty=0.3378 (0.23s)
+2026-09-23 14:15:41,565 | INFO | p1-align_0 | -UuX1xuaiiE$_$0 对齐迭代 1/8: objective=1.583976, delta=0.145933
+2026-09-23 14:15:41,614 | INFO | p1-align_0 | -UuX1xuaiiE$_$0 对齐迭代 2/8: objective=1.530675, delta=0.000971
+2026-09-23 14:15:41,664 | INFO | p1-align_0 | -UuX1xuaiiE$_$0 对齐迭代 3/8: objective=1.530583, delta=0.000015
+2026-09-23 14:15:41,670 | INFO | p1-align_1 | -UuX1xuaiiE$_$1 对齐迭代 1/8: objective=1.517651, delta=0.119013
+2026-09-23 14:15:41,675 | INFO | MainThread | [34/100] -UuX1xuaiiE$_$0 completed: objective=1.530583, uncertainty=0.3529 (0.27s)
+2026-09-23 14:15:41,757 | INFO | p1-align_0 | -UuX1xuaiiE$_$3 对齐迭代 1/8: objective=1.365346, delta=0.104411
+2026-09-23 14:15:41,803 | INFO | p1-align_0 | -UuX1xuaiiE$_$3 对齐迭代 2/8: objective=1.324659, delta=0.000254
+2026-09-23 14:15:41,817 | INFO | p1-align_1 | -UuX1xuaiiE$_$1 对齐迭代 2/8: objective=1.459763, delta=0.002700
+2026-09-23 14:15:41,856 | INFO | p1-align_0 | -UuX1xuaiiE$_$3 对齐迭代 3/8: objective=1.324657, delta=0.000004
+2026-09-23 14:15:41,867 | INFO | MainThread | [35/100] -UuX1xuaiiE$_$3 completed: objective=1.324657, uncertainty=0.3319 (0.19s)
+2026-09-23 14:15:41,976 | INFO | p1-align_1 | -UuX1xuaiiE$_$1 对齐迭代 3/8: objective=1.459695, delta=0.000154
+2026-09-23 14:15:42,005 | INFO | p1-align_0 | -UuX1xuaiiE$_$6 对齐迭代 1/8: objective=1.197349, delta=0.095635
+2026-09-23 14:15:42,069 | INFO | p1-align_0 | -UuX1xuaiiE$_$6 对齐迭代 2/8: objective=1.159549, delta=0.001801
+2026-09-23 14:15:42,089 | INFO | p1-align_1 | -UuX1xuaiiE$_$1 对齐迭代 4/8: objective=1.459695, delta=0.000010
+2026-09-23 14:15:42,104 | INFO | MainThread | [36/100] -UuX1xuaiiE$_$1 completed: objective=1.459695, uncertainty=0.3027 (0.64s)
+2026-09-23 14:15:42,290 | INFO | p1-align_0 | -UuX1xuaiiE$_$6 对齐迭代 3/8: objective=1.159352, delta=0.000122
+2026-09-23 14:15:42,349 | INFO | p1-align_0 | -UuX1xuaiiE$_$6 对齐迭代 4/8: objective=1.159342, delta=0.000010
+2026-09-23 14:15:42,362 | INFO | MainThread | [37/100] -UuX1xuaiiE$_$6 completed: objective=1.159342, uncertainty=0.3057 (0.49s)
+2026-09-23 14:15:42,485 | INFO | p1-align_1 | -a55Q6RWvTA$_$3 对齐迭代 1/8: objective=1.871576, delta=0.139491
+2026-09-23 14:15:42,499 | INFO | p1-align_0 | -aNfi7CP8vM$_$7 对齐迭代 1/8: objective=1.667407, delta=0.105473
+2026-09-23 14:15:42,564 | INFO | p1-align_0 | -aNfi7CP8vM$_$7 对齐迭代 2/8: objective=1.623971, delta=0.001903
+2026-09-23 14:15:42,632 | INFO | p1-align_0 | -aNfi7CP8vM$_$7 对齐迭代 3/8: objective=1.623862, delta=0.000088
+2026-09-23 14:15:42,643 | INFO | p1-align_1 | -a55Q6RWvTA$_$3 对齐迭代 2/8: objective=1.806683, delta=0.003862
+2026-09-23 14:15:42,647 | INFO | MainThread | [38/100] -aNfi7CP8vM$_$7 completed: objective=1.623862, uncertainty=0.2921 (0.29s)
+2026-09-23 14:15:42,799 | INFO | p1-align_0 | -aqamKhZ1Ec$_$0 对齐迭代 1/8: objective=1.244393, delta=0.110771
+2026-09-23 14:15:42,867 | INFO | p1-align_1 | -a55Q6RWvTA$_$3 对齐迭代 3/8: objective=1.806781, delta=0.000350
+2026-09-23 14:15:42,874 | INFO | p1-align_0 | -aqamKhZ1Ec$_$0 对齐迭代 2/8: objective=1.222220, delta=0.001832
+2026-09-23 14:15:42,942 | INFO | p1-align_0 | -aqamKhZ1Ec$_$0 对齐迭代 3/8: objective=1.222146, delta=0.000062
+2026-09-23 14:15:42,956 | INFO | MainThread | [39/100] -aqamKhZ1Ec$_$0 completed: objective=1.222146, uncertainty=0.2315 (0.31s)
+2026-09-23 14:15:43,147 | INFO | p1-align_1 | -a55Q6RWvTA$_$3 对齐迭代 4/8: objective=1.806786, delta=0.000040
+2026-09-23 14:15:43,169 | INFO | MainThread | [40/100] -a55Q6RWvTA$_$3 completed: objective=1.806786, uncertainty=0.2706 (1.06s)
+2026-09-23 14:15:43,345 | INFO | p1-align_0 | -dxfTGcXJoc$_$0 对齐迭代 1/8: objective=1.527314, delta=0.120842
+2026-09-23 14:15:43,386 | INFO | p1-align_1 | -dxfTGcXJoc$_$1 对齐迭代 1/8: objective=1.606940, delta=0.121214
+2026-09-23 14:15:43,470 | INFO | p1-align_0 | -dxfTGcXJoc$_$0 对齐迭代 2/8: objective=1.479446, delta=0.004756
+2026-09-23 14:15:43,485 | INFO | p1-align_1 | -dxfTGcXJoc$_$1 对齐迭代 2/8: objective=1.560498, delta=0.002673
+2026-09-23 14:15:43,586 | INFO | p1-align_1 | -dxfTGcXJoc$_$1 对齐迭代 3/8: objective=1.560429, delta=0.000139
+2026-09-23 14:15:43,595 | INFO | p1-align_0 | -dxfTGcXJoc$_$0 对齐迭代 3/8: objective=1.479760, delta=0.000416
+2026-09-23 14:15:43,695 | INFO | p1-align_1 | -dxfTGcXJoc$_$1 对齐迭代 4/8: objective=1.560425, delta=0.000010
+2026-09-23 14:15:43,712 | INFO | MainThread | [41/100] -dxfTGcXJoc$_$1 completed: objective=1.560425, uncertainty=0.2623 (0.54s)
+2026-09-23 14:15:43,829 | INFO | p1-align_0 | -dxfTGcXJoc$_$0 对齐迭代 4/8: objective=1.479792, delta=0.000044
+2026-09-23 14:15:43,847 | INFO | MainThread | [42/100] -dxfTGcXJoc$_$0 completed: objective=1.479792, uncertainty=0.2397 (0.89s)
+2026-09-23 14:15:44,015 | INFO | p1-align_1 | -dxfTGcXJoc$_$2 对齐迭代 1/8: objective=1.691893, delta=0.126744
+2026-09-23 14:15:44,023 | INFO | p1-align_0 | -dxfTGcXJoc$_$6 对齐迭代 1/8: objective=1.923448, delta=0.122876
+2026-09-23 14:15:44,113 | INFO | p1-align_0 | -dxfTGcXJoc$_$6 对齐迭代 2/8: objective=1.864333, delta=0.004374
+2026-09-23 14:15:44,127 | INFO | p1-align_1 | -dxfTGcXJoc$_$2 对齐迭代 2/8: objective=1.629554, delta=0.004978
+2026-09-23 14:15:44,209 | INFO | p1-align_0 | -dxfTGcXJoc$_$6 对齐迭代 3/8: objective=1.864156, delta=0.000323
+2026-09-23 14:15:44,247 | INFO | p1-align_1 | -dxfTGcXJoc$_$2 对齐迭代 3/8: objective=1.629068, delta=0.000392
+2026-09-23 14:15:44,309 | INFO | p1-align_0 | -dxfTGcXJoc$_$6 对齐迭代 4/8: objective=1.864139, delta=0.000028
+2026-09-23 14:15:44,325 | INFO | MainThread | [43/100] -dxfTGcXJoc$_$6 completed: objective=1.864139, uncertainty=0.2812 (0.48s)
+2026-09-23 14:15:44,430 | INFO | p1-align_1 | -dxfTGcXJoc$_$2 对齐迭代 4/8: objective=1.629032, delta=0.000035
+2026-09-23 14:15:44,446 | INFO | MainThread | [44/100] -dxfTGcXJoc$_$2 completed: objective=1.629032, uncertainty=0.2611 (0.73s)
+2026-09-23 14:15:44,519 | INFO | p1-align_0 | -egA8-b7-3M$_$1 对齐迭代 1/8: objective=1.415592, delta=0.110253
+2026-09-23 14:15:44,548 | INFO | p1-align_1 | -egA8-b7-3M$_$13 对齐迭代 1/8: objective=1.604560, delta=0.125561
+2026-09-23 14:15:44,596 | INFO | p1-align_1 | -egA8-b7-3M$_$13 对齐迭代 2/8: objective=1.566759, delta=0.000507
+2026-09-23 14:15:44,629 | INFO | p1-align_0 | -egA8-b7-3M$_$1 对齐迭代 2/8: objective=1.376327, delta=0.001728
+2026-09-23 14:15:44,656 | INFO | p1-align_1 | -egA8-b7-3M$_$13 对齐迭代 3/8: objective=1.566805, delta=0.000007
+2026-09-23 14:15:44,669 | INFO | MainThread | [45/100] -egA8-b7-3M$_$13 completed: objective=1.566805, uncertainty=0.3538 (0.22s)
+2026-09-23 14:15:44,769 | INFO | p1-align_1 | -egA8-b7-3M$_$16 对齐迭代 1/8: objective=1.519668, delta=0.116749
+2026-09-23 14:15:44,780 | INFO | p1-align_0 | -egA8-b7-3M$_$1 对齐迭代 3/8: objective=1.376317, delta=0.000067
+2026-09-23 14:15:44,793 | INFO | MainThread | [46/100] -egA8-b7-3M$_$1 completed: objective=1.376317, uncertainty=0.2714 (0.47s)
+2026-09-23 14:15:44,880 | INFO | p1-align_1 | -egA8-b7-3M$_$16 对齐迭代 2/8: objective=1.490029, delta=0.001628
+2026-09-23 14:15:44,928 | INFO | p1-align_0 | -egA8-b7-3M$_$17 对齐迭代 1/8: objective=1.409133, delta=0.109874
+2026-09-23 14:15:44,955 | INFO | p1-align_1 | -egA8-b7-3M$_$16 对齐迭代 3/8: objective=1.489792, delta=0.000067
+2026-09-23 14:15:44,966 | INFO | MainThread | [47/100] -egA8-b7-3M$_$16 completed: objective=1.489792, uncertainty=0.2957 (0.30s)
+2026-09-23 14:15:45,063 | INFO | p1-align_0 | -egA8-b7-3M$_$17 对齐迭代 2/8: objective=1.366279, delta=0.007427
+2026-09-23 14:15:45,106 | INFO | p1-align_1 | -egA8-b7-3M$_$18 对齐迭代 1/8: objective=1.394183, delta=0.128121
+2026-09-23 14:15:45,142 | INFO | p1-align_0 | -egA8-b7-3M$_$17 对齐迭代 3/8: objective=1.366298, delta=0.000608
+2026-09-23 14:15:45,188 | INFO | p1-align_1 | -egA8-b7-3M$_$18 对齐迭代 2/8: objective=1.343710, delta=0.003742
+2026-09-23 14:15:45,219 | INFO | p1-align_0 | -egA8-b7-3M$_$17 对齐迭代 4/8: objective=1.366317, delta=0.000053
+2026-09-23 14:15:45,232 | INFO | MainThread | [48/100] -egA8-b7-3M$_$17 completed: objective=1.366317, uncertainty=0.3031 (0.44s)
+2026-09-23 14:15:45,319 | INFO | p1-align_1 | -egA8-b7-3M$_$18 对齐迭代 3/8: objective=1.343741, delta=0.000354
+2026-09-23 14:15:45,365 | INFO | p1-align_0 | -egA8-b7-3M$_$20 对齐迭代 1/8: objective=1.553522, delta=0.127667
+2026-09-23 14:15:45,404 | INFO | p1-align_1 | -egA8-b7-3M$_$18 对齐迭代 4/8: objective=1.343742, delta=0.000041
+2026-09-23 14:15:45,416 | INFO | MainThread | [49/100] -egA8-b7-3M$_$18 completed: objective=1.343742, uncertainty=0.2983 (0.45s)
+2026-09-23 14:15:45,488 | INFO | p1-align_0 | -egA8-b7-3M$_$20 对齐迭代 2/8: objective=1.489257, delta=0.003776
+2026-09-23 14:15:45,527 | INFO | p1-align_1 | -egA8-b7-3M$_$26 对齐迭代 1/8: objective=1.906475, delta=0.120297
+2026-09-23 14:15:45,571 | INFO | p1-align_0 | -egA8-b7-3M$_$20 对齐迭代 3/8: objective=1.489251, delta=0.000294
+2026-09-23 14:15:45,591 | INFO | p1-align_1 | -egA8-b7-3M$_$26 对齐迭代 2/8: objective=1.843892, delta=0.001941
+2026-09-23 14:15:45,642 | INFO | p1-align_0 | -egA8-b7-3M$_$20 对齐迭代 4/8: objective=1.489256, delta=0.000026
+2026-09-23 14:15:45,663 | INFO | p1-align_1 | -egA8-b7-3M$_$26 对齐迭代 3/8: objective=1.843971, delta=0.000100
+2026-09-23 14:15:45,665 | INFO | MainThread | [50/100] -egA8-b7-3M$_$20 completed: objective=1.489256, uncertainty=0.3224 (0.43s)
+2026-09-23 14:15:45,678 | INFO | MainThread | [51/100] -egA8-b7-3M$_$26 completed: objective=1.843971, uncertainty=0.3269 (0.26s)
+2026-09-23 14:15:45,807 | INFO | p1-align_1 | -egA8-b7-3M$_$9 对齐迭代 1/8: objective=1.614061, delta=0.104387
+2026-09-23 14:15:45,827 | INFO | p1-align_0 | -egA8-b7-3M$_$6 对齐迭代 1/8: objective=1.379953, delta=0.115685
+2026-09-23 14:15:45,871 | INFO | p1-align_1 | -egA8-b7-3M$_$9 对齐迭代 2/8: objective=1.588396, delta=0.000634
+2026-09-23 14:15:45,897 | INFO | p1-align_0 | -egA8-b7-3M$_$6 对齐迭代 2/8: objective=1.348568, delta=0.001159
+2026-09-23 14:15:45,934 | INFO | p1-align_1 | -egA8-b7-3M$_$9 对齐迭代 3/8: objective=1.588355, delta=0.000014
+2026-09-23 14:15:45,950 | INFO | MainThread | [52/100] -egA8-b7-3M$_$9 completed: objective=1.588355, uncertainty=0.3017 (0.27s)
+2026-09-23 14:15:46,014 | INFO | p1-align_0 | -egA8-b7-3M$_$6 对齐迭代 3/8: objective=1.348667, delta=0.000052
+2026-09-23 14:15:46,026 | INFO | MainThread | [53/100] -egA8-b7-3M$_$6 completed: objective=1.348667, uncertainty=0.2980 (0.36s)
+2026-09-23 14:15:46,116 | INFO | p1-align_1 | -hnBHBN8p5A$_$6 对齐迭代 1/8: objective=1.413768, delta=0.096821
+2026-09-23 14:15:46,164 | INFO | p1-align_0 | -hnBHBN8p5A$_$7 对齐迭代 1/8: objective=1.569197, delta=0.137248
+2026-09-23 14:15:46,184 | INFO | p1-align_1 | -hnBHBN8p5A$_$6 对齐迭代 2/8: objective=1.386260, delta=0.001192
+2026-09-23 14:15:46,239 | INFO | p1-align_1 | -hnBHBN8p5A$_$6 对齐迭代 3/8: objective=1.386268, delta=0.000064
+2026-09-23 14:15:46,251 | INFO | MainThread | [54/100] -hnBHBN8p5A$_$6 completed: objective=1.386268, uncertainty=0.3110 (0.30s)
+2026-09-23 14:15:46,255 | INFO | p1-align_0 | -hnBHBN8p5A$_$7 对齐迭代 2/8: objective=1.495574, delta=0.002487
+2026-09-23 14:15:46,357 | INFO | p1-align_1 | -iRBcNs9oI8$_$3 对齐迭代 1/8: objective=1.892342, delta=0.132666
+2026-09-23 14:15:46,377 | INFO | p1-align_0 | -hnBHBN8p5A$_$7 对齐迭代 3/8: objective=1.495556, delta=0.000150
+2026-09-23 14:15:46,425 | INFO | p1-align_1 | -iRBcNs9oI8$_$3 对齐迭代 2/8: objective=1.833490, delta=0.001264
+2026-09-23 14:15:46,469 | INFO | p1-align_0 | -hnBHBN8p5A$_$7 对齐迭代 4/8: objective=1.495558, delta=0.000013
+2026-09-23 14:15:46,489 | INFO | p1-align_1 | -iRBcNs9oI8$_$3 对齐迭代 3/8: objective=1.833690, delta=0.000031
+2026-09-23 14:15:46,492 | INFO | MainThread | [55/100] -hnBHBN8p5A$_$7 completed: objective=1.495558, uncertainty=0.3164 (0.47s)
+2026-09-23 14:15:46,504 | INFO | MainThread | [56/100] -iRBcNs9oI8$_$3 completed: objective=1.833690, uncertainty=0.3031 (0.25s)
+2026-09-23 14:15:46,591 | INFO | p1-align_0 | -iRBcNs9oI8$_$6 对齐迭代 1/8: objective=1.673809, delta=0.116090
+2026-09-23 14:15:46,627 | INFO | p1-align_1 | -iRBcNs9oI8$_$7 对齐迭代 1/8: objective=1.800864, delta=0.139765
+2026-09-23 14:15:46,644 | INFO | p1-align_0 | -iRBcNs9oI8$_$6 对齐迭代 2/8: objective=1.644343, delta=0.000491
+2026-09-23 14:15:46,681 | INFO | p1-align_0 | -iRBcNs9oI8$_$6 对齐迭代 3/8: objective=1.644437, delta=0.000006
+2026-09-23 14:15:46,692 | INFO | p1-align_1 | -iRBcNs9oI8$_$7 对齐迭代 2/8: objective=1.750425, delta=0.011085
+2026-09-23 14:15:46,705 | INFO | MainThread | [57/100] -iRBcNs9oI8$_$6 completed: objective=1.644437, uncertainty=0.3623 (0.21s)
+2026-09-23 14:15:46,800 | INFO | p1-align_1 | -iRBcNs9oI8$_$7 对齐迭代 3/8: objective=1.750159, delta=0.000726
+2026-09-23 14:15:46,848 | INFO | p1-align_1 | -iRBcNs9oI8$_$7 对齐迭代 4/8: objective=1.750154, delta=0.000045
+2026-09-23 14:15:46,857 | INFO | p1-align_0 | -iRBcNs9oI8$_$8 对齐迭代 1/8: objective=1.556786, delta=0.121034
+2026-09-23 14:15:46,868 | INFO | MainThread | [58/100] -iRBcNs9oI8$_$7 completed: objective=1.750154, uncertainty=0.3730 (0.36s)
+2026-09-23 14:15:46,943 | INFO | p1-align_1 | -iRBcNs9oI8$_$9 对齐迭代 1/8: objective=1.569225, delta=0.106220
+2026-09-23 14:15:46,973 | INFO | p1-align_0 | -iRBcNs9oI8$_$8 对齐迭代 2/8: objective=1.513255, delta=0.002026
+2026-09-23 14:15:46,996 | INFO | p1-align_1 | -iRBcNs9oI8$_$9 对齐迭代 2/8: objective=1.563659, delta=0.000752
+2026-09-23 14:15:47,039 | INFO | p1-align_1 | -iRBcNs9oI8$_$9 对齐迭代 3/8: objective=1.563879, delta=0.000032
+2026-09-23 14:15:47,051 | INFO | MainThread | [59/100] -iRBcNs9oI8$_$9 completed: objective=1.563879, uncertainty=0.3225 (0.18s)
+2026-09-23 14:15:47,120 | INFO | p1-align_0 | -iRBcNs9oI8$_$8 对齐迭代 3/8: objective=1.513153, delta=0.000091
+2026-09-23 14:15:47,133 | INFO | MainThread | [60/100] -iRBcNs9oI8$_$8 completed: objective=1.513153, uncertainty=0.3171 (0.43s)
+2026-09-23 14:15:47,283 | INFO | p1-align_1 | -lzEya4AM_4$_$5 对齐迭代 1/8: objective=1.369944, delta=0.139604
+2026-09-23 14:15:47,354 | INFO | p1-align_0 | -lzEya4AM_4$_$6 对齐迭代 1/8: objective=1.412137, delta=0.107325
+2026-09-23 14:15:47,356 | INFO | p1-align_1 | -lzEya4AM_4$_$5 对齐迭代 2/8: objective=1.305607, delta=0.004503
+2026-09-23 14:15:47,422 | INFO | p1-align_1 | -lzEya4AM_4$_$5 对齐迭代 3/8: objective=1.306192, delta=0.000110
+2026-09-23 14:15:47,476 | INFO | p1-align_0 | -lzEya4AM_4$_$6 对齐迭代 2/8: objective=1.380837, delta=0.002149
+2026-09-23 14:15:47,499 | INFO | p1-align_1 | -lzEya4AM_4$_$5 对齐迭代 4/8: objective=1.306204, delta=0.000003
+2026-09-23 14:15:47,513 | INFO | MainThread | [61/100] -lzEya4AM_4$_$5 completed: objective=1.306204, uncertainty=0.3008 (0.46s)
+2026-09-23 14:15:47,609 | INFO | p1-align_1 | -mJ2ud6oKI8$_$1 对齐迭代 1/8: objective=1.208586, delta=0.074217
+2026-09-23 14:15:47,649 | INFO | p1-align_0 | -lzEya4AM_4$_$6 对齐迭代 3/8: objective=1.380850, delta=0.000131
+2026-09-23 14:15:47,667 | INFO | p1-align_1 | -mJ2ud6oKI8$_$1 对齐迭代 2/8: objective=1.197970, delta=0.000957
+2026-09-23 14:15:47,725 | INFO | p1-align_1 | -mJ2ud6oKI8$_$1 对齐迭代 3/8: objective=1.197877, delta=0.000070
+2026-09-23 14:15:47,738 | INFO | MainThread | [62/100] -mJ2ud6oKI8$_$1 completed: objective=1.197877, uncertainty=0.2636 (0.22s)
+2026-09-23 14:15:47,820 | INFO | p1-align_1 | -mJ2ud6oKI8$_$2 对齐迭代 1/8: objective=0.960192, delta=0.075114
+2026-09-23 14:15:47,848 | INFO | p1-align_0 | -lzEya4AM_4$_$6 对齐迭代 4/8: objective=1.380847, delta=0.000010
+2026-09-23 14:15:47,857 | INFO | p1-align_1 | -mJ2ud6oKI8$_$2 对齐迭代 2/8: objective=0.938512, delta=0.000915
+2026-09-23 14:15:47,878 | INFO | MainThread | [63/100] -lzEya4AM_4$_$6 completed: objective=1.380847, uncertainty=0.2715 (0.75s)
+2026-09-23 14:15:47,915 | INFO | p1-align_1 | -mJ2ud6oKI8$_$2 对齐迭代 3/8: objective=0.938523, delta=0.000033
+2026-09-23 14:15:47,927 | INFO | MainThread | [64/100] -mJ2ud6oKI8$_$2 completed: objective=0.938523, uncertainty=0.2542 (0.19s)
+2026-09-23 14:15:47,947 | INFO | p1-align_0 | -mJ2ud6oKI8$_$6 对齐迭代 1/8: objective=1.289526, delta=0.118757
+2026-09-23 14:15:48,005 | INFO | p1-align_0 | -mJ2ud6oKI8$_$6 对齐迭代 2/8: objective=1.235290, delta=0.001221
+2026-09-23 14:15:48,032 | INFO | p1-align_1 | -mJ2ud6oKI8$_$8 对齐迭代 1/8: objective=1.835166, delta=0.104728
+2026-09-23 14:15:48,046 | INFO | p1-align_0 | -mJ2ud6oKI8$_$6 对齐迭代 3/8: objective=1.235258, delta=0.000027
+2026-09-23 14:15:48,057 | INFO | MainThread | [65/100] -mJ2ud6oKI8$_$6 completed: objective=1.235258, uncertainty=0.3735 (0.18s)
+2026-09-23 14:15:48,142 | INFO | p1-align_1 | -mJ2ud6oKI8$_$8 对齐迭代 2/8: objective=1.771257, delta=0.001167
+2026-09-23 14:15:48,189 | INFO | p1-align_1 | -mJ2ud6oKI8$_$8 对齐迭代 3/8: objective=1.771167, delta=0.000033
+2026-09-23 14:15:48,199 | INFO | p1-align_0 | -mJ2ud6oKI8$_$9 对齐迭代 1/8: objective=1.393333, delta=0.124455
+2026-09-23 14:15:48,213 | INFO | MainThread | [66/100] -mJ2ud6oKI8$_$8 completed: objective=1.771167, uncertainty=0.3559 (0.29s)
+2026-09-23 14:15:48,326 | INFO | p1-align_1 | -mqbVkbCndg$_$0 对齐迭代 1/8: objective=1.627567, delta=0.142291
+2026-09-23 14:15:48,342 | INFO | p1-align_0 | -mJ2ud6oKI8$_$9 对齐迭代 2/8: objective=1.321151, delta=0.002556
+2026-09-23 14:15:48,390 | INFO | p1-align_1 | -mqbVkbCndg$_$0 对齐迭代 2/8: objective=1.548109, delta=0.005473
+2026-09-23 14:15:48,428 | INFO | p1-align_0 | -mJ2ud6oKI8$_$9 对齐迭代 3/8: objective=1.320913, delta=0.000148
+2026-09-23 14:15:48,464 | INFO | p1-align_1 | -mqbVkbCndg$_$0 对齐迭代 3/8: objective=1.548285, delta=0.000507
+2026-09-23 14:15:48,522 | INFO | p1-align_1 | -mqbVkbCndg$_$0 对齐迭代 4/8: objective=1.548305, delta=0.000046
+2026-09-23 14:15:48,527 | INFO | p1-align_0 | -mJ2ud6oKI8$_$9 对齐迭代 4/8: objective=1.320906, delta=0.000010
+2026-09-23 14:15:48,536 | INFO | MainThread | [67/100] -mqbVkbCndg$_$0 completed: objective=1.548305, uncertainty=0.3137 (0.32s)
+2026-09-23 14:15:48,541 | INFO | MainThread | [68/100] -mJ2ud6oKI8$_$9 completed: objective=1.320906, uncertainty=0.3363 (0.48s)
+2026-09-23 14:15:48,646 | INFO | p1-align_0 | -ri04Z7vwnc$_$0 对齐迭代 1/8: objective=1.306637, delta=0.101373
+2026-09-23 14:15:48,665 | INFO | p1-align_1 | -qDkUB0GgYY$_$6 对齐迭代 1/8: objective=1.606487, delta=0.142393
+2026-09-23 14:15:48,698 | INFO | p1-align_0 | -ri04Z7vwnc$_$0 对齐迭代 2/8: objective=1.274490, delta=0.000398
+2026-09-23 14:15:48,727 | INFO | p1-align_1 | -qDkUB0GgYY$_$6 对齐迭代 2/8: objective=1.528072, delta=0.002688
+2026-09-23 14:15:48,752 | INFO | p1-align_0 | -ri04Z7vwnc$_$0 对齐迭代 3/8: objective=1.274492, delta=0.000010
+2026-09-23 14:15:48,763 | INFO | MainThread | [69/100] -ri04Z7vwnc$_$0 completed: objective=1.274492, uncertainty=0.4017 (0.22s)
+2026-09-23 14:15:48,834 | INFO | p1-align_1 | -qDkUB0GgYY$_$6 对齐迭代 3/8: objective=1.527840, delta=0.000176
+2026-09-23 14:15:48,884 | INFO | p1-align_0 | -ri04Z7vwnc$_$2 对齐迭代 1/8: objective=2.195309, delta=0.140392
+2026-09-23 14:15:48,905 | INFO | p1-align_1 | -qDkUB0GgYY$_$6 对齐迭代 4/8: objective=1.527828, delta=0.000018
+2026-09-23 14:15:48,917 | INFO | MainThread | [70/100] -qDkUB0GgYY$_$6 completed: objective=1.527828, uncertainty=0.3792 (0.38s)
+2026-09-23 14:15:48,985 | INFO | p1-align_0 | -ri04Z7vwnc$_$2 对齐迭代 2/8: objective=2.111213, delta=0.002791
+2026-09-23 14:15:49,014 | INFO | p1-align_1 | -ri04Z7vwnc$_$5 对齐迭代 1/8: objective=1.034367, delta=0.100253
+2026-09-23 14:15:49,051 | INFO | p1-align_0 | -ri04Z7vwnc$_$2 对齐迭代 3/8: objective=2.110747, delta=0.000177
+2026-09-23 14:15:49,077 | INFO | p1-align_1 | -ri04Z7vwnc$_$5 对齐迭代 2/8: objective=0.985662, delta=0.000806
+2026-09-23 14:15:49,120 | INFO | p1-align_0 | -ri04Z7vwnc$_$2 对齐迭代 4/8: objective=2.110723, delta=0.000013
+2026-09-23 14:15:49,133 | INFO | p1-align_1 | -ri04Z7vwnc$_$5 对齐迭代 3/8: objective=0.985590, delta=0.000010
+2026-09-23 14:15:49,142 | INFO | MainThread | [71/100] -ri04Z7vwnc$_$2 completed: objective=2.110723, uncertainty=0.3719 (0.38s)
+2026-09-23 14:15:49,144 | INFO | MainThread | [72/100] -ri04Z7vwnc$_$5 completed: objective=0.985590, uncertainty=0.3281 (0.23s)
+2026-09-23 14:15:49,285 | INFO | p1-align_1 | -s9qJ7ATP7w$_$1 对齐迭代 1/8: objective=1.228254, delta=0.112681
+2026-09-23 14:15:49,320 | INFO | p1-align_0 | -s9qJ7ATP7w$_$0 对齐迭代 1/8: objective=1.340264, delta=0.149912
+2026-09-23 14:15:49,349 | INFO | p1-align_1 | -s9qJ7ATP7w$_$1 对齐迭代 2/8: objective=1.190679, delta=0.004030
+2026-09-23 14:15:49,400 | INFO | p1-align_1 | -s9qJ7ATP7w$_$1 对齐迭代 3/8: objective=1.190206, delta=0.000309
+2026-09-23 14:15:49,423 | INFO | p1-align_0 | -s9qJ7ATP7w$_$0 对齐迭代 2/8: objective=1.260906, delta=0.005373
+2026-09-23 14:15:49,463 | INFO | p1-align_1 | -s9qJ7ATP7w$_$1 对齐迭代 4/8: objective=1.190187, delta=0.000025
+2026-09-23 14:15:49,475 | INFO | MainThread | [73/100] -s9qJ7ATP7w$_$1 completed: objective=1.190187, uncertainty=0.3230 (0.33s)
+2026-09-23 14:15:49,554 | INFO | p1-align_0 | -s9qJ7ATP7w$_$0 对齐迭代 3/8: objective=1.260308, delta=0.000272
+2026-09-23 14:15:49,589 | INFO | p1-align_1 | -s9qJ7ATP7w$_$4 对齐迭代 1/8: objective=1.579122, delta=0.113286
+2026-09-23 14:15:49,646 | INFO | p1-align_1 | -s9qJ7ATP7w$_$4 对齐迭代 2/8: objective=1.529787, delta=0.001734
+2026-09-23 14:15:49,664 | INFO | p1-align_0 | -s9qJ7ATP7w$_$0 对齐迭代 4/8: objective=1.260284, delta=0.000015
+2026-09-23 14:15:49,680 | INFO | MainThread | [74/100] -s9qJ7ATP7w$_$0 completed: objective=1.260284, uncertainty=0.3645 (0.54s)
+2026-09-23 14:15:49,776 | INFO | p1-align_1 | -s9qJ7ATP7w$_$4 对齐迭代 3/8: objective=1.529808, delta=0.000051
+2026-09-23 14:15:49,788 | INFO | MainThread | [75/100] -s9qJ7ATP7w$_$4 completed: objective=1.529808, uncertainty=0.3399 (0.31s)
+2026-09-23 14:15:49,882 | INFO | p1-align_1 | -s9qJ7ATP7w$_$6 对齐迭代 1/8: objective=1.073172, delta=0.122671
+2026-09-23 14:15:49,905 | INFO | p1-align_0 | -s9qJ7ATP7w$_$5 对齐迭代 1/8: objective=1.238727, delta=0.117272
+2026-09-23 14:15:49,930 | INFO | p1-align_1 | -s9qJ7ATP7w$_$6 对齐迭代 2/8: objective=1.029237, delta=0.000625
+2026-09-23 14:15:49,963 | INFO | p1-align_1 | -s9qJ7ATP7w$_$6 对齐迭代 3/8: objective=1.029192, delta=0.000004
+2026-09-23 14:15:49,973 | INFO | MainThread | [76/100] -s9qJ7ATP7w$_$6 completed: objective=1.029192, uncertainty=0.3704 (0.18s)
+2026-09-23 14:15:50,060 | INFO | p1-align_0 | -s9qJ7ATP7w$_$5 对齐迭代 2/8: objective=1.191122, delta=0.005220
+2026-09-23 14:15:50,144 | INFO | p1-align_1 | -s9qJ7ATP7w$_$7 对齐迭代 1/8: objective=1.425835, delta=0.159080
+2026-09-23 14:15:50,148 | INFO | p1-align_0 | -s9qJ7ATP7w$_$5 对齐迭代 3/8: objective=1.190871, delta=0.000430
+2026-09-23 14:15:50,228 | INFO | p1-align_0 | -s9qJ7ATP7w$_$5 对齐迭代 4/8: objective=1.190845, delta=0.000040
+2026-09-23 14:15:50,241 | INFO | p1-align_1 | -s9qJ7ATP7w$_$7 对齐迭代 2/8: objective=1.345082, delta=0.005498
+2026-09-23 14:15:50,243 | INFO | MainThread | [77/100] -s9qJ7ATP7w$_$5 completed: objective=1.190845, uncertainty=0.2793 (0.56s)
+2026-09-23 14:15:50,419 | INFO | p1-align_0 | -s9qJ7ATP7w$_$8 对齐迭代 1/8: objective=1.413111, delta=0.155263
+2026-09-23 14:15:50,491 | INFO | p1-align_0 | -s9qJ7ATP7w$_$8 对齐迭代 2/8: objective=1.339786, delta=0.004163
+2026-09-23 14:15:50,508 | INFO | p1-align_1 | -s9qJ7ATP7w$_$7 对齐迭代 3/8: objective=1.344909, delta=0.000572
+2026-09-23 14:15:50,547 | INFO | p1-align_0 | -s9qJ7ATP7w$_$8 对齐迭代 3/8: objective=1.339681, delta=0.000078
+2026-09-23 14:15:50,558 | INFO | MainThread | [78/100] -s9qJ7ATP7w$_$8 completed: objective=1.339681, uncertainty=0.4262 (0.32s)
+2026-09-23 14:15:50,663 | INFO | p1-align_1 | -s9qJ7ATP7w$_$7 对齐迭代 4/8: objective=1.344897, delta=0.000067
+2026-09-23 14:15:50,678 | INFO | p1-align_0 | -t217m2on-s$_$2 对齐迭代 1/8: objective=1.520972, delta=0.123690
+2026-09-23 14:15:50,694 | INFO | MainThread | [79/100] -s9qJ7ATP7w$_$7 completed: objective=1.344897, uncertainty=0.3756 (0.72s)
+2026-09-23 14:15:50,853 | INFO | p1-align_0 | -t217m2on-s$_$2 对齐迭代 2/8: objective=1.464079, delta=0.003919
+2026-09-23 14:15:50,906 | INFO | p1-align_0 | -t217m2on-s$_$2 对齐迭代 3/8: objective=1.463955, delta=0.000221
+2026-09-23 14:15:50,964 | INFO | p1-align_0 | -t217m2on-s$_$2 对齐迭代 4/8: objective=1.463945, delta=0.000019
+2026-09-23 14:15:50,977 | INFO | MainThread | [80/100] -t217m2on-s$_$2 completed: objective=1.463945, uncertainty=0.2813 (0.42s)
+2026-09-23 14:15:50,993 | INFO | p1-align_1 | -t217m2on-s$_$7 对齐迭代 1/8: objective=1.588362, delta=0.110700
+2026-09-23 14:15:51,089 | INFO | p1-align_0 | -tANM6ETl_M$_$3 对齐迭代 1/8: objective=2.187661, delta=0.137461
+2026-09-23 14:15:51,150 | INFO | p1-align_0 | -tANM6ETl_M$_$3 对齐迭代 2/8: objective=2.120320, delta=0.002558
+2026-09-23 14:15:51,180 | INFO | p1-align_1 | -t217m2on-s$_$7 对齐迭代 2/8: objective=1.541848, delta=0.002703
+2026-09-23 14:15:51,213 | INFO | p1-align_0 | -tANM6ETl_M$_$3 对齐迭代 3/8: objective=2.120203, delta=0.000055
+2026-09-23 14:15:51,227 | INFO | MainThread | [81/100] -tANM6ETl_M$_$3 completed: objective=2.120203, uncertainty=0.3471 (0.25s)
+2026-09-23 14:15:51,323 | INFO | p1-align_0 | -tPCytz4rww$_$10 对齐迭代 1/8: objective=1.322880, delta=0.118655
+2026-09-23 14:15:51,368 | INFO | p1-align_1 | -t217m2on-s$_$7 对齐迭代 3/8: objective=1.541975, delta=0.000156
+2026-09-23 14:15:51,383 | INFO | p1-align_0 | -tPCytz4rww$_$10 对齐迭代 2/8: objective=1.272589, delta=0.001544
+2026-09-23 14:15:51,437 | INFO | p1-align_0 | -tPCytz4rww$_$10 对齐迭代 3/8: objective=1.272726, delta=0.000066
+2026-09-23 14:15:51,449 | INFO | MainThread | [82/100] -tPCytz4rww$_$10 completed: objective=1.272726, uncertainty=0.3388 (0.22s)
+2026-09-23 14:15:51,527 | INFO | p1-align_0 | -tPCytz4rww$_$11 对齐迭代 1/8: objective=1.484744, delta=0.144903
+2026-09-23 14:15:51,568 | INFO | p1-align_0 | -tPCytz4rww$_$11 对齐迭代 2/8: objective=1.405701, delta=0.003248
+2026-09-23 14:15:51,601 | INFO | p1-align_1 | -t217m2on-s$_$7 对齐迭代 4/8: objective=1.541977, delta=0.000013
+2026-09-23 14:15:51,622 | INFO | MainThread | [83/100] -t217m2on-s$_$7 completed: objective=1.541977, uncertainty=0.2514 (0.93s)
+2026-09-23 14:15:51,641 | INFO | p1-align_0 | -tPCytz4rww$_$11 对齐迭代 3/8: objective=1.405651, delta=0.000162
+2026-09-23 14:15:51,750 | INFO | p1-align_0 | -tPCytz4rww$_$11 对齐迭代 4/8: objective=1.405651, delta=0.000011
+2026-09-23 14:15:51,768 | INFO | MainThread | [84/100] -tPCytz4rww$_$11 completed: objective=1.405651, uncertainty=0.3533 (0.32s)
+2026-09-23 14:15:51,881 | INFO | p1-align_1 | -tPCytz4rww$_$12 对齐迭代 1/8: objective=1.416665, delta=0.102888
+2026-09-23 14:15:51,903 | INFO | p1-align_0 | -tPCytz4rww$_$16 对齐迭代 1/8: objective=1.392448, delta=0.124200
+2026-09-23 14:15:51,981 | INFO | p1-align_0 | -tPCytz4rww$_$16 对齐迭代 2/8: objective=1.341869, delta=0.006458
+2026-09-23 14:15:52,019 | INFO | p1-align_1 | -tPCytz4rww$_$12 对齐迭代 2/8: objective=1.363427, delta=0.002379
+2026-09-23 14:15:52,061 | INFO | p1-align_0 | -tPCytz4rww$_$16 对齐迭代 3/8: objective=1.341696, delta=0.000395
+2026-09-23 14:15:52,137 | INFO | p1-align_0 | -tPCytz4rww$_$16 对齐迭代 4/8: objective=1.341685, delta=0.000024
+2026-09-23 14:15:52,140 | INFO | p1-align_1 | -tPCytz4rww$_$12 对齐迭代 3/8: objective=1.363101, delta=0.000156
+2026-09-23 14:15:52,151 | INFO | MainThread | [85/100] -tPCytz4rww$_$16 completed: objective=1.341685, uncertainty=0.3024 (0.38s)
+2026-09-23 14:15:52,272 | INFO | p1-align_0 | -tPCytz4rww$_$18 对齐迭代 1/8: objective=1.685225, delta=0.108860
+2026-09-23 14:15:52,295 | INFO | p1-align_1 | -tPCytz4rww$_$12 对齐迭代 4/8: objective=1.363084, delta=0.000012
+2026-09-23 14:15:52,311 | INFO | MainThread | [86/100] -tPCytz4rww$_$12 completed: objective=1.363084, uncertainty=0.2767 (0.69s)
+2026-09-23 14:15:52,401 | INFO | p1-align_0 | -tPCytz4rww$_$18 对齐迭代 2/8: objective=1.628704, delta=0.002355
+2026-09-23 14:15:52,427 | INFO | p1-align_1 | -uywlfIYOS8$_$4 对齐迭代 1/8: objective=1.476334, delta=0.103921
+2026-09-23 14:15:52,489 | INFO | p1-align_1 | -uywlfIYOS8$_$4 对齐迭代 2/8: objective=1.425873, delta=0.002006
+2026-09-23 14:15:52,513 | INFO | p1-align_0 | -tPCytz4rww$_$18 对齐迭代 3/8: objective=1.628537, delta=0.000166
+2026-09-23 14:15:52,556 | INFO | p1-align_1 | -uywlfIYOS8$_$4 对齐迭代 3/8: objective=1.425490, delta=0.000117
+2026-09-23 14:15:52,602 | INFO | p1-align_0 | -tPCytz4rww$_$18 对齐迭代 4/8: objective=1.628533, delta=0.000013
+2026-09-23 14:15:52,619 | INFO | p1-align_1 | -uywlfIYOS8$_$4 对齐迭代 4/8: objective=1.425475, delta=0.000010
+2026-09-23 14:15:52,627 | INFO | MainThread | [87/100] -tPCytz4rww$_$18 completed: objective=1.628533, uncertainty=0.3142 (0.48s)
+2026-09-23 14:15:52,633 | INFO | MainThread | [88/100] -uywlfIYOS8$_$4 completed: objective=1.425475, uncertainty=0.3283 (0.32s)
+2026-09-23 14:15:52,810 | INFO | p1-align_1 | -wMB_hJL-3o$_$7 对齐迭代 1/8: objective=1.560537, delta=0.118299
+2026-09-23 14:15:52,846 | INFO | p1-align_0 | -vxjVxOeScU$_$4 对齐迭代 1/8: objective=1.878075, delta=0.125352
+2026-09-23 14:15:52,881 | INFO | p1-align_1 | -wMB_hJL-3o$_$7 对齐迭代 2/8: objective=1.511121, delta=0.002058
+2026-09-23 14:15:52,939 | INFO | p1-align_1 | -wMB_hJL-3o$_$7 对齐迭代 3/8: objective=1.511372, delta=0.000073
+2026-09-23 14:15:52,946 | INFO | p1-align_0 | -vxjVxOeScU$_$4 对齐迭代 2/8: objective=1.814354, delta=0.002570
+2026-09-23 14:15:52,961 | INFO | MainThread | [89/100] -wMB_hJL-3o$_$7 completed: objective=1.511372, uncertainty=0.3255 (0.33s)
+2026-09-23 14:15:53,042 | INFO | p1-align_1 | -wny0OAz3g8$_$0 对齐迭代 1/8: objective=1.666819, delta=0.132907
+2026-09-23 14:15:53,073 | INFO | p1-align_0 | -vxjVxOeScU$_$4 对齐迭代 3/8: objective=1.814219, delta=0.000097
+2026-09-23 14:15:53,093 | INFO | p1-align_1 | -wny0OAz3g8$_$0 对齐迭代 2/8: objective=1.589837, delta=0.005474
+2026-09-23 14:15:53,094 | INFO | MainThread | [90/100] -vxjVxOeScU$_$4 completed: objective=1.814219, uncertainty=0.3163 (0.47s)
+2026-09-23 14:15:53,194 | INFO | p1-align_1 | -wny0OAz3g8$_$0 对齐迭代 3/8: objective=1.589427, delta=0.000575
+2026-09-23 14:15:53,243 | INFO | p1-align_1 | -wny0OAz3g8$_$0 对齐迭代 4/8: objective=1.589420, delta=0.000059
+2026-09-23 14:15:53,252 | INFO | p1-align_0 | -wny0OAz3g8$_$1 对齐迭代 1/8: objective=2.028299, delta=0.135509
+2026-09-23 14:15:53,265 | INFO | MainThread | [91/100] -wny0OAz3g8$_$0 completed: objective=1.589420, uncertainty=0.3922 (0.30s)
+2026-09-23 14:15:53,388 | INFO | p1-align_0 | -wny0OAz3g8$_$1 对齐迭代 2/8: objective=1.959863, delta=0.001681
+2026-09-23 14:15:53,436 | INFO | p1-align_1 | -wny0OAz3g8$_$2 对齐迭代 1/8: objective=1.221561, delta=0.114041
+2026-09-23 14:15:53,494 | INFO | p1-align_0 | -wny0OAz3g8$_$1 对齐迭代 3/8: objective=1.959845, delta=0.000057
+2026-09-23 14:15:53,508 | INFO | MainThread | [92/100] -wny0OAz3g8$_$1 completed: objective=1.959845, uncertainty=0.3572 (0.41s)
+2026-09-23 14:15:53,515 | INFO | p1-align_1 | -wny0OAz3g8$_$2 对齐迭代 2/8: objective=1.165876, delta=0.002097
+2026-09-23 14:15:53,629 | INFO | p1-align_0 | -wny0OAz3g8$_$3 对齐迭代 1/8: objective=1.844302, delta=0.143374
+2026-09-23 14:15:53,658 | INFO | p1-align_1 | -wny0OAz3g8$_$2 对齐迭代 3/8: objective=1.165520, delta=0.000124
+2026-09-23 14:15:53,701 | INFO | p1-align_0 | -wny0OAz3g8$_$3 对齐迭代 2/8: objective=1.791211, delta=0.005156
+2026-09-23 14:15:53,747 | INFO | p1-align_1 | -wny0OAz3g8$_$2 对齐迭代 4/8: objective=1.165498, delta=0.000009
+2026-09-23 14:15:53,763 | INFO | p1-align_0 | -wny0OAz3g8$_$3 对齐迭代 3/8: objective=1.791457, delta=0.000433
+2026-09-23 14:15:53,776 | INFO | MainThread | [93/100] -wny0OAz3g8$_$2 completed: objective=1.165498, uncertainty=0.3577 (0.51s)
+2026-09-23 14:15:53,874 | INFO | p1-align_0 | -wny0OAz3g8$_$3 对齐迭代 4/8: objective=1.791442, delta=0.000037
+2026-09-23 14:15:53,885 | INFO | MainThread | [94/100] -wny0OAz3g8$_$3 completed: objective=1.791442, uncertainty=0.3559 (0.38s)
+2026-09-23 14:15:53,981 | INFO | p1-align_1 | -wny0OAz3g8$_$5 对齐迭代 1/8: objective=1.554810, delta=0.123950
+2026-09-23 14:15:54,061 | INFO | p1-align_0 | -wny0OAz3g8$_$7 对齐迭代 1/8: objective=1.820220, delta=0.133813
+2026-09-23 14:15:54,067 | INFO | p1-align_1 | -wny0OAz3g8$_$5 对齐迭代 2/8: objective=1.473042, delta=0.005171
+2026-09-23 14:15:54,146 | INFO | p1-align_1 | -wny0OAz3g8$_$5 对齐迭代 3/8: objective=1.472402, delta=0.000744
+2026-09-23 14:15:54,161 | INFO | p1-align_0 | -wny0OAz3g8$_$7 对齐迭代 2/8: objective=1.761895, delta=0.003735
+2026-09-23 14:15:54,225 | INFO | p1-align_1 | -wny0OAz3g8$_$5 对齐迭代 4/8: objective=1.472346, delta=0.000106
+2026-09-23 14:15:54,253 | INFO | p1-align_0 | -wny0OAz3g8$_$7 对齐迭代 3/8: objective=1.761952, delta=0.000155
+2026-09-23 14:15:54,307 | INFO | p1-align_1 | -wny0OAz3g8$_$5 对齐迭代 5/8: objective=1.472339, delta=0.000015
+2026-09-23 14:15:54,320 | INFO | MainThread | [95/100] -wny0OAz3g8$_$5 completed: objective=1.472339, uncertainty=0.3494 (0.54s)
+2026-09-23 14:15:54,393 | INFO | p1-align_0 | -wny0OAz3g8$_$7 对齐迭代 4/8: objective=1.761961, delta=0.000008
+2026-09-23 14:15:54,409 | INFO | MainThread | [96/100] -wny0OAz3g8$_$7 completed: objective=1.761961, uncertainty=0.3405 (0.52s)
+2026-09-23 14:15:54,424 | INFO | p1-align_1 | -wny0OAz3g8$_$9 对齐迭代 1/8: objective=1.819751, delta=0.139513
+2026-09-23 14:15:54,634 | INFO | p1-align_1 | -wny0OAz3g8$_$9 对齐迭代 2/8: objective=1.756442, delta=0.008075
+2026-09-23 14:15:54,674 | INFO | p1-align_1 | -wny0OAz3g8$_$9 对齐迭代 3/8: objective=1.756129, delta=0.000861
+2026-09-23 14:15:54,709 | INFO | p1-align_1 | -wny0OAz3g8$_$9 对齐迭代 4/8: objective=1.756141, delta=0.000093
+2026-09-23 14:15:54,721 | INFO | MainThread | [97/100] -wny0OAz3g8$_$9 completed: objective=1.756141, uncertainty=0.3680 (0.40s)
+2026-09-23 14:15:54,920 | INFO | p1-align_0 | -yRb-Jum7EQ$_$1 对齐迭代 1/8: objective=1.419868, delta=0.143656
+2026-09-23 14:15:54,938 | INFO | p1-align_1 | -yRb-Jum7EQ$_$5 对齐迭代 1/8: objective=1.203277, delta=0.118575
+2026-09-23 14:15:55,029 | INFO | p1-align_1 | -yRb-Jum7EQ$_$5 对齐迭代 2/8: objective=1.160099, delta=0.004196
+2026-09-23 14:15:55,075 | INFO | p1-align_0 | -yRb-Jum7EQ$_$1 对齐迭代 2/8: objective=1.350276, delta=0.004815
+2026-09-23 14:15:55,130 | INFO | p1-align_1 | -yRb-Jum7EQ$_$5 对齐迭代 3/8: objective=1.160088, delta=0.000219
+2026-09-23 14:15:55,217 | INFO | p1-align_1 | -yRb-Jum7EQ$_$5 对齐迭代 4/8: objective=1.160087, delta=0.000013
+2026-09-23 14:15:55,229 | INFO | p1-align_0 | -yRb-Jum7EQ$_$1 对齐迭代 3/8: objective=1.350843, delta=0.000167
+2026-09-23 14:15:55,232 | INFO | MainThread | [98/100] -yRb-Jum7EQ$_$5 completed: objective=1.160087, uncertainty=0.2350 (0.51s)
+2026-09-23 14:15:55,409 | INFO | p1-align_1 | -yRb-Jum7EQ$_$6 对齐迭代 1/8: objective=1.515514, delta=0.113741
+2026-09-23 14:15:55,461 | INFO | p1-align_0 | -yRb-Jum7EQ$_$1 对齐迭代 4/8: objective=1.350859, delta=0.000007
+2026-09-23 14:15:55,479 | INFO | MainThread | [99/100] -yRb-Jum7EQ$_$1 completed: objective=1.350859, uncertainty=0.2393 (1.07s)
+2026-09-23 14:15:55,492 | INFO | p1-align_1 | -yRb-Jum7EQ$_$6 对齐迭代 2/8: objective=1.478254, delta=0.001697
+2026-09-23 14:15:55,550 | INFO | p1-align_1 | -yRb-Jum7EQ$_$6 对齐迭代 3/8: objective=1.478261, delta=0.000070
+2026-09-23 14:15:55,569 | INFO | MainThread | [100/100] -yRb-Jum7EQ$_$6 completed: objective=1.478261, uncertainty=0.2363 (0.34s)
+2026-09-23 14:15:57,094 | INFO | MainThread | 对齐完成: 样本=100, mean_uncertainty=0.315776

@@ -1,0 +1,12 @@
+2026-09-23 14:06:53,559 | INFO | MainThread | 特征提取开始: 样本=1, workers=4, overwrite=True
+2026-09-23 14:06:53,666 | ERROR | MainThread | [1/1] -3g5yACwYnA$_$13 失败: AttributeError: module 'cv2' has no attribute 'CascadeClassifier'
+2026-09-23 14:06:53,675 | ERROR | MainThread | 特征提取失败
+Traceback (most recent call last):
+  File "D:\PythonWorkplace\Multimodal_Sentiment_Prediction\scripts\problem1\extract_features.py", line 30, in main
+    records = run_feature_extraction(cfg, overwrite=args.overwrite, limit=args.limit, logger=logger)
+  File "D:\PythonWorkplace\Multimodal_Sentiment_Prediction\src\problem1\feature_extraction\pipeline.py", line 112, in run_feature_extraction
+    raise RuntimeError(f"特征提取严格校验失败: {len(failed)}/{len(records)}，详见feature_errors.json")
+RuntimeError: 特征提取严格校验失败: 1/1，详见feature_errors.json
+2026-09-23 14:07:28,964 | INFO | MainThread | 特征提取开始: 样本=1, workers=4, overwrite=True
+2026-09-23 14:07:29,219 | INFO | MainThread | [1/1] -3g5yACwYnA$_$13 completed (0.25s)
+2026-09-23 14:07:29,260 | INFO | MainThread | 特征提取结束: 样本=1, 校验错误=0

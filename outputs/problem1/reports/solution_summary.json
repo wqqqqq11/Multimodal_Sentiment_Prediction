@@ -1,0 +1,48 @@
+{
+  "successful_samples": 100,
+  "representative_sample": "-hnBHBN8p5A$_$7",
+  "mean_objective": 1.8560430286110514,
+  "mean_uncertainty": 0.3255750666168056,
+  "p90_uncertainty": 0.3694128678504809,
+  "max_uncertainty": 0.4190530086055057,
+  "high_uncertainty_sample_count": 3,
+  "mean_uncertainty_by_modality": {
+    "text": 0.21037641513460578,
+    "audio": 0.5391281438871638,
+    "vision": 0.30334391376036635
+  },
+  "raw_sinkhorn_convergence_rate": 1.0,
+  "sample_sinkhorn_convergence_rate": 1.0,
+  "max_raw_marginal_residual": 9.999939324483245e-05,
+  "max_marginal_residual": 2.498001805406602e-16,
+  "total_monotonic_violations": 0,
+  "total_preprojection_monotonic_violations": 188,
+  "acceptance_audit": {
+    "expected_samples": 100,
+    "processed_samples": 100,
+    "successful_samples": 100,
+    "sample_coverage_rate": 1.0,
+    "duplicate_sample_id_count": 0,
+    "missing_sample_ids": [],
+    "unexpected_sample_ids": [],
+    "feature_validation_passed": true,
+    "feature_validation_error_count": 0,
+    "feature_validation_warning_count": 14,
+    "mapping_audit_passed_samples": 100,
+    "mapping_audit_pass_rate": 1.0,
+    "mapping_error_count": 0,
+    "padding_violation_count": 0,
+    "global_errors": [],
+    "config_fingerprint": "41d6e764bf9690e6eca25b71512a9b1f52428acb61f0a7dac8b05d2a697ccc06",
+    "resolved_config_fingerprint_match": true,
+    "overall_passed": true
+  },
+  "figures": {
+    "quality_overview": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\01_alignment_quality_overview.png",
+    "convergence": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\02_consensus_convergence.png",
+    "representative_heatmap": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\03_representative_alignment_heatmap.png",
+    "representative_validation": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\04_representative_sample_validation.png"
+  },
+  "representative_alignment_table": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\reports\\representative_sample_alignment.csv",
+  "representative_validation_report": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\reports\\representative_sample_validation.md"
+}
