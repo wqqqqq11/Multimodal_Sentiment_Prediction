@@ -1,0 +1,68 @@
+{
+  "project": {
+    "name": "MRCD-Net",
+    "seed": 2026,
+    "description": "Mask-aware Reliability-gated Complete-to-Missing Distillation Network"
+  },
+  "paths": {
+    "preprocessed_root": "datasets/preprocessed_data/problem2",
+    "output_root": "outputs/problem2",
+    "strategy_document": "strategy/problem2_modeling.md"
+  },
+  "data": {
+    "train_file": "train.npz",
+    "valid_file": "valid.npz",
+    "test_file": "test.npz",
+    "challenge_file": "challenge_aligned.npz",
+    "mask_bank_file": "train_mask_bank.npz",
+    "batch_size": 96,
+    "eval_batch_size": 192,
+    "num_workers": 10,
+    "pin_memory": true
+  },
+  "model": {
+    "vocab_size": 30522,
+    "max_steps": 50,
+    "audio_dim": 74,
+    "vision_dim": 35,
+    "hidden_dim": 96,
+    "fusion_dim": 128,
+    "text_layers": 1,
+    "text_heads": 4,
+    "dropout": 0.20,
+    "num_classes": 3,
+    "gate_reliability_gamma": 0.80
+  },
+  "training": {
+    "teacher_epochs": 24,
+    "student_epochs": 30,
+    "teacher_lr": 0.0005,
+    "student_lr": 0.0004,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "patience": 6,
+    "min_delta": 0.0001,
+    "missing_view_probability": 0.85,
+    "class_weights": [1.1703, 1.4930, 0.6776],
+    "loss_weights": {
+      "classification": 1.0,
+      "regression": 1.0,
+      "correlation": 0.20,
+      "coherence": 0.10,
+      "kd_classification": 0.80,
+      "kd_regression": 0.50,
+      "kd_feature": 0.30,
+      "kd_relation": 0.10,
+      "kd_gate": 0.10
+    },
+    "distillation_temperature": 2.0,
+    "distillation_warmup_epochs": 5
+  },
+  "evaluation": {
+    "missing_rates": [0.10, 0.20, 0.30, 0.40, 0.48],
+    "missing_patterns": ["audio", "vision", "audio_vision"],
+    "missing_positions": ["begin", "middle", "end"],
+    "primary_position": "middle",
+    "bootstrap_samples": 200
+  }
+}

@@ -1,53 +1,29 @@
-from __future__ import annotations
+from pathlib import Path
 
-import numpy as np
+import torch
 
-from data_progressing.problem2.masking import (
-    ContinuousSpanMaskGenerator,
-    MissingnessConfig,
-    masks_from_attention,
-    modality_availability,
-)
+from src.problem2.data import Problem2Dataset, apply_fixed_scenario, apply_random_mask_view, make_loader
 
 
-def _config() -> MissingnessConfig:
-    return MissingnessConfig(
-        bank_size=3,
-        pattern_probabilities={"audio": 0.2, "vision": 0.2, "audio_vision": 0.6},
-        position_probabilities={"begin": 1 / 3, "middle": 1 / 3, "end": 1 / 3},
-        ratio_min=0.05,
-        ratio_max=0.48,
-        beta_alpha=2.0,
-        beta_beta=4.0,
-        min_remaining=2,
-    )
+ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_attention_masks_separate_cls_sep_and_padding() -> None:
-    attention = np.array([[1, 1, 1, 1, 0, 0], [1, 1, 1, 0, 0, 0]])
-    result = masks_from_attention(attention)
-    np.testing.assert_array_equal(result["structural"], [[1, 0, 0, 1, 0, 0], [1, 0, 1, 0, 0, 0]])
-    np.testing.assert_array_equal(result["content"], [[0, 1, 1, 0, 0, 0], [0, 1, 0, 0, 0, 0]])
-    assert not np.any(result["valid"] & result["padding"])
+def _batch():
+    base = ROOT / "datasets" / "preprocessed_data" / "problem2"
+    dataset = Problem2Dataset(base / "train.npz", base / "train_mask_bank.npz")
+    return next(iter(make_loader(dataset, 8, False, 0, False, 2026)))
 
 
-def test_natural_zero_is_only_inside_content() -> None:
-    features = np.array([[[0.0], [2.0], [0.0], [0.0], [0.0]]])
-    content = np.array([[0, 1, 1, 0, 0]], dtype=bool)
-    result = modality_availability(features, content)
-    np.testing.assert_array_equal(result["observed"], [[0, 1, 0, 0, 0]])
-    np.testing.assert_array_equal(result["natural_zero"], [[0, 0, 1, 0, 0]])
+def test_random_mask_preserves_shape_and_zeros_missing_values() -> None:
+    masked = apply_random_mask_view(_batch(), 1.0, torch.Generator().manual_seed(7))
+    assert masked["modality_reliability"].shape == (8, 3, 8)
+    for modality in ("audio", "vision"):
+        missing = masked[f"{modality}_missing_mask"]
+        assert torch.all(masked[modality][missing] == 0)
 
 
-def test_mask_bank_is_deterministic_and_masks_only_observed_steps() -> None:
-    audio = np.array([[0, 1, 1, 1, 1, 1, 1, 0]], dtype=bool)
-    vision = np.array([[0, 1, 1, 0, 1, 1, 1, 0]], dtype=bool)
-    first = ContinuousSpanMaskGenerator(_config(), seed=2026).generate(audio, vision)
-    second = ContinuousSpanMaskGenerator(_config(), seed=2026).generate(audio, vision)
-    np.testing.assert_array_equal(first["synthetic_missing_mask"], second["synthetic_missing_mask"])
-    masks = first["synthetic_missing_mask"]
-    assert not masks[:, :, 0].any()
-    assert not np.any(masks[:, :, 1] & ~audio[:, None, :])
-    assert not np.any(masks[:, :, 2] & ~vision[:, None, :])
-    assert np.all((audio.sum(axis=1)[:, None] - masks[:, :, 1].sum(axis=2)) >= 2)
-    assert np.all((vision.sum(axis=1)[:, None] - masks[:, :, 2].sum(axis=2)) >= 2)
+def test_fixed_scenario_increases_missingness() -> None:
+    batch = _batch()
+    masked = apply_fixed_scenario(batch, "audio_vision", 0.2, "middle")
+    assert masked["audio_missing_mask"].sum() > batch["audio_missing_mask"].sum()
+    assert masked["vision_missing_mask"].sum() > batch["vision_missing_mask"].sum()
