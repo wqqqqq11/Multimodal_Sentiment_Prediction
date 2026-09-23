@@ -27,3 +27,15 @@ def test_fixed_scenario_increases_missingness() -> None:
     masked = apply_fixed_scenario(batch, "audio_vision", 0.2, "middle")
     assert masked["audio_missing_mask"].sum() > batch["audio_missing_mask"].sum()
     assert masked["vision_missing_mask"].sum() > batch["vision_missing_mask"].sum()
+
+
+def test_all_modalities_synchronized_mask_uses_same_absolute_span() -> None:
+    batch = _batch()
+    masked = apply_fixed_scenario(batch, "all_modalities", 0.30, "middle")
+    text_missing = masked["text_missing_mask"]
+    assert text_missing.sum() > 0
+    assert torch.all(masked["input_ids"][text_missing] == 103)
+    for modality in ("audio", "vision"):
+        artificial = masked[f"{modality}_missing_mask"] & batch[f"{modality}_observed_mask"]
+        assert torch.all(artificial <= text_missing)
+        assert torch.all(masked[modality][masked[f"{modality}_missing_mask"]] == 0)

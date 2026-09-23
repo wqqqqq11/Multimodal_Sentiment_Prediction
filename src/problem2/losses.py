@@ -29,17 +29,23 @@ def supervised_loss(
     class_axis = torch.tensor([-1.0, 0.0, 1.0], device=probabilities.device)
     polarity_expectation = (probabilities * class_axis).sum(dim=-1)
     coherence = F.smooth_l1_loss(outputs["regression"] / 3.0, polarity_expectation)
+    text_classification = F.cross_entropy(outputs["text_logits"], labels_cls, weight=class_weights)
+    text_regression = F.smooth_l1_loss(outputs["text_regression"], labels_reg, beta=0.5)
     total = (
         weights["classification"] * classification
         + weights["regression"] * regression
         + weights["correlation"] * correlation
         + weights["coherence"] * coherence
+        + weights.get("text_aux_classification", 0.0) * text_classification
+        + weights.get("text_aux_regression", 0.0) * text_regression
     )
     return total, {
         "classification": classification,
         "regression": regression,
         "correlation": correlation,
         "coherence": coherence,
+        "text_aux_classification": text_classification,
+        "text_aux_regression": text_regression,
     }
 
 
@@ -62,6 +68,10 @@ def distillation_loss(
     kd_regression = (regression_per_sample * confidence).sum() / confidence.sum().clamp_min(1e-8)
     feature_per_sample = 1.0 - F.cosine_similarity(student["fused"], teacher["fused"], dim=-1)
     kd_feature = (feature_per_sample * confidence).sum() / confidence.sum().clamp_min(1e-8)
+    modality_per_sample = 1.0 - F.cosine_similarity(
+        student["modalities"], teacher["modalities"], dim=-1
+    ).mean(dim=-1)
+    kd_modality = (modality_per_sample * confidence).sum() / confidence.sum().clamp_min(1e-8)
     student_normalized = F.normalize(student["fused"], dim=-1)
     teacher_normalized = F.normalize(teacher["fused"], dim=-1)
     kd_relation = F.mse_loss(student_normalized @ student_normalized.T, teacher_normalized @ teacher_normalized.T)
@@ -72,6 +82,7 @@ def distillation_loss(
         weights["kd_classification"] * kd_classification
         + weights["kd_regression"] * kd_regression
         + weights["kd_feature"] * kd_feature
+        + weights.get("kd_modality", 0.0) * kd_modality
         + weights["kd_relation"] * kd_relation
         + weights["kd_gate"] * kd_gate
     )
@@ -79,6 +90,7 @@ def distillation_loss(
         "kd_classification": kd_classification,
         "kd_regression": kd_regression,
         "kd_feature": kd_feature,
+        "kd_modality": kd_modality,
         "kd_relation": kd_relation,
         "kd_gate": kd_gate,
     }

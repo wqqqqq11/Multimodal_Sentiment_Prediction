@@ -49,6 +49,12 @@
     "warn_clipped_element_ratio": 0.05,
     "reject_label_disagreement": true
   },
+  "privileged_text": {
+    "enabled": true,
+    "vocab_size": 30522,
+    "hidden_dim": 96,
+    "initialization_file": "text_privileged_init.npz"
+  },
   "output": {
     "dtype": "float32",
     "compressed": true,

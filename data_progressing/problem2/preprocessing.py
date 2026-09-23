@@ -58,6 +58,62 @@ def _base_masks(block: dict[str, Any], eps: float) -> dict[str, np.ndarray]:
             "vision_observed": vision["observed"], "vision_natural": vision["natural_zero"]}
 
 
+def _privileged_text_pool(block: dict[str, Any], content: np.ndarray) -> np.ndarray:
+    """Pool organizer-provided BERT representations for training-only privileged supervision."""
+    if "text" not in block:
+        raise ValueError("Attachment 2 labeled split is missing organizer-provided `text`")
+    text = np.asarray(block["text"], dtype=np.float32)
+    if text.ndim != 3 or text.shape[:2] != content.shape or text.shape[2] != 768:
+        raise ValueError(f"text must have shape (N,50,768), got {text.shape}")
+    if not np.isfinite(text).all():
+        raise ValueError("organizer-provided text contains NaN or Inf")
+    denominator = np.maximum(content.sum(axis=1, keepdims=True), 1)
+    return ((text * content[..., None]).sum(axis=1) / denominator).astype(np.float32)
+
+
+def _build_privileged_initialization(
+    train_block: dict[str, Any],
+    content: np.ndarray,
+    *,
+    vocab_size: int,
+    hidden_dim: int,
+    seed: int,
+) -> dict[str, np.ndarray]:
+    """Compress contextual BERT vectors into a small organizer-only token initialization."""
+    text = np.asarray(train_block["text"], dtype=np.float32)
+    input_ids, _, _ = _text_fields(np.asarray(train_block["text_bert"]))
+    rng = np.random.default_rng(seed + 731)
+    gaussian = rng.normal(size=(text.shape[-1], hidden_dim)).astype(np.float64)
+    projection, _ = np.linalg.qr(gaussian, mode="reduced")
+    projection = projection.astype(np.float32)
+    projected = np.einsum("ntd,dh->nth", text, projection, optimize=True)
+    flat_ids = input_ids[content].astype(np.int64)
+    flat_vectors = projected[content]
+    if np.any(flat_ids >= vocab_size):
+        raise ValueError("text_bert token id exceeds configured privileged vocabulary")
+    prototypes = np.zeros((vocab_size, hidden_dim), dtype=np.float64)
+    raw_prototypes = np.zeros((vocab_size, text.shape[-1]), dtype=np.float64)
+    counts = np.bincount(flat_ids, minlength=vocab_size).astype(np.int64)
+    for dimension in range(hidden_dim):
+        prototypes[:, dimension] = np.bincount(
+            flat_ids, weights=flat_vectors[:, dimension], minlength=vocab_size
+        )
+    flat_raw = text[content]
+    for dimension in range(text.shape[-1]):
+        raw_prototypes[:, dimension] = np.bincount(
+            flat_ids, weights=flat_raw[:, dimension], minlength=vocab_size
+        )
+    seen = counts > 0
+    prototypes[seen] /= counts[seen, None]
+    raw_prototypes[seen] /= counts[seen, None]
+    return {
+        "projection": projection,
+        "token_prototypes": prototypes.astype(np.float32),
+        "token_prototypes_raw": raw_prototypes.astype(np.float16),
+        "token_counts": counts,
+    }
+
+
 def _prepare_labeled_split(
     split: str,
     block: dict[str, Any],
@@ -76,6 +132,7 @@ def _prepare_labeled_split(
     expected = expected_class_from_regression(regression)
     mismatch = labels != expected
     missing = np.zeros_like(masks["content"], dtype=bool)
+    privileged_text = _privileged_text_pool(block, masks["content"])
     reliability = reliability_tensor(
         masks["content"], masks["audio_observed"], masks["audio_natural"],
         masks["vision_observed"], masks["vision_natural"],
@@ -89,6 +146,10 @@ def _prepare_labeled_split(
         "content_mask": masks["content"],
         "structural_mask": masks["structural"],
         "padding_mask": masks["padding"],
+        "text_observed_mask": masks["content"].copy(),
+        "text_natural_zero_mask": missing.copy(),
+        "text_missing_mask": missing.copy(),
+        "privileged_text": privileged_text,
         "audio": audio,
         "vision": vision,
         "audio_observed_mask": masks["audio_observed"],
@@ -184,6 +245,9 @@ def _prepare_challenge(
         "content_mask": timeline["content"],
         "structural_mask": timeline["structural"],
         "padding_mask": timeline["padding"],
+        "text_observed_mask": timeline["content"].copy(),
+        "text_natural_zero_mask": natural.copy(),
+        "text_missing_mask": natural.copy(),
         "audio": audio,
         "vision": vision,
         "audio_observed_mask": audio_state["observed"],
@@ -267,6 +331,19 @@ def run_preprocessing(cfg: Problem2Config, *, overwrite: bool = False) -> dict[s
     scaler.fit("vision", np.asarray(data["train"]["vision"]), train_masks["vision_observed"])
     write_json(output_root / "scaler.json", scaler.to_dict())
 
+    privileged_cfg = cfg.section("privileged_text")
+    privileged_init = _build_privileged_initialization(
+        data["train"], train_masks["content"],
+        vocab_size=int(privileged_cfg["vocab_size"]),
+        hidden_dim=int(privileged_cfg["hidden_dim"]),
+        seed=cfg.seed,
+    )
+    write_npz(
+        output_root / str(privileged_cfg["initialization_file"]),
+        privileged_init,
+        compressed=True,
+    )
+
     compressed = bool(cfg.section("output").get("compressed", True))
     split_audits: dict[str, Any] = {}
     quality_rows: list[dict[str, Any]] = []
@@ -316,6 +393,7 @@ def run_preprocessing(cfg: Problem2Config, *, overwrite: bool = False) -> dict[s
         },
         "design": {
             "text_interface": "text_bert token ids, attention mask and token type ids",
+            "privileged_text": "Attachment 2 organizer text pooled for training-only teacher; compressed token prototypes initialize the deployable student",
             "scaled_modalities": ["audio", "vision"],
             "scaler_fit_scope": "Attachment 2 training split, observed content steps only",
             "sample_policy": "retain all samples; flag severe unavailability instead of deleting",
@@ -338,6 +416,7 @@ def run_preprocessing(cfg: Problem2Config, *, overwrite: bool = False) -> dict[s
     write_json(report_root / "preprocessing_report.json", report)
     readme = "# Problem 2 preprocessed data\n\n"
     readme += "Primary text input is `text_bert`; this is the only text representation shared by Attachment 2 and Attachment 3.\n\n"
+    readme += "Attachment 2 labeled splits additionally contain training-only `privileged_text`; `text_privileged_init.npz` compresses organizer BERT semantics into the compact student vocabulary. Neither is required by Attachment 3 inference.\n\n"
     readme += "- `train.npz`, `valid.npz`, `test.npz`: clean teacher inputs, labels, base masks and gate reliability features.\n"
     readme += "- `train_mask_bank.npz`: deterministic continuous-span masks for missing-student views. Index `[sample, view]` pairs with the same clean training sample.\n"
     readme += "- `challenge_aligned.npz`: all 30 Attachment 3 aligned samples with detected unavailable intervals.\n"

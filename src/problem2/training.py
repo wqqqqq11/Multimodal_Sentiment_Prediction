@@ -7,6 +7,7 @@ from typing import Any
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
 from .data import apply_random_mask_view
@@ -109,6 +110,114 @@ def train_teacher(
     return history
 
 
+def train_text_student(
+    student: MRCDNet,
+    teacher: MRCDNet,
+    train_loader: DataLoader[dict[str, Any]],
+    valid_loader: DataLoader[dict[str, Any]],
+    cfg: dict[str, Any],
+    device: torch.device,
+    run_dir: Path,
+    logger: Any,
+) -> list[dict[str, Any]]:
+    """P0: distill organizer BERT semantics into the deployable token encoder."""
+    train_cfg = cfg["training"]
+    for parameter in student.parameters():
+        parameter.requires_grad_(False)
+    trainable_modules = (student.text_encoder, student.text_classification_head, student.text_regression_head)
+    for module in trainable_modules:
+        for parameter in module.parameters():
+            parameter.requires_grad_(True)
+    teacher.eval()
+    for parameter in teacher.parameters():
+        parameter.requires_grad_(False)
+    parameters = [parameter for module in trainable_modules for parameter in module.parameters()]
+    optimizer = torch.optim.AdamW(parameters, lr=float(train_cfg["text_distill_lr"]), weight_decay=float(train_cfg["weight_decay"]))
+    scaler = _scaler(device)
+    class_weights = torch.tensor(train_cfg["class_weights"], device=device, dtype=torch.float32)
+    generator = torch.Generator(device="cpu").manual_seed(int(cfg["project"]["seed"]) + 11)
+    history: list[dict[str, Any]] = []
+    best_score = -float("inf")
+    stale = 0
+    checkpoint_path = run_dir / "checkpoints" / "text_student_best.pt"
+    target_cfg = cfg["evaluation"]["target_scenario"]
+    scenario = (str(target_cfg["pattern"]), float(target_cfg["rate"]), str(target_cfg["position"]))
+    for epoch in range(1, int(train_cfg["text_distill_epochs"]) + 1):
+        started = time.perf_counter()
+        student.train()
+        sums: dict[str, float] = defaultdict(float)
+        batches = 0
+        for source_batch in train_loader:
+            masked_cpu = apply_random_mask_view(
+                source_batch,
+                probability=0.60,
+                generator=generator,
+                synchronized_probability=1.0,
+                synchronized_rate_min=float(train_cfg["synchronized_rate_min"]),
+                synchronized_rate_max=float(train_cfg["synchronized_rate_max"]),
+            )
+            complete = move_to_device(source_batch, device)
+            masked = move_to_device(masked_cpu, device)
+            optimizer.zero_grad(set_to_none=True)
+            with torch.no_grad(), _autocast(device):
+                teacher_text = teacher.encode_text(complete)
+                teacher_logits = teacher.text_classification_head(teacher_text)
+                teacher_regression = 3.0 * torch.tanh(teacher.text_regression_head(teacher_text).squeeze(-1))
+            with _autocast(device):
+                student_text = student.encode_text(masked)
+                student_logits = student.text_classification_head(student_text)
+                student_regression = 3.0 * torch.tanh(student.text_regression_head(student_text).squeeze(-1))
+                representation = F.smooth_l1_loss(student_text, teacher_text, beta=0.25)
+                cosine = (1.0 - F.cosine_similarity(student_text, teacher_text, dim=-1)).mean()
+                classification = F.cross_entropy(student_logits, masked["classification_labels"].long(), weight=class_weights)
+                regression = F.smooth_l1_loss(student_regression, masked["regression_labels"].float(), beta=0.5)
+                kd_classification = F.kl_div(
+                    F.log_softmax(student_logits / 2.0, dim=-1),
+                    F.softmax(teacher_logits / 2.0, dim=-1), reduction="batchmean",
+                ) * 4.0
+                kd_regression = F.smooth_l1_loss(student_regression, teacher_regression, beta=0.25)
+                total = representation + cosine + 0.65 * classification + 0.45 * regression + 0.35 * kd_classification + 0.25 * kd_regression
+            scaler.scale(total).backward()
+            scaler.unscale_(optimizer)
+            torch.nn.utils.clip_grad_norm_(parameters, float(train_cfg["gradient_clip"]))
+            scaler.step(optimizer)
+            scaler.update()
+            for key, value in {
+                "loss": total, "representation": representation, "cosine": cosine,
+                "classification": classification, "regression": regression,
+            }.items():
+                sums[key] += float(value.detach())
+            batches += 1
+        student.eval()
+        target = predict(student, valid_loader, device, scenario)
+        metrics = target["metrics"]
+        row = {
+            "stage": "text_distill", "epoch": epoch, "lr": optimizer.param_groups[0]["lr"],
+            **{f"train_{key}": value for key, value in _epoch_average(sums, batches).items()},
+            **{f"target30_{key}": float(metrics[key]) for key in ("accuracy", "macro_f1", "mae", "pearson", "selection_score")},
+            "seconds": time.perf_counter() - started,
+        }
+        history.append(row)
+        logger.info(
+            "文本特权蒸馏 Epoch %02d/%02d | loss=%.4f rep=%.4f | 三模态同步缺失30%% Acc=%.4f F1=%.4f MAE=%.4f | %.1fs",
+            epoch, int(train_cfg["text_distill_epochs"]), row["train_loss"], row["train_representation"],
+            metrics["accuracy"], metrics["macro_f1"], metrics["mae"], row["seconds"],
+        )
+        score = float(metrics["selection_score"])
+        if score > best_score + float(train_cfg["min_delta"]):
+            best_score, stale = score, 0
+            _checkpoint(student, epoch, metrics, checkpoint_path)
+        else:
+            stale += 1
+            if stale >= min(int(train_cfg["patience"]), 6):
+                logger.info("文本特权蒸馏早停：连续 %d 个 epoch 未改善", stale)
+                break
+    load_model_checkpoint(student, checkpoint_path, device)
+    for parameter in student.parameters():
+        parameter.requires_grad_(True)
+    return history
+
+
 def train_student(
     student: MRCDNet,
     teacher: MRCDNet,
@@ -141,11 +250,18 @@ def train_student(
         batches = 0
         distillation_scale = min(1.0, epoch / max(int(train_cfg["distillation_warmup_epochs"]), 1))
         for source_batch in train_loader:
-            masked_cpu = apply_random_mask_view(source_batch, float(train_cfg["missing_view_probability"]), mask_generator)
+            masked_cpu = apply_random_mask_view(
+                source_batch,
+                float(train_cfg["missing_view_probability"]),
+                mask_generator,
+                synchronized_probability=float(train_cfg["synchronized_missing_probability"]),
+                synchronized_rate_min=float(train_cfg["synchronized_rate_min"]),
+                synchronized_rate_max=float(train_cfg["synchronized_rate_max"]),
+            )
             complete_batch = move_to_device(source_batch, device)
             masked_batch = move_to_device(masked_cpu, device)
             optimizer.zero_grad(set_to_none=True)
-            with torch.inference_mode(), _autocast(device):
+            with torch.no_grad(), _autocast(device):
                 teacher_outputs = teacher(complete_batch)
             with _autocast(device):
                 student_outputs = student(masked_batch)
@@ -168,7 +284,8 @@ def train_student(
             batches += 1
         scheduler.step()
         complete = predict(student, valid_loader, device)
-        missing = predict(student, valid_loader, device, ("audio_vision", 0.20, "middle"))
+        target_cfg = cfg["evaluation"]["target_scenario"]
+        missing = predict(student, valid_loader, device, (str(target_cfg["pattern"]), float(target_cfg["rate"]), str(target_cfg["position"])))
         complete_metrics, missing_metrics = complete["metrics"], missing["metrics"]
         robust_score = 0.5 * float(complete_metrics["selection_score"]) + 0.5 * float(missing_metrics["selection_score"])
         row = {
@@ -176,19 +293,19 @@ def train_student(
             "distillation_scale": distillation_scale,
             **{f"train_{key}": value for key, value in _epoch_average(sums, batches).items()},
             **{f"complete_{key}": float(complete_metrics[key]) for key in ("accuracy", "macro_f1", "mae", "pearson", "selection_score")},
-            **{f"missing20_{key}": float(missing_metrics[key]) for key in ("accuracy", "macro_f1", "mae", "pearson", "selection_score")},
+            **{f"target30_{key}": float(missing_metrics[key]) for key in ("accuracy", "macro_f1", "mae", "pearson", "selection_score")},
             "robust_selection_score": robust_score,
             "seconds": time.perf_counter() - started,
         }
         history.append(row)
         logger.info(
-            "学生 Epoch %02d/%02d | loss=%.4f sup=%.4f kd=%.4f | 完整F1=%.4f MAE=%.4f | 双缺失20%% F1=%.4f MAE=%.4f | %.1fs",
+            "学生 Epoch %02d/%02d | loss=%.4f sup=%.4f kd=%.4f | 完整F1=%.4f MAE=%.4f | 三模态同步缺失30%% F1=%.4f MAE=%.4f | %.1fs",
             epoch, int(train_cfg["student_epochs"]), row["train_loss"], row["train_supervised"], row["train_distillation"],
             complete_metrics["macro_f1"], complete_metrics["mae"], missing_metrics["macro_f1"], missing_metrics["mae"], row["seconds"],
         )
         if robust_score > best_score + float(train_cfg["min_delta"]):
             best_score, stale = robust_score, 0
-            _checkpoint(student, epoch, {"complete": complete_metrics, "missing20": missing_metrics, "robust_score": robust_score}, checkpoint_path)
+            _checkpoint(student, epoch, {"complete": complete_metrics, "target30": missing_metrics, "robust_score": robust_score}, checkpoint_path)
         else:
             stale += 1
             if stale >= int(train_cfg["patience"]):

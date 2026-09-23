@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 
-COLORS = {"text": "#31688E", "audio": "#35B779", "vision": "#FDE725", "audio_vision": "#D1495B"}
+COLORS = {"text": "#31688E", "audio": "#35B779", "vision": "#FDE725", "audio_vision": "#D1495B", "all_modalities": "#7B2CBF"}
 
 
 def configure_matplotlib() -> None:
@@ -38,12 +38,12 @@ def plot_training_history(history: pd.DataFrame, path: Path) -> None:
     axes[0, 0].legend()
     axes[0, 1].plot(teacher["epoch"], teacher["valid_macro_f1"], label="教师完整验证 F1")
     axes[0, 1].plot(student["epoch"], student["complete_macro_f1"], label="学生完整验证 F1")
-    axes[0, 1].plot(student["epoch"], student["missing20_macro_f1"], label="学生双模态缺失20% F1")
+    axes[0, 1].plot(student["epoch"], student["target30_macro_f1"], label="学生三模态同步缺失30% F1")
     axes[0, 1].set(title="分类性能随训练变化", xlabel="Epoch", ylabel="Macro-F1")
     axes[0, 1].legend()
     axes[1, 0].plot(teacher["epoch"], teacher["valid_mae"], label="教师完整验证 MAE")
     axes[1, 0].plot(student["epoch"], student["complete_mae"], label="学生完整验证 MAE")
-    axes[1, 0].plot(student["epoch"], student["missing20_mae"], label="学生双模态缺失20% MAE")
+    axes[1, 0].plot(student["epoch"], student["target30_mae"], label="学生三模态同步缺失30% MAE")
     axes[1, 0].set(title="回归误差随训练变化", xlabel="Epoch", ylabel="MAE")
     axes[1, 0].legend()
     axes[1, 1].plot(student["epoch"], student["train_supervised"], label="监督损失")
@@ -57,7 +57,7 @@ def plot_robustness_curves(frame: pd.DataFrame, path: Path, primary_position: st
     configure_matplotlib()
     data = frame[(frame["position"] == primary_position) & (frame["pattern"] != "none")]
     fig, axes = plt.subplots(1, 2, figsize=(12, 4.8))
-    labels = {"audio": "语音缺失", "vision": "视觉缺失", "audio_vision": "语音+视觉缺失"}
+    labels = {"text": "文本缺失", "audio": "语音缺失", "vision": "视觉缺失", "audio_vision": "语音+视觉缺失", "all_modalities": "三模态同步缺失"}
     for pattern, group in data.groupby("pattern"):
         group = group.sort_values("missing_rate")
         axes[0].plot(group["missing_rate"] * 100, group["macro_f1"], marker="o", label=labels[pattern], color=COLORS[pattern])
@@ -90,7 +90,7 @@ def plot_position_effect(frame: pd.DataFrame, path: Path) -> None:
 
 def plot_ablation(frame: pd.DataFrame, path: Path) -> None:
     configure_matplotlib()
-    scenario = "audio_vision_20_middle"
+    scenario = "all_modalities_30_middle"
     data = frame[frame["scenario"] == scenario]
     labels = {
         "teacher_without_missing_training": "完整教师",
@@ -103,7 +103,7 @@ def plot_ablation(frame: pd.DataFrame, path: Path) -> None:
     axes[0].bar(x, data["macro_f1"], color="#4C78A8")
     axes[1].bar(x, data["mae"], color="#F58518")
     tick_labels = [labels[value] for value in data["variant"]]
-    for axis, title, ylabel in zip(axes, ("双模态缺失20%分类消融", "双模态缺失20%回归消融"), ("Macro-F1（越高越好）", "MAE（越低越好）"), strict=True):
+    for axis, title, ylabel in zip(axes, ("三模态同步缺失30%分类消融", "三模态同步缺失30%回归消融"), ("Macro-F1（越高越好）", "MAE（越低越好）"), strict=True):
         axis.set_xticks(x, tick_labels, rotation=18, ha="right")
         axis.set(title=title, xlabel="模型变体", ylabel=ylabel)
         axis.grid(axis="y", alpha=0.25)

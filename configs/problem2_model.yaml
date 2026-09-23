@@ -7,7 +7,8 @@
   "paths": {
     "preprocessed_root": "datasets/preprocessed_data/problem2",
     "output_root": "outputs/problem2",
-    "strategy_document": "strategy/problem2_modeling.md"
+    "strategy_document": "strategy/problem2_modeling.md",
+    "privileged_text_init": "datasets/preprocessed_data/problem2/text_privileged_init.npz"
   },
   "data": {
     "train_file": "train.npz",
@@ -17,7 +18,7 @@
     "mask_bank_file": "train_mask_bank.npz",
     "batch_size": 96,
     "eval_batch_size": 192,
-    "num_workers": 10,
+    "num_workers": 0,
     "pin_memory": true
   },
   "model": {
@@ -32,26 +33,36 @@
     "dropout": 0.20,
     "num_classes": 3,
     "gate_reliability_gamma": 0.80
+    ,"privileged_text_dim": 768,
+    "text_residual_weight": 0.65
   },
   "training": {
-    "teacher_epochs": 24,
+    "teacher_epochs": 30,
+    "text_distill_epochs": 15,
     "student_epochs": 30,
-    "teacher_lr": 0.0005,
-    "student_lr": 0.0004,
+    "teacher_lr": 0.0003,
+    "text_distill_lr": 0.0006,
+    "student_lr": 0.00025,
     "weight_decay": 0.0001,
     "gradient_clip": 1.0,
-    "patience": 6,
+    "patience": 8,
     "min_delta": 0.0001,
-    "missing_view_probability": 0.85,
+    "missing_view_probability": 0.75,
+    "synchronized_missing_probability": 0.65,
+    "synchronized_rate_min": 0.15,
+    "synchronized_rate_max": 0.40,
     "class_weights": [1.1703, 1.4930, 0.6776],
     "loss_weights": {
       "classification": 1.0,
       "regression": 1.0,
       "correlation": 0.20,
       "coherence": 0.10,
+      "text_aux_classification": 0.35,
+      "text_aux_regression": 0.25,
       "kd_classification": 0.80,
       "kd_regression": 0.50,
       "kd_feature": 0.30,
+      "kd_modality": 0.25,
       "kd_relation": 0.10,
       "kd_gate": 0.10
     },
@@ -60,9 +71,17 @@
   },
   "evaluation": {
     "missing_rates": [0.10, 0.20, 0.30, 0.40, 0.48],
-    "missing_patterns": ["audio", "vision", "audio_vision"],
+    "missing_patterns": ["text", "audio", "vision", "audio_vision", "all_modalities"],
     "missing_positions": ["begin", "middle", "end"],
     "primary_position": "middle",
-    "bootstrap_samples": 200
+    "bootstrap_samples": 200,
+    "target_scenario": {
+      "pattern": "all_modalities",
+      "rate": 0.30,
+      "position": "middle",
+      "minimum_accuracy": 0.6209,
+      "minimum_macro_f1": 0.5943,
+      "maximum_mae": 0.6010
+    }
   }
 }

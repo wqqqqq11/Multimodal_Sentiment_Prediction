@@ -54,7 +54,7 @@ def validate_config(cfg: dict[str, Any]) -> None:
 
 def resolve_paths(cfg: dict[str, Any], project_root: Path) -> dict[str, Any]:
     result = deepcopy(cfg)
-    for key in ("preprocessed_root", "output_root", "strategy_document"):
+    for key in ("preprocessed_root", "output_root", "strategy_document", "privileged_text_init"):
         value = Path(result["paths"][key])
         result["paths"][key] = str(value if value.is_absolute() else (project_root / value).resolve())
     return result

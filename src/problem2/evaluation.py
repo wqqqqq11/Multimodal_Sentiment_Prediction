@@ -155,6 +155,7 @@ def evaluate_ablations(
         ("vision_20_middle", ("vision", 0.20, "middle")),
         ("audio_vision_20_middle", ("audio_vision", 0.20, "middle")),
         ("audio_vision_40_middle", ("audio_vision", 0.40, "middle")),
+        ("all_modalities_30_middle", ("all_modalities", 0.30, "middle")),
     ]
     variants = [
         ("teacher_without_missing_training", teacher, "none"),

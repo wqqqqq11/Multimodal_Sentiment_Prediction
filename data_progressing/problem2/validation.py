@@ -21,6 +21,9 @@ def validate_split_arrays(arrays: dict[str, np.ndarray], *, labeled: bool) -> di
         "content_mask",
         "structural_mask",
         "padding_mask",
+        "text_observed_mask",
+        "text_natural_zero_mask",
+        "text_missing_mask",
         "audio",
         "vision",
         "audio_observed_mask",
@@ -32,7 +35,7 @@ def validate_split_arrays(arrays: dict[str, np.ndarray], *, labeled: bool) -> di
         "modality_reliability",
     }
     if labeled:
-        required |= {"classification_labels", "regression_labels", "raw_text"}
+        required |= {"classification_labels", "regression_labels", "raw_text", "privileged_text"}
     missing = sorted(required - arrays.keys())
     if missing:
         raise ValidationError(f"Missing arrays: {missing}")
@@ -52,6 +55,13 @@ def validate_split_arrays(arrays: dict[str, np.ndarray], *, labeled: bool) -> di
         raise ValidationError("content/structural masks do not partition the attention region")
     if np.any(attention & padding) or np.any(~(attention | padding)):
         raise ValidationError("attention and padding masks do not form a partition")
+    text_observed = arrays["text_observed_mask"].astype(bool)
+    text_natural = arrays["text_natural_zero_mask"].astype(bool)
+    text_missing = arrays["text_missing_mask"].astype(bool)
+    if np.any(text_observed & text_natural) or np.any(text_observed & text_missing) or np.any(text_natural & text_missing):
+        raise ValidationError("text availability masks overlap")
+    if np.any((text_observed | text_natural | text_missing) & ~content):
+        raise ValidationError("text availability mask reaches structural/padding slots")
     for modality in ("audio", "vision"):
         observed = arrays[f"{modality}_observed_mask"].astype(bool)
         natural = arrays[f"{modality}_natural_zero_mask"].astype(bool)
@@ -69,9 +79,12 @@ def validate_split_arrays(arrays: dict[str, np.ndarray], *, labeled: bool) -> di
             raise ValidationError("Classification labels must be 0/1/2")
         if not np.isfinite(regression).all() or np.any((regression < -3) | (regression > 3)):
             raise ValidationError("Regression labels must be finite and within [-3,3]")
+        if arrays["privileged_text"].shape != (n, 768) or not np.isfinite(arrays["privileged_text"]).all():
+            raise ValidationError("privileged_text must be finite with shape (N,768)")
     return {
         "sample_count": int(n),
         "steps": int(steps),
+        "text_observed_steps": int(arrays["text_observed_mask"].sum()),
         "audio_observed_steps": int(arrays["audio_observed_mask"].sum()),
         "vision_observed_steps": int(arrays["vision_observed_mask"].sum()),
         "audio_missing_steps": int(arrays["audio_missing_mask"].sum()),

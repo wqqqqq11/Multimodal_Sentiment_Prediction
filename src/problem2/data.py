@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, Dataset
 
 TENSOR_KEYS = (
     "input_ids", "attention_mask", "token_type_ids", "content_mask", "structural_mask", "padding_mask",
+    "text_observed_mask", "text_natural_zero_mask", "text_missing_mask", "privileged_text",
     "audio", "vision", "audio_observed_mask", "audio_natural_zero_mask", "audio_missing_mask",
     "vision_observed_mask", "vision_natural_zero_mask", "vision_missing_mask", "modality_reliability",
     "classification_labels", "regression_labels",
@@ -25,6 +26,7 @@ class Problem2Dataset(Dataset[dict[str, Any]]):
             self.arrays = {key: archive[key] for key in archive.files}
         required = {
             "sample_id", "input_ids", "attention_mask", "content_mask", "audio", "vision",
+            "text_observed_mask", "text_natural_zero_mask", "text_missing_mask",
             "audio_observed_mask", "audio_natural_zero_mask", "audio_missing_mask",
             "vision_observed_mask", "vision_natural_zero_mask", "vision_missing_mask",
         }
@@ -100,10 +102,10 @@ def reliability_features(batch: dict[str, torch.Tensor]) -> torch.Tensor:
     modality_features: list[torch.Tensor] = []
     for modality in ("text", "audio", "vision"):
         if modality == "text":
-            observed = content
-            natural = torch.zeros_like(content)
-            missing = torch.zeros_like(content)
-            quality = torch.ones_like(denominator)
+            observed = batch["text_observed_mask"].bool() & content
+            natural = batch["text_natural_zero_mask"].bool() & content
+            missing = batch["text_missing_mask"].bool() & content
+            quality = observed.sum(dim=1).float() / denominator
         else:
             observed = batch[f"{modality}_observed_mask"].bool() & content
             natural = batch[f"{modality}_natural_zero_mask"].bool() & content
@@ -126,6 +128,9 @@ def apply_random_mask_view(
     batch: dict[str, Any],
     probability: float,
     generator: torch.Generator | None = None,
+    synchronized_probability: float = 0.0,
+    synchronized_rate_min: float = 0.20,
+    synchronized_rate_max: float = 0.40,
 ) -> dict[str, Any]:
     if "synthetic_missing_mask_bank" not in batch:
         raise KeyError("训练批次缺少 synthetic_missing_mask_bank")
@@ -136,8 +141,24 @@ def apply_random_mask_view(
     selected = bank[torch.arange(batch_size, device=bank.device), choices]
     use_missing = torch.rand(batch_size, generator=generator, device=bank.device) < probability
     selected = selected & use_missing[:, None, None]
+    use_synchronized = (
+        torch.rand(batch_size, generator=generator, device=bank.device) < synchronized_probability
+    ) & use_missing
+    selected = selected & ~use_synchronized[:, None, None]
+    synchronized = torch.zeros((batch_size, bank.shape[-1]), dtype=torch.bool, device=bank.device)
+    for row in range(batch_size):
+        if not bool(use_synchronized[row]):
+            continue
+        ratio = float(torch.empty(1).uniform_(synchronized_rate_min, synchronized_rate_max, generator=generator))
+        position_id = int(torch.randint(3, (1,), generator=generator))
+        position = ("begin", "middle", "end")[position_id]
+        synchronized[row] = _absolute_content_span(batch["content_mask"][row].bool(), ratio, position)
+    text_artificial = synchronized & batch["text_observed_mask"].bool()
+    output["input_ids"] = batch["input_ids"].clone().masked_fill(text_artificial, 103)
+    output["text_observed_mask"] = batch["text_observed_mask"].bool() & ~text_artificial
+    output["text_missing_mask"] = batch["text_missing_mask"].bool() | text_artificial
     for channel, modality in ((1, "audio"), (2, "vision")):
-        artificial = selected[:, channel] & batch["content_mask"].bool()
+        artificial = (selected[:, channel] | synchronized) & batch[f"{modality}_observed_mask"].bool()
         prior_missing = batch[f"{modality}_missing_mask"].bool()
         total_missing = prior_missing | artificial
         observed = batch[f"{modality}_observed_mask"].bool() & ~artificial
@@ -156,34 +177,53 @@ def apply_fixed_scenario(
     rate: float,
     position: str,
 ) -> dict[str, Any]:
-    if pattern not in {"audio", "vision", "audio_vision", "none"}:
+    pattern_modalities = {
+        "none": [],
+        "text": ["text"],
+        "audio": ["audio"],
+        "vision": ["vision"],
+        "text_audio": ["text", "audio"],
+        "text_vision": ["text", "vision"],
+        "audio_vision": ["audio", "vision"],
+        "all_modalities": ["text", "audio", "vision"],
+    }
+    if pattern not in pattern_modalities:
         raise ValueError(f"未知缺失类型: {pattern}")
     if position not in {"begin", "middle", "end"}:
         raise ValueError(f"未知缺失位置: {position}")
     output = dict(batch)
-    modalities = [] if pattern == "none" else (["audio", "vision"] if pattern == "audio_vision" else [pattern])
+    modalities = pattern_modalities[pattern]
     content = batch["content_mask"].bool()
+    shared_span = torch.stack([_absolute_content_span(row, rate, position) for row in content])
     for modality in modalities:
-        artificial = torch.zeros_like(content)
-        base_observed = batch[f"{modality}_observed_mask"].bool() & content
-        for row in range(content.shape[0]):
-            eligible = torch.where(base_observed[row])[0]
-            if eligible.numel() == 0:
-                continue
-            length = min(max(int(round(float(content[row].sum()) * rate)), 1), max(int(eligible.numel()) - 1, 1))
-            if position == "begin":
-                start = 0
-            elif position == "end":
-                start = max(int(eligible.numel()) - length, 0)
-            else:
-                start = max((int(eligible.numel()) - length) // 2, 0)
-            artificial[row, eligible[start:start + length]] = True
+        artificial = shared_span & batch[f"{modality}_observed_mask"].bool()
         total_missing = batch[f"{modality}_missing_mask"].bool() | artificial
-        output[modality] = batch[modality].masked_fill(total_missing.unsqueeze(-1), 0.0)
         output[f"{modality}_observed_mask"] = batch[f"{modality}_observed_mask"].bool() & ~artificial
         output[f"{modality}_missing_mask"] = total_missing
+        if modality == "text":
+            output["input_ids"] = batch["input_ids"].clone().masked_fill(total_missing, 103)
+        else:
+            output[modality] = batch[modality].masked_fill(total_missing.unsqueeze(-1), 0.0)
     output["modality_reliability"] = reliability_features(output)
     return output
+
+
+def _absolute_content_span(content: torch.Tensor, rate: float, position: str) -> torch.Tensor:
+    """Create one physically contiguous interval, then intersect it with each modality."""
+    result = torch.zeros_like(content, dtype=torch.bool)
+    indexes = torch.where(content)[0]
+    if indexes.numel() <= 1 or rate <= 0:
+        return result
+    length = min(max(int(round(float(indexes.numel()) * rate)), 1), int(indexes.numel()) - 1)
+    first, last = int(indexes[0]), int(indexes[-1])
+    if position == "begin":
+        start = first
+    elif position == "end":
+        start = last - length + 1
+    else:
+        start = first + max((int(indexes.numel()) - length) // 2, 0)
+    result[start:start + length] = True
+    return result & content
 
 
 def iter_loader(loader: DataLoader[dict[str, Any]]) -> Iterator[dict[str, Any]]:

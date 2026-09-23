@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import numpy as np
 import torch
 
 from .config import load_config, resolve_paths
@@ -19,7 +20,7 @@ from .evaluation import (
 )
 from .model import MRCDNet, count_parameters
 from .reporting import write_solution_report
-from .training import train_student, train_teacher
+from .training import train_student, train_teacher, train_text_student
 from .utils import choose_device, create_run_directory, set_seed, setup_logger, write_json
 from .visualization import (
     plot_ablation,
@@ -95,7 +96,7 @@ def run_solution(
     overrides: dict[str, Any] = {}
     if smoke:
         overrides = {
-            "training": {"teacher_epochs": 1, "student_epochs": 1, "patience": 1},
+            "training": {"teacher_epochs": 1, "text_distill_epochs": 1, "student_epochs": 1, "patience": 1},
             "evaluation": {"missing_rates": [0.20], "missing_positions": ["middle"]},
         }
     cfg = resolve_paths(load_config(config_path, overrides), project_root)
@@ -114,16 +115,39 @@ def run_solution(
             len(datasets["train"]), len(datasets["valid"]), len(datasets["test"]), len(datasets["challenge"]), cfg["data"]["num_workers"],
         )
         logger.info("[步骤2/4 参数初始化] seed=%d device=%s", cfg["project"]["seed"], device)
-        teacher = MRCDNet(cfg["model"]).to(device)
-        student = MRCDNet(cfg["model"]).to(device)
+        teacher = MRCDNet(cfg["model"], privileged_text=True).to(device)
+        student = MRCDNet(cfg["model"], privileged_text=False).to(device)
+        privileged_path = Path(cfg["paths"]["privileged_text_init"])
+        if not privileged_path.is_file():
+            raise FileNotFoundError(f"缺少P0特权文本初始化文件，请重新运行问题2预处理: {privileged_path}")
+        with np.load(privileged_path, allow_pickle=False) as privileged:
+            projection = torch.from_numpy(privileged["projection"]).to(device)
+            prototypes = torch.from_numpy(privileged["token_prototypes"]).to(device)
+            raw_prototypes = torch.from_numpy(privileged["token_prototypes_raw"]).to(device)
+            token_counts = torch.from_numpy(privileged["token_counts"]).to(device)
+        teacher.initialize_privileged_text(projection)
+        student.initialize_privileged_text(projection)
+        student.initialize_student_tokens(prototypes, token_counts)
         parameter_count, trainable_count = count_parameters(student)
         logger.info("MRCD-Net 参数：total=%s trainable=%s", f"{parameter_count:,}", f"{trainable_count:,}")
         logger.info("[步骤3/4 模型调用] 开始训练完整教师")
         teacher_history = train_teacher(teacher, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
-        student.load_state_dict(teacher.state_dict())
+        transferable = {
+            key: value for key, value in teacher.state_dict().items()
+            if not key.startswith("text_encoder.") and not key.startswith("privileged_text_encoder.")
+        }
+        student.load_state_dict(transferable, strict=False)
+        with torch.no_grad():
+            mapped_parts = []
+            for start in range(0, raw_prototypes.shape[0], 2048):
+                mapped_parts.append(teacher.privileged_text_encoder(raw_prototypes[start:start + 2048]).float())
+            final_teacher_prototypes = torch.cat(mapped_parts, dim=0)
+        student.initialize_student_tokens(final_teacher_prototypes, token_counts)
+        logger.info("P0文本特权蒸馏：赛方预计算text教师 -> 可部署text_bert学生")
+        text_history = train_text_student(student, teacher, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
         logger.info("开始训练缺失学生：由最佳教师初始化并执行完整—缺失一致性蒸馏")
         student_history = train_student(student, teacher, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
-        history = pd.DataFrame(teacher_history + student_history)
+        history = pd.DataFrame(teacher_history + text_history + student_history)
         history.to_csv(run_dir / "metrics" / "training_history.csv", index=False, encoding="utf-8-sig")
         plot_training_history(history, run_dir / "figures" / "training_history.png")
 
@@ -132,6 +156,9 @@ def run_solution(
         student_validation = predict(student, loaders["valid"], device)
         test_result = predict(student, loaders["test"], device)
         challenge_result = predict(student, loaders["challenge"], device)
+        target_cfg = cfg["evaluation"]["target_scenario"]
+        target_scenario = (str(target_cfg["pattern"]), float(target_cfg["rate"]), str(target_cfg["position"]))
+        target_result = predict(student, loaders["valid"], device, target_scenario)
         prediction_frame(student_validation).to_csv(run_dir / "predictions" / "validation_predictions.csv", index=False, encoding="utf-8-sig")
         prediction_frame(test_result).to_csv(run_dir / "predictions" / "test_predictions.csv", index=False, encoding="utf-8-sig")
         challenge_diagnostics = prediction_frame(challenge_result, include_labels=False)
@@ -155,9 +182,20 @@ def run_solution(
             "teacher_validation": teacher_validation["metrics"],
             "student_validation": student_validation["metrics"],
             "student_test": test_result["metrics"],
+            "target_synchronized_30": target_result["metrics"],
+            "target_thresholds": {
+                "minimum_accuracy": target_cfg["minimum_accuracy"],
+                "minimum_macro_f1": target_cfg["minimum_macro_f1"],
+                "maximum_mae": target_cfg["maximum_mae"],
+            },
             "attachment3_count": len(challenge_result["sample_id"]),
             "smoke": smoke,
         }
+        summary["target_passed"] = bool(
+            float(target_result["metrics"]["accuracy"]) >= float(target_cfg["minimum_accuracy"])
+            and float(target_result["metrics"]["macro_f1"]) >= float(target_cfg["minimum_macro_f1"])
+            and float(target_result["metrics"]["mae"]) <= float(target_cfg["maximum_mae"])
+        )
         write_json(run_dir / "metrics" / "summary.json", summary)
         plot_robustness_curves(robustness, run_dir / "figures" / "missing_rate_effect.png", eval_cfg["primary_position"])
         plot_position_effect(robustness, run_dir / "figures" / "missing_position_effect.png")
@@ -176,6 +214,13 @@ def run_solution(
             "求解完成：valid Acc=%.4f F1=%.4f MAE=%.4f r=%.4f；结果目录=%s",
             student_validation["metrics"]["accuracy"], student_validation["metrics"]["macro_f1"],
             student_validation["metrics"]["mae"], student_validation["metrics"]["pearson"], run_dir,
+        )
+        logger.info(
+            "目标验收（三模态同步缺失30%%）：Acc=%.4f/%0.4f F1=%.4f/%0.4f MAE=%.4f/%0.4f，状态=%s",
+            target_result["metrics"]["accuracy"], target_cfg["minimum_accuracy"],
+            target_result["metrics"]["macro_f1"], target_cfg["minimum_macro_f1"],
+            target_result["metrics"]["mae"], target_cfg["maximum_mae"],
+            "PASS" if summary["target_passed"] else "NOT_REACHED",
         )
         return run_dir
     except Exception as exc:

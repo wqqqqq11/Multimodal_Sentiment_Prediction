@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import random
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -91,9 +92,17 @@ def atomic_torch_save(value: Any, path: Path) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
     torch.save(value, temporary)
     # Windows may reject os.replace when the destination is an existing torch ZIP.
-    if path.exists():
-        path.unlink()
-    os.replace(temporary, path)
+    last_error: OSError | None = None
+    for attempt in range(8):
+        try:
+            if path.exists():
+                path.unlink()
+            os.replace(temporary, path)
+            return
+        except PermissionError as exc:
+            last_error = exc
+            time.sleep(0.10 * (attempt + 1))
+    raise PermissionError(f"检查点被其他进程占用，重试后仍无法替换: {path}") from last_error
 
 
 def move_to_device(batch: dict[str, Any], device: torch.device) -> dict[str, Any]:
