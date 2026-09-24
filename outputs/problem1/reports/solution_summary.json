@@ -1,0 +1,80 @@
+{
+  "successful_samples": 100,
+  "representative_sample": "-UacrmKiTn4$_$10",
+  "representative_selection_rule": "人脸检测率不低于 80% 的成功样本中，不确定性中位数附近的样本（该样本检测率 100%）。",
+  "mean_objective": 2.0354062302338956,
+  "mean_uncertainty": 0.3055062123292521,
+  "p90_uncertainty": 0.34435266113130236,
+  "max_uncertainty": 0.391137016476932,
+  "high_uncertainty_sample_count": 0,
+  "mean_uncertainty_by_modality": {
+    "text": 0.2100045128273462,
+    "audio": 0.4918853052925896,
+    "vision": 0.30280940127288036
+  },
+  "temporal_diagnostics_by_modality": {
+    "text": {
+      "mean_temporal_std_sec": 0.1790578485669637,
+      "mean_normalized_temporal_uncertainty": 0.3549602389641175,
+      "mean_weighted_90pct_span_sec": 0.6252428634819094,
+      "p90_weighted_90pct_span_sec": 0.7532580379494184,
+      "mean_peak_offset_sec": 0.17130025716388927,
+      "p90_peak_offset_sec": 0.31428915719759226
+    },
+    "audio": {
+      "mean_temporal_std_sec": 0.20971791023111602,
+      "mean_normalized_temporal_uncertainty": 0.3977331627691791,
+      "mean_weighted_90pct_span_sec": 0.5486808945250828,
+      "p90_weighted_90pct_span_sec": 0.8898025004211689,
+      "mean_peak_offset_sec": 0.2750250365582518,
+      "p90_peak_offset_sec": 0.49383289795093227
+    },
+    "vision": {
+      "mean_temporal_std_sec": 0.1720659196464153,
+      "mean_normalized_temporal_uncertainty": 0.3361133163744523,
+      "mean_weighted_90pct_span_sec": 0.5123668186366405,
+      "p90_weighted_90pct_span_sec": 0.591463992136173,
+      "mean_peak_offset_sec": 0.15870168701152665,
+      "p90_peak_offset_sec": 0.28001785673074847
+    }
+  },
+  "raw_sinkhorn_convergence_rate": 1.0,
+  "sample_sinkhorn_convergence_rate": 1.0,
+  "max_raw_marginal_residual": 9.998843436500107e-05,
+  "max_marginal_residual": 1.7687740161420606e-11,
+  "total_monotonic_violations": 0,
+  "total_preprojection_monotonic_violations": 206,
+  "acceptance_audit": {
+    "expected_samples": 100,
+    "processed_samples": 100,
+    "successful_samples": 100,
+    "sample_coverage_rate": 1.0,
+    "duplicate_sample_id_count": 0,
+    "missing_sample_ids": [],
+    "unexpected_sample_ids": [],
+    "feature_validation_passed": true,
+    "feature_validation_error_count": 0,
+    "feature_validation_warning_count": 16,
+    "feature_validation_warning_count_by_modality": {
+      "vision": 14,
+      "audio": 2
+    },
+    "mapping_audit_passed_samples": 100,
+    "mapping_audit_pass_rate": 1.0,
+    "mapping_error_count": 0,
+    "padding_violation_count": 0,
+    "global_errors": [],
+    "config_fingerprint": "e34cbeebe32846dbda19b1f0553c4c030d2eed75a455e3e69a2ca7f6bbb870a0",
+    "resolved_config_fingerprint_match": true,
+    "feature_config_fingerprint_match": true,
+    "overall_passed": true
+  },
+  "figures": {
+    "quality_overview": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\01_alignment_quality_overview.png",
+    "convergence": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\02_consensus_convergence.png",
+    "representative_heatmap": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\03_representative_alignment_heatmap.png",
+    "representative_validation": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\04_representative_sample_validation.png"
+  },
+  "representative_alignment_table": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\reports\\representative_sample_alignment.csv",
+  "representative_validation_report": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\reports\\representative_sample_validation.md"
+}
