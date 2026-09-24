@@ -2,13 +2,12 @@
   "project": {
     "name": "MRCD-Net",
     "seed": 2026,
-    "description": "Mask-aware Reliability-gated Complete-to-Missing Distillation Network"
+    "description": "Compact-BERT Text-Anchored Adaptive Expert Network"
   },
   "paths": {
     "preprocessed_root": "datasets/preprocessed_data/problem2",
     "output_root": "outputs/problem2",
-    "strategy_document": "strategy/problem2_modeling.md",
-    "privileged_text_init": "datasets/preprocessed_data/problem2/text_privileged_init.npz"
+    "strategy_document": "strategy/problem2_modeling.md"
   },
   "data": {
     "train_file": "train.npz",
@@ -16,8 +15,8 @@
     "test_file": "test.npz",
     "challenge_file": "challenge_aligned.npz",
     "mask_bank_file": "train_mask_bank.npz",
-    "batch_size": 96,
-    "eval_batch_size": 192,
+    "batch_size": 24,
+    "eval_batch_size": 64,
     "num_workers": 0,
     "pin_memory": true
   },
@@ -28,47 +27,72 @@
     "vision_dim": 35,
     "hidden_dim": 128,
     "fusion_dim": 192,
-    "text_layers": 2,
+    "text_pretrained_model": "google/bert_uncased_L-4_H-256_A-4",
+    "text_pretrained_revision": "43ca9bbcdffc2f4220d09f6e4fc48c28bfffeede",
+    "teacher_text_pretrained_model": "google-bert/bert-base-uncased",
+    "teacher_text_pretrained_revision": "main",
+    "text_pretrained": true,
+    "text_local_files_only": false,
+    "text_hidden_dim": 256,
+    "text_layers": 4,
     "text_heads": 4,
-    "dropout": 0.25,
+    "text_intermediate_dim": 1024,
+    "modality_layers": 1,
+    "modality_heads": 4,
+    "modality_intermediate_dim": 256,
+    "cross_attention_heads": 4,
+    "router_hidden_dim": 64,
+    "router_prior_strength": 1.5,
+    "dropout": 0.20,
     "num_classes": 3,
-    "gate_reliability_gamma": 0.80
-    ,"privileged_text_dim": 768,
-    "text_residual_weight": 0.65
+    "deployment_precision": "float16"
   },
   "training": {
-    "teacher_epochs": 30,
-    "text_distill_epochs": 15,
-    "student_epochs": 30,
-    "teacher_lr": 0.0003,
-    "text_distill_lr": 0.00025,
-    "student_lr": 0.000125,
+    "teacher_epochs": 12,
+    "text_distill_epochs": 10,
+    "student_epochs": 25,
+    "teacher_lr": 0.0002,
+    "teacher_text_lr": 0.00002,
+    "text_distill_lr": 0.00003,
+    "student_lr": 0.0001,
+    "student_text_lr": 0.00001,
+    "teacher_frozen_bottom_layers": 8,
+    "text_initial_frozen_layers": 2,
+    "text_freeze_epochs": 2,
+    "student_frozen_bottom_layers": 2,
+    "student_text_freeze_epochs": 2,
     "weight_decay": 0.0001,
     "gradient_clip": 1.0,
     "patience": 5,
     "min_delta": 0.0001,
-    "missing_view_probability": 0.50,
-    "synchronized_missing_probability": 0.40,
-    "synchronized_include_text": false,
+    "missing_view_probability": 0.60,
+    "synchronized_missing_probability": 0.65,
+    "trimodal_missing_probability": 0.10,
     "synchronized_rate_min": 0.15,
     "synchronized_rate_max": 0.40,
+    "multi_span_probability": 0.80,
+    "multi_span_count_min": 2,
+    "multi_span_count_max": 6,
+    "multi_span_length_max": 4,
     "class_weights": [1.1703, 1.4930, 0.6776],
     "loss_weights": {
       "classification": 1.0,
       "regression": 1.0,
       "correlation": 0.20,
       "coherence": 0.10,
-      "text_aux_classification": 0.35,
-      "text_aux_regression": 0.25,
-      "kd_classification": 0.80,
-      "kd_regression": 0.50,
-      "kd_feature": 0.30,
-      "kd_modality": 0.25,
-      "kd_relation": 0.10,
-      "kd_gate": 0.10
+      "uncertainty": 0.05,
+      "expert_aux_classification": 0.25,
+      "expert_aux_regression": 0.15,
+      "router_prior": 0.05,
+      "kd_classification": 0.60,
+      "kd_regression": 0.40,
+      "kd_token": 0.35,
+      "kd_cls": 0.25,
+      "kd_feature": 0.15,
+      "kd_relation": 0.10
     },
     "distillation_temperature": 2.0,
-    "distillation_warmup_epochs": 30
+    "distillation_warmup_epochs": 8
   },
   "evaluation": {
     "missing_rates": [0.10, 0.20, 0.30, 0.40, 0.48],
@@ -88,7 +112,7 @@
       ]
     },
     "stress_scenario": {
-      "pattern": "all_modalities",
+      "pattern": "audio_vision",
       "rate": 0.30,
       "position": "middle"
     }

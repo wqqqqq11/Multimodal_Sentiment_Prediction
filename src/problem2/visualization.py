@@ -140,11 +140,11 @@ def plot_challenge_predictions(frame: pd.DataFrame, path: Path) -> None:
     axes[0].set(title="附件3全量样本情感强度预测", ylabel="情感强度 [-3,3]")
     axes[0].legend()
     bottom = np.zeros(len(frame))
-    for key, label, color in (("gate_text", "文本门控", COLORS["text"]), ("gate_audio", "语音门控", COLORS["audio"]), ("gate_vision", "视觉门控", COLORS["vision"])):
+    for key, label, color in (("gate_text_expert", "文本专家", COLORS["text"]), ("gate_full_expert", "完整专家", COLORS["audio"]), ("gate_missing_expert", "缺失专家", COLORS["vision"])):
         axes[1].bar(x, frame[key], bottom=bottom, label=label, color=color)
         bottom += frame[key].to_numpy()
-    axes[1].set(title="附件3样本级模态门控权重", xlabel="附件3样本序号", ylabel="门控权重")
+    axes[1].set(title="附件3样本级专家路由权重", xlabel="附件3样本序号", ylabel="路由权重")
     axes[1].legend(ncol=3)
     axes[1].set_xticks(x, frame["sample_id"], rotation=90, fontsize=7)
-    text_dominance = float(frame["gate_text"].mean())
-    _save(fig, path, f"附件3共 {len(frame)} 条预测，平均文本门控权重为 {text_dominance:.3f}，模型会随缺失程度动态重分配权重。")
+    text_dominance = float(frame["gate_text_expert"].mean())
+    _save(fig, path, f"附件3共 {len(frame)} 条预测，平均文本专家权重为 {text_dominance:.3f}，模型会随缺失程度动态重分配权重。")

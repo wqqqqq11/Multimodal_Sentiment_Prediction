@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
-import numpy as np
 import torch
 
 from .config import load_config, resolve_paths
@@ -21,7 +20,7 @@ from .evaluation import (
 from .model import MRCDNet, count_parameters
 from .reporting import write_solution_report
 from .training import train_student, train_teacher, train_text_student
-from .utils import choose_device, create_run_directory, set_seed, setup_logger, write_json
+from .utils import atomic_torch_save, choose_device, create_run_directory, set_seed, setup_logger, write_json
 from .visualization import (
     plot_ablation,
     plot_challenge_predictions,
@@ -74,12 +73,21 @@ def _copy_submission_artifacts(run_dir: Path, output_root: Path) -> None:
     submission = output_root / "submission"
     submission.mkdir(parents=True, exist_ok=True)
     shutil.copy2(run_dir / "predictions" / "problem2_attachment3_predictions.csv", submission / "problem2_attachment3_predictions.csv")
-    shutil.copy2(run_dir / "checkpoints" / "student_best.pt", submission / "problem2_student_best.pt")
+    checkpoint = torch.load(run_dir / "checkpoints" / "student_best.pt", map_location="cpu", weights_only=False)
+    checkpoint["model_state"] = {
+        key: value.half() if torch.is_floating_point(value) else value
+        for key, value in checkpoint["model_state"].items()
+    }
+    checkpoint["precision"] = "float16"
+    model_path = submission / "problem2_student_best_fp16.pt"
+    atomic_torch_save(checkpoint, model_path)
+    if model_path.stat().st_size > 50 * 1024 * 1024:
+        raise ValueError(f"FP16部署权重超过50MB限制: {model_path.stat().st_size / 1024**2:.2f}MB")
     shutil.copy2(run_dir / "resolved_config.json", submission / "problem2_model_config.json")
     (submission / "README.md").write_text(
         "# 问题2提交材料\n\n"
         "- `problem2_attachment3_predictions.csv`：附件3共30条预测。\n"
-        "- `problem2_student_best.pt`：MRCD-Net学生模型参数。\n"
+        "- `problem2_student_best_fp16.pt`：紧凑BERT学生模型FP16参数。\n"
         "- `problem2_model_config.json`：复现实验配置。\n\n"
         "主结果列：`id`、`sentiment_polarity`（Negative/Neutral/Positive）、`sentiment_intensity`（[-3,3]）。\n",
         encoding="utf-8",
@@ -115,35 +123,22 @@ def run_solution(
             len(datasets["train"]), len(datasets["valid"]), len(datasets["test"]), len(datasets["challenge"]), cfg["data"]["num_workers"],
         )
         logger.info("[步骤2/4 参数初始化] seed=%d device=%s", cfg["project"]["seed"], device)
-        teacher = MRCDNet(cfg["model"], privileged_text=True).to(device)
-        student = MRCDNet(cfg["model"], privileged_text=False).to(device)
-        privileged_path = Path(cfg["paths"]["privileged_text_init"])
-        if not privileged_path.is_file():
-            raise FileNotFoundError(f"缺少P0特权文本初始化文件，请重新运行问题2预处理: {privileged_path}")
-        with np.load(privileged_path, allow_pickle=False) as privileged:
-            projection = torch.from_numpy(privileged["projection"]).to(device)
-            prototypes = torch.from_numpy(privileged["token_prototypes"]).to(device)
-            raw_prototypes = torch.from_numpy(privileged["token_prototypes_raw"]).to(device)
-            token_counts = torch.from_numpy(privileged["token_counts"]).to(device)
-        teacher.initialize_privileged_text(projection)
-        student.initialize_privileged_text(projection)
-        student.initialize_student_tokens(prototypes, token_counts)
+        teacher = MRCDNet(cfg["model"], text_model_name=str(cfg["model"]["teacher_text_pretrained_model"])).to(device)
+        student = MRCDNet(cfg["model"], text_model_name=str(cfg["model"]["text_pretrained_model"])).to(device)
         parameter_count, trainable_count = count_parameters(student)
-        logger.info("MRCD-Net 参数：total=%s trainable=%s", f"{parameter_count:,}", f"{trainable_count:,}")
+        logger.info(
+            "新主模型参数：total=%s trainable=%s；teacher=%s；student=%s",
+            f"{parameter_count:,}", f"{trainable_count:,}", cfg["model"]["teacher_text_pretrained_model"], cfg["model"]["text_pretrained_model"],
+        )
         logger.info("[步骤3/4 模型调用] 开始训练完整教师")
         teacher_history = train_teacher(teacher, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
+        student_state = student.state_dict()
         transferable = {
             key: value for key, value in teacher.state_dict().items()
-            if not key.startswith("text_encoder.") and not key.startswith("privileged_text_encoder.")
+            if not key.startswith("text_encoder.") and key in student_state and value.shape == student_state[key].shape
         }
         student.load_state_dict(transferable, strict=False)
-        with torch.no_grad():
-            mapped_parts = []
-            for start in range(0, raw_prototypes.shape[0], 2048):
-                mapped_parts.append(teacher.privileged_text_encoder(raw_prototypes[start:start + 2048]).float())
-            final_teacher_prototypes = torch.cat(mapped_parts, dim=0)
-        student.initialize_student_tokens(final_teacher_prototypes, token_counts)
-        logger.info("P0文本特权蒸馏：赛方预计算text教师 -> 可部署text_bert学生")
+        logger.info("文本多层蒸馏：完整BERT token/CLS/概率 -> 四层紧凑BERT")
         text_history = train_text_student(student, teacher, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
         logger.info("开始训练缺失学生：由最佳教师初始化并执行完整—缺失一致性蒸馏")
         student_history = train_student(student, teacher, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)

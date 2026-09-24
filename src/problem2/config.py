@@ -41,6 +41,16 @@ def validate_config(cfg: dict[str, Any]) -> None:
     probability = float(cfg["training"]["missing_view_probability"])
     if not 0.0 <= probability <= 1.0:
         raise ConfigError("missing_view_probability 必须在 [0,1]")
+    synchronized = float(cfg["training"].get("synchronized_missing_probability", 0.0))
+    trimodal = float(cfg["training"].get("trimodal_missing_probability", 0.0))
+    if synchronized < 0.0 or trimodal < 0.0 or synchronized + trimodal > 1.0:
+        raise ConfigError("同步音视频与三模态缺失概率之和必须在 [0,1]")
+    for key in (
+        "text_pretrained_model", "text_pretrained_revision",
+        "teacher_text_pretrained_model", "teacher_text_pretrained_revision",
+    ):
+        if not str(cfg["model"].get(key, "")).strip():
+            raise ConfigError(f"model.{key} 不能为空")
     temperature = float(cfg["training"]["distillation_temperature"])
     if temperature <= 0:
         raise ConfigError("distillation_temperature 必须大于 0")
@@ -68,7 +78,7 @@ def validate_config(cfg: dict[str, Any]) -> None:
 
 def resolve_paths(cfg: dict[str, Any], project_root: Path) -> dict[str, Any]:
     result = deepcopy(cfg)
-    for key in ("preprocessed_root", "output_root", "strategy_document", "privileged_text_init"):
+    for key in ("preprocessed_root", "output_root", "strategy_document"):
         value = Path(result["paths"][key])
         result["paths"][key] = str(value if value.is_absolute() else (project_root / value).resolve())
     return result

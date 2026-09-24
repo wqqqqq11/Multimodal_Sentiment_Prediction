@@ -21,7 +21,7 @@ def write_solution_report(
 
 ## 1 运行结论
 
-本次运行 `{run_id}` 完成了完整教师训练、缺失学生蒸馏、验证集稳健性实验、消融实验、独立测试集评价以及附件3全量推理。模型参数量为 {parameter_count:,}，计算设备为 `{device}`。
+本次运行 `{run_id}` 完成了完整BERT教师训练、四层紧凑BERT多层蒸馏、自适应专家学生训练、验证集稳健性实验、消融实验、独立测试集评价以及附件3全量推理。部署模型参数量为 {parameter_count:,}，计算设备为 `{device}`。
 
 | 数据划分 | Accuracy | Macro-F1 | MAE | Pearson |
 |---|---:|---:|---:|---:|
@@ -40,13 +40,13 @@ def write_solution_report(
 
 ### 2.2 参数初始化
 
-固定 NumPy、PyTorch 和 CUDA 随机种子；创建独立教师与学生网络。教师先在完整样本上训练，学生以教师最优权重作为初始化。
+固定 NumPy、PyTorch 和 CUDA 随机种子；创建完整BERT教师与四层紧凑BERT学生。先冻结文本底层，再逐层解冻；教师的词元表示、CLS表示和输出概率共同监督学生。
 
-注意：缺失视图采样概率必须在 [0,1]；蒸馏温度必须大于0；全部损失系数必须非负。门控可靠性系数越大，模型越抑制高缺失模态，应在验证集内调试。
+注意：缺失视图采样概率必须在 [0,1]；蒸馏温度必须大于0；全部损失系数必须非负。路由先验强度只在附件2验证集内调试。
 
 ### 2.3 模型调用
 
-教师优化分类、回归、相关性与极性一致性损失。学生在经验分布连续遮蔽样本上，同时优化真实标签监督损失以及分类概率、回归值、融合表示、样本关系和门控贡献蒸馏损失。早停指标取完整验证场景与语音视觉同时缺失20%场景综合分数。
+文本保留50步上下文；音频和视觉经轻量时序Transformer编码后，作为Key/Value接受文本Query的局部交叉注意力。缺失位置不进入Key/Value。文本、完整多模态和同步缺失三个共享骨干专家由可用率、缺失片段统计、预测熵、回归不确定度和音视频同步度共同路由。学生同时优化真实标签监督及分类、回归、token、CLS、融合表示和样本关系蒸馏损失。
 
 注意：梯度裁剪阈值需大于0；蒸馏权重采用预热，避免训练初期错误教师信号主导；显存不足时优先下调 batch size，不改变序列接口。
 
@@ -65,7 +65,8 @@ def write_solution_report(
 - `logs/train.log`：含时间戳的完整训练日志。
 - `checkpoints/teacher_best.pt` 与 `student_best.pt`：最优模型参数。
 - `predictions/problem2_attachment3_predictions.csv`：附件3竞赛预测主文件。
-- `predictions/problem2_attachment3_diagnostics.csv`：概率、门控与可用率诊断文件，不作为主提交文件。
+- `predictions/problem2_attachment3_diagnostics.csv`：概率、专家路由、不确定度与可用率诊断文件，不作为主提交文件。
+- `outputs/problem2/submission/problem2_student_best_fp16.pt`：最终FP16部署权重，导出时强制检查不超过50MB。
 - `metrics/*.csv|json`：性能、消融、稳健性和错误归因结果。
 - `figures/*.png`：训练、缺失规律、消融和全量预测可视化。
 """

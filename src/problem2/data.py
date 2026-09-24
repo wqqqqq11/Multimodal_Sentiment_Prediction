@@ -94,6 +94,11 @@ def _longest_run(mask: torch.Tensor) -> torch.Tensor:
     return longest
 
 
+def _segment_count(mask: torch.Tensor) -> torch.Tensor:
+    previous = torch.cat((torch.zeros_like(mask[:, :1]), mask[:, :-1]), dim=1)
+    return (mask & ~previous).sum(dim=1).float()
+
+
 def reliability_features(batch: dict[str, torch.Tensor]) -> torch.Tensor:
     content = batch["content_mask"].bool()
     denominator = content.sum(dim=1).clamp_min(1).float()
@@ -119,8 +124,11 @@ def reliability_features(batch: dict[str, torch.Tensor]) -> torch.Tensor:
         begin = (missing & (valid_rank <= 1.0 / 3.0)).sum(dim=1).float() / denominator
         middle = (missing & (valid_rank > 1.0 / 3.0) & (valid_rank <= 2.0 / 3.0)).sum(dim=1).float() / denominator
         end = (missing & (valid_rank > 2.0 / 3.0)).sum(dim=1).float() / denominator
+        segments = _segment_count(missing) / denominator
         longest = _longest_run(missing) / denominator
-        modality_features.append(torch.stack((observed_ratio, natural_ratio, missing_ratio, quality, begin, middle, end, longest), dim=1))
+        modality_features.append(
+            torch.stack((observed_ratio, natural_ratio, missing_ratio, quality, begin, middle, end, segments, longest), dim=1)
+        )
     return torch.stack(modality_features, dim=1)
 
 
@@ -129,8 +137,13 @@ def apply_random_mask_view(
     probability: float,
     generator: torch.Generator | None = None,
     synchronized_probability: float = 0.0,
+    trimodal_probability: float = 0.0,
     synchronized_rate_min: float = 0.20,
     synchronized_rate_max: float = 0.40,
+    multi_span_probability: float = 0.0,
+    multi_span_count_min: int = 2,
+    multi_span_count_max: int = 6,
+    multi_span_length_max: int = 4,
 ) -> dict[str, Any]:
     if "synthetic_missing_mask_bank" not in batch:
         raise KeyError("训练批次缺少 synthetic_missing_mask_bank")
@@ -140,28 +153,45 @@ def apply_random_mask_view(
     choices = torch.randint(bank_size, (batch_size,), generator=generator, device=bank.device)
     selected = bank[torch.arange(batch_size, device=bank.device), choices]
     use_missing = torch.rand(batch_size, generator=generator, device=bank.device) < probability
-    selected = selected & use_missing[:, None, None]
+    kind_draw = torch.rand(batch_size, generator=generator, device=bank.device)
+    use_trimodal = (kind_draw < trimodal_probability) & use_missing
     use_synchronized = (
-        torch.rand(batch_size, generator=generator, device=bank.device) < synchronized_probability
-    ) & use_missing
-    selected = selected & ~use_synchronized[:, None, None]
+        (kind_draw >= trimodal_probability)
+        & (kind_draw < trimodal_probability + synchronized_probability)
+        & use_missing
+    )
+    use_independent = use_missing & ~use_trimodal & ~use_synchronized
+    selected = selected & use_independent[:, None, None]
     synchronized = torch.zeros((batch_size, bank.shape[-1]), dtype=torch.bool, device=bank.device)
     for row in range(batch_size):
-        if not bool(use_synchronized[row]):
+        if not bool(use_synchronized[row] or use_trimodal[row]):
             continue
         ratio = float(torch.empty(1).uniform_(synchronized_rate_min, synchronized_rate_max, generator=generator))
-        position_id = int(torch.randint(3, (1,), generator=generator))
-        position = ("begin", "middle", "end")[position_id]
-        synchronized[row] = _absolute_content_span(batch["content_mask"][row].bool(), ratio, position)
-    text_artificial = synchronized & batch["text_observed_mask"].bool()
+        use_multi = float(torch.rand(1, generator=generator)) < multi_span_probability
+        if use_multi:
+            synchronized[row] = _random_multi_span(
+                batch["content_mask"][row].bool(), ratio, generator,
+                multi_span_count_min, multi_span_count_max, multi_span_length_max,
+            )
+        else:
+            position_id = int(torch.randint(3, (1,), generator=generator))
+            position = ("begin", "middle", "end")[position_id]
+            synchronized[row] = _absolute_content_span(batch["content_mask"][row].bool(), ratio, position)
+    text_shared = synchronized & use_trimodal[:, None]
+    text_artificial = (selected[:, 0] | text_shared) & batch["text_observed_mask"].bool()
     output["input_ids"] = batch["input_ids"].clone().masked_fill(text_artificial, 103)
     output["text_observed_mask"] = batch["text_observed_mask"].bool() & ~text_artificial
     output["text_missing_mask"] = batch["text_missing_mask"].bool() | text_artificial
+    shared_rows = use_synchronized | use_trimodal
+    shared_total_missing = (
+        batch["audio_missing_mask"].bool() | batch["vision_missing_mask"].bool() | synchronized
+    )
     for channel, modality in ((1, "audio"), (2, "vision")):
         artificial = (selected[:, channel] | synchronized) & batch[f"{modality}_observed_mask"].bool()
         prior_missing = batch[f"{modality}_missing_mask"].bool()
         total_missing = prior_missing | artificial
-        observed = batch[f"{modality}_observed_mask"].bool() & ~artificial
+        total_missing = torch.where(shared_rows[:, None], shared_total_missing, total_missing)
+        observed = batch[f"{modality}_observed_mask"].bool() & ~total_missing
         values = batch[modality].clone()
         values = values.masked_fill(total_missing.unsqueeze(-1), 0.0)
         output[modality] = values
@@ -169,6 +199,37 @@ def apply_random_mask_view(
         output[f"{modality}_missing_mask"] = total_missing
     output["modality_reliability"] = reliability_features(output)
     return output
+
+
+def _random_multi_span(
+    content: torch.Tensor,
+    rate: float,
+    generator: torch.Generator | None,
+    count_min: int,
+    count_max: int,
+    length_max: int,
+) -> torch.Tensor:
+    """Generate several short synchronized segments, matching Attachment 3 more closely."""
+    result = torch.zeros_like(content, dtype=torch.bool)
+    indexes = torch.where(content)[0]
+    if indexes.numel() <= 1 or rate <= 0:
+        return result
+    target = min(max(int(round(float(indexes.numel()) * rate)), 1), int(indexes.numel()) - 1)
+    span_count = int(torch.randint(count_min, count_max + 1, (1,), generator=generator))
+    attempts = 0
+    while int((result & content).sum()) < target and attempts < span_count * 8:
+        start_index = int(torch.randint(int(indexes.numel()), (1,), generator=generator))
+        length = int(torch.randint(1, max(int(length_max), 1) + 1, (1,), generator=generator))
+        start = int(indexes[start_index])
+        result[start:start + length] = True
+        result &= content
+        attempts += 1
+    if int(result.sum()) > target:
+        chosen = torch.where(result)[0]
+        keep = chosen[torch.randperm(chosen.numel(), generator=generator)[:target]]
+        result.zero_()
+        result[keep] = True
+    return result
 
 
 def apply_fixed_scenario(

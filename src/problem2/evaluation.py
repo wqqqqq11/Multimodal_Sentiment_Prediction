@@ -26,6 +26,7 @@ def predict(
     logits: list[np.ndarray] = []
     regressions: list[np.ndarray] = []
     gates: list[np.ndarray] = []
+    uncertainties: list[np.ndarray] = []
     reliabilities: list[np.ndarray] = []
     labels_cls: list[np.ndarray] = []
     labels_reg: list[np.ndarray] = []
@@ -40,19 +41,23 @@ def predict(
         logits.append(outputs["logits"].float().cpu().numpy())
         regressions.append(outputs["regression"].float().cpu().numpy())
         gates.append(outputs["gates"].float().cpu().numpy())
+        uncertainties.append(torch.exp(0.5 * outputs["log_variance"]).float().cpu().numpy())
         reliabilities.append(outputs["reliability"].float().cpu().numpy())
         if "classification_labels" in batch:
             labels_cls.append(batch["classification_labels"].cpu().numpy())
             labels_reg.append(batch["regression_labels"].cpu().numpy())
     logit_values = np.concatenate(logits)
     probabilities = _softmax(logit_values)
+    raw_regression = np.concatenate(regressions)
     result: dict[str, Any] = {
         "sample_id": np.asarray(sample_ids),
         "raw_text": np.asarray(raw_texts) if raw_texts else None,
         "logits": logit_values,
         "probabilities": probabilities,
         "prediction_class": probabilities.argmax(axis=1),
-        "prediction_regression": np.concatenate(regressions),
+        "prediction_regression": np.clip(raw_regression, -3.0, 3.0),
+        "prediction_regression_raw": raw_regression,
+        "regression_uncertainty": np.concatenate(uncertainties),
         "gates": np.concatenate(gates),
         "reliability": np.concatenate(reliabilities),
     }
@@ -80,9 +85,10 @@ def prediction_frame(result: dict[str, Any], include_labels: bool = True) -> pd.
         "prob_negative": result["probabilities"][:, 0],
         "prob_neutral": result["probabilities"][:, 1],
         "prob_positive": result["probabilities"][:, 2],
-        "gate_text": result["gates"][:, 0],
-        "gate_audio": result["gates"][:, 1],
-        "gate_vision": result["gates"][:, 2],
+        "gate_text_expert": result["gates"][:, 0],
+        "gate_full_expert": result["gates"][:, 1],
+        "gate_missing_expert": result["gates"][:, 2],
+        "regression_uncertainty": result["regression_uncertainty"],
         "observed_text_ratio": result["reliability"][:, 0, 0],
         "observed_audio_ratio": result["reliability"][:, 1, 0],
         "observed_vision_ratio": result["reliability"][:, 2, 0],

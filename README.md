@@ -164,6 +164,8 @@ python data_progressing/problem1_preprocess.py
 python data_progressing/problem2_preprocess.py --overwrite
 python data_progressing/problem2_validate.py
 python -m pytest tests/problem2 -q
+# 数据准备完成后，由你自行启动正式训练：
+python scripts/problem2/solve_problem2.py --device cuda
 ```
 
 代码与配置：
@@ -172,7 +174,9 @@ python -m pytest tests/problem2 -q
 - `data_progressing/problem2/`：掩码、缩放、质量特征、预处理和验收实现；
 - `data_progressing/problem2_preprocess.py`：全量预处理入口；
 - `data_progressing/problem2_validate.py`：独立验收入口；
-- `tests/problem2/`：掩码语义、异常值处理和数据契约测试；
+- `configs/problem2_model.yaml`：完整BERT教师、四层紧凑BERT、局部交叉注意力、三专家路由及训练参数；
+- `src/problem2/`：主模型、多层蒸馏、同步多片段缺失增强、评估与FP16导出；
+- `tests/problem2/`：掩码语义、模型前向、损失可微性、异常值处理和数据契约测试；
 - `strategy/problem2_modeling.md`：问题二变量、假设、公式推导、训练求解、缺失规律分析与模型接入说明。
 
-主要数据产物位于`datasets/preprocessed_data/problem2/`，审计报告位于`outputs/problem2/preprocessing/`。训练输入不使用附件2独有的768维`text`字段，从而保证与附件3字段同构。
+主要数据产物位于`datasets/preprocessed_data/problem2/`，审计报告位于`outputs/problem2/preprocessing/`。部署输入不使用附件2独有的768维`text`字段，而是由兼容现有三字段接口的四层预训练BERT直接编码；完整BERT仅在离线训练阶段作为教师。两套骨干均强制加载`safetensors`，兼容现有PyTorch 2.5环境且不经过旧式pickle权重。
