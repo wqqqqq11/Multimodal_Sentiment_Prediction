@@ -52,7 +52,7 @@
   "privileged_text": {
     "enabled": true,
     "vocab_size": 30522,
-    "hidden_dim": 96,
+    "hidden_dim": 128,
     "initialization_file": "text_privileged_init.npz"
   },
   "output": {

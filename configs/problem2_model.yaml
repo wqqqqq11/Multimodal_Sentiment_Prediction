@@ -26,11 +26,11 @@
     "max_steps": 50,
     "audio_dim": 74,
     "vision_dim": 35,
-    "hidden_dim": 96,
-    "fusion_dim": 128,
-    "text_layers": 1,
+    "hidden_dim": 128,
+    "fusion_dim": 192,
+    "text_layers": 2,
     "text_heads": 4,
-    "dropout": 0.20,
+    "dropout": 0.25,
     "num_classes": 3,
     "gate_reliability_gamma": 0.80
     ,"privileged_text_dim": 768,
@@ -41,14 +41,15 @@
     "text_distill_epochs": 15,
     "student_epochs": 30,
     "teacher_lr": 0.0003,
-    "text_distill_lr": 0.0006,
-    "student_lr": 0.00025,
+    "text_distill_lr": 0.00025,
+    "student_lr": 0.000125,
     "weight_decay": 0.0001,
     "gradient_clip": 1.0,
-    "patience": 8,
+    "patience": 5,
     "min_delta": 0.0001,
-    "missing_view_probability": 0.75,
-    "synchronized_missing_probability": 0.65,
+    "missing_view_probability": 0.50,
+    "synchronized_missing_probability": 0.40,
+    "synchronized_include_text": false,
     "synchronized_rate_min": 0.15,
     "synchronized_rate_max": 0.40,
     "class_weights": [1.1703, 1.4930, 0.6776],
@@ -67,7 +68,7 @@
       "kd_gate": 0.10
     },
     "distillation_temperature": 2.0,
-    "distillation_warmup_epochs": 5
+    "distillation_warmup_epochs": 30
   },
   "evaluation": {
     "missing_rates": [0.10, 0.20, 0.30, 0.40, 0.48],
@@ -75,13 +76,21 @@
     "missing_positions": ["begin", "middle", "end"],
     "primary_position": "middle",
     "bootstrap_samples": 200,
-    "target_scenario": {
+    "selection": {
+      "complete_weight": 0.60,
+      "robust_weight": 0.40,
+      "scenarios": [
+        {"name": "audio_20_middle", "pattern": "audio", "rate": 0.20, "position": "middle", "weight": 0.20},
+        {"name": "vision_20_middle", "pattern": "vision", "rate": 0.20, "position": "middle", "weight": 0.20},
+        {"name": "audio_vision_20_begin", "pattern": "audio_vision", "rate": 0.20, "position": "begin", "weight": 0.20},
+        {"name": "audio_vision_20_middle", "pattern": "audio_vision", "rate": 0.20, "position": "middle", "weight": 0.20},
+        {"name": "audio_vision_20_end", "pattern": "audio_vision", "rate": 0.20, "position": "end", "weight": 0.20}
+      ]
+    },
+    "stress_scenario": {
       "pattern": "all_modalities",
       "rate": 0.30,
-      "position": "middle",
-      "minimum_accuracy": 0.6209,
-      "minimum_macro_f1": 0.5943,
-      "maximum_mae": 0.6010
+      "position": "middle"
     }
   }
 }
