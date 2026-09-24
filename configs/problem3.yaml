@@ -1,0 +1,58 @@
+{
+  "project": {
+    "name": "problem3_sparse_evidence_preprocessing",
+    "version": "1.1.0-official-tokenizer",
+    "seed": 2026
+  },
+  "paths": {
+    "problem2_preprocessed_root": "datasets/preprocessed_data/problem2",
+    "dataset04_aligned_dir": "datasets/original_data_from_the_competition_organizer/dataset04/aligned",
+    "dataset04_unaligned_dir": "datasets/original_data_from_the_competition_organizer/dataset04/unaligned",
+    "preprocessed_root": "datasets/preprocessed_data/problem3",
+    "output_root": "outputs/problem3"
+  },
+  "data": {
+    "version": "aligned",
+    "max_steps": 50,
+    "audio_dim": 74,
+    "vision_dim": 35,
+    "zero_epsilon": 1e-8,
+    "expected_dataset04_samples": 20
+  },
+  "tokenizer": {
+    "name": "google-bert/bert-base-uncased",
+    "revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+    "local_files_only": true,
+    "max_length": 50
+  },
+  "mapping": {
+    "primary_method": "official_wordpiece_offset_then_proportional_time",
+    "fallback_confidence": 0.35,
+    "decode_video_metadata": true
+  },
+  "prototype": {
+    "max_positions_per_sample_modality": 8,
+    "intensity_bins": [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0]
+  },
+  "counterfactual": {
+    "validation_repeats": 3,
+    "gaussian_noise_std": 0.02,
+    "time_jitter_steps": 1,
+    "non_evidence_mask_ratio": 0.05,
+    "mask_token_id": 103
+  },
+  "repair": {
+    "sample_id": "13",
+    "minimum_median_cosine": 0.80,
+    "maximum_mse_quantile": 0.95
+  },
+  "output": {
+    "compressed": true,
+    "overwrite": true
+  },
+  "validation": {
+    "expected_split_counts": {"train": 3395, "valid": 728, "test": 727},
+    "require_finite": true,
+    "require_problem2_scaler_hash": true
+  }
+}

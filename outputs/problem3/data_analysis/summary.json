@@ -1,0 +1,19 @@
+{
+  "sample_counts": {
+    "train": 3395,
+    "valid": 728,
+    "test": 727,
+    "attachment4": 20
+  },
+  "attachment4_truncated_ids": [
+    "07",
+    "18"
+  ],
+  "attachment4_visual_failure_ids": [
+    "13"
+  ],
+  "attachment4_duplicate_text_matches": 5,
+  "prototype_candidates": 78212,
+  "mapping_caveat": "Time/frame evidence uses a proportional fallback and must be reported as low-confidence.",
+  "modeling_boundary": "This analysis creates no classifier, regressor, selector, or fusion model."
+}
