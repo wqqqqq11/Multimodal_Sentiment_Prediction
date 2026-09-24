@@ -29,6 +29,30 @@ def _epoch_average(sums: dict[str, float], batches: int) -> dict[str, float]:
     return {key: value / max(batches, 1) for key, value in sums.items()}
 
 
+def _scenario(spec: dict[str, Any]) -> tuple[str, float, str]:
+    return (str(spec["pattern"]), float(spec["rate"]), str(spec["position"]))
+
+
+def _stress_scenario(cfg: dict[str, Any]) -> tuple[str, float, str]:
+    return _scenario(cfg["evaluation"]["stress_scenario"])
+
+
+def _selection_score(
+    model: nn.Module,
+    valid_loader: DataLoader[dict[str, Any]],
+    device: torch.device,
+    cfg: dict[str, Any],
+) -> tuple[float, dict[str, Any], dict[str, Any]]:
+    selection = cfg["evaluation"]["selection"]
+    complete = predict(model, valid_loader, device)
+    robust = 0.0
+    for spec in selection["scenarios"]:
+        metrics = predict(model, valid_loader, device, _scenario(spec))["metrics"]
+        robust += float(spec["weight"]) * float(metrics["selection_score"])
+    score = float(selection["complete_weight"]) * float(complete["metrics"]["selection_score"]) + float(selection["robust_weight"]) * robust
+    return score, complete["metrics"], predict(model, valid_loader, device, _stress_scenario(cfg))["metrics"]
+
+
 def _checkpoint(model: nn.Module, epoch: int, metrics: dict[str, Any], path: Path) -> None:
     atomic_torch_save({
         "epoch": epoch,
@@ -140,8 +164,7 @@ def train_text_student(
     best_score = -float("inf")
     stale = 0
     checkpoint_path = run_dir / "checkpoints" / "text_student_best.pt"
-    target_cfg = cfg["evaluation"]["target_scenario"]
-    scenario = (str(target_cfg["pattern"]), float(target_cfg["rate"]), str(target_cfg["position"]))
+    scenario = _stress_scenario(cfg)
     for epoch in range(1, int(train_cfg["text_distill_epochs"]) + 1):
         started = time.perf_counter()
         student.train()
@@ -283,11 +306,7 @@ def train_student(
                 sums[key] += float(value.detach())
             batches += 1
         scheduler.step()
-        complete = predict(student, valid_loader, device)
-        target_cfg = cfg["evaluation"]["target_scenario"]
-        missing = predict(student, valid_loader, device, (str(target_cfg["pattern"]), float(target_cfg["rate"]), str(target_cfg["position"])))
-        complete_metrics, missing_metrics = complete["metrics"], missing["metrics"]
-        robust_score = 0.5 * float(complete_metrics["selection_score"]) + 0.5 * float(missing_metrics["selection_score"])
+        robust_score, complete_metrics, missing_metrics = _selection_score(student, valid_loader, device, cfg)
         row = {
             "stage": "student", "epoch": epoch, "lr": optimizer.param_groups[0]["lr"],
             "distillation_scale": distillation_scale,

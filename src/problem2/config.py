@@ -50,6 +50,20 @@ def validate_config(cfg: dict[str, Any]) -> None:
     for rate in cfg["evaluation"]["missing_rates"]:
         if not 0.0 <= float(rate) < 1.0:
             raise ConfigError(f"缺失率必须在 [0,1): {rate}")
+    evaluation = cfg["evaluation"]
+    if "stress_scenario" not in evaluation:
+        raise ConfigError("evaluation.stress_scenario 缺失")
+    for key in ("pattern", "rate", "position"):
+        if key not in evaluation["stress_scenario"]:
+            raise ConfigError(f"evaluation.stress_scenario 缺少 {key}")
+    if "selection" not in evaluation:
+        raise ConfigError("evaluation.selection 缺失")
+    selection = evaluation["selection"]
+    for key in ("complete_weight", "robust_weight", "scenarios"):
+        if key not in selection:
+            raise ConfigError(f"evaluation.selection 缺少 {key}")
+    if not selection["scenarios"]:
+        raise ConfigError("evaluation.selection.scenarios 不能为空")
 
 
 def resolve_paths(cfg: dict[str, Any], project_root: Path) -> dict[str, Any]:

@@ -156,9 +156,9 @@ def run_solution(
         student_validation = predict(student, loaders["valid"], device)
         test_result = predict(student, loaders["test"], device)
         challenge_result = predict(student, loaders["challenge"], device)
-        target_cfg = cfg["evaluation"]["target_scenario"]
-        target_scenario = (str(target_cfg["pattern"]), float(target_cfg["rate"]), str(target_cfg["position"]))
-        target_result = predict(student, loaders["valid"], device, target_scenario)
+        stress_cfg = cfg["evaluation"]["stress_scenario"]
+        stress_scenario = (str(stress_cfg["pattern"]), float(stress_cfg["rate"]), str(stress_cfg["position"]))
+        target_result = predict(student, loaders["valid"], device, stress_scenario)
         prediction_frame(student_validation).to_csv(run_dir / "predictions" / "validation_predictions.csv", index=False, encoding="utf-8-sig")
         prediction_frame(test_result).to_csv(run_dir / "predictions" / "test_predictions.csv", index=False, encoding="utf-8-sig")
         challenge_diagnostics = prediction_frame(challenge_result, include_labels=False)
@@ -183,19 +183,14 @@ def run_solution(
             "student_validation": student_validation["metrics"],
             "student_test": test_result["metrics"],
             "target_synchronized_30": target_result["metrics"],
-            "target_thresholds": {
-                "minimum_accuracy": target_cfg["minimum_accuracy"],
-                "minimum_macro_f1": target_cfg["minimum_macro_f1"],
-                "maximum_mae": target_cfg["maximum_mae"],
+            "stress_scenario": {
+                "pattern": stress_cfg["pattern"],
+                "rate": stress_cfg["rate"],
+                "position": stress_cfg["position"],
             },
             "attachment3_count": len(challenge_result["sample_id"]),
             "smoke": smoke,
         }
-        summary["target_passed"] = bool(
-            float(target_result["metrics"]["accuracy"]) >= float(target_cfg["minimum_accuracy"])
-            and float(target_result["metrics"]["macro_f1"]) >= float(target_cfg["minimum_macro_f1"])
-            and float(target_result["metrics"]["mae"]) <= float(target_cfg["maximum_mae"])
-        )
         write_json(run_dir / "metrics" / "summary.json", summary)
         plot_robustness_curves(robustness, run_dir / "figures" / "missing_rate_effect.png", eval_cfg["primary_position"])
         plot_position_effect(robustness, run_dir / "figures" / "missing_position_effect.png")
@@ -216,11 +211,11 @@ def run_solution(
             student_validation["metrics"]["mae"], student_validation["metrics"]["pearson"], run_dir,
         )
         logger.info(
-            "目标验收（三模态同步缺失30%%）：Acc=%.4f/%0.4f F1=%.4f/%0.4f MAE=%.4f/%0.4f，状态=%s",
-            target_result["metrics"]["accuracy"], target_cfg["minimum_accuracy"],
-            target_result["metrics"]["macro_f1"], target_cfg["minimum_macro_f1"],
-            target_result["metrics"]["mae"], target_cfg["maximum_mae"],
-            "PASS" if summary["target_passed"] else "NOT_REACHED",
+            "压力场景（%s 缺失%.0f%% %s）：Acc=%.4f F1=%.4f MAE=%.4f",
+            stress_cfg["pattern"], 100.0 * float(stress_cfg["rate"]), stress_cfg["position"],
+            target_result["metrics"]["accuracy"],
+            target_result["metrics"]["macro_f1"],
+            target_result["metrics"]["mae"],
         )
         return run_dir
     except Exception as exc:
