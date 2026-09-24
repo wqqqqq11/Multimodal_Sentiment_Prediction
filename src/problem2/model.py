@@ -236,10 +236,13 @@ class ExpertHead(nn.Module):
 
 
 class ExpertRouter(nn.Module):
-    def __init__(self, cfg: dict[str, Any]) -> None:
+    def __init__(self, cfg: dict[str, Any], task: str) -> None:
         super().__init__()
+        if task not in {"classification", "regression"}:
+            raise ValueError(f"未知路由任务: {task}")
+        self.task = task
         hidden = int(cfg.get("router_hidden_dim", 64))
-        self.prior_strength = float(cfg.get("router_prior_strength", 1.5))
+        self.prior_strength = float(cfg.get(f"{task}_router_prior_strength", cfg.get("router_prior_strength", 1.5)))
         self.network = nn.Sequential(
             nn.Linear(35, hidden), nn.LayerNorm(hidden), nn.GELU(), nn.Dropout(float(cfg["dropout"])), nn.Linear(hidden, 3)
         )
@@ -259,8 +262,12 @@ class ExpertRouter(nn.Module):
         availability = reliability[:, :, 0]
         audio_visual_availability = availability[:, 1:].mean(dim=1)
         missing_degree = 1.0 - audio_visual_availability
-        prior_text = (0.15 + missing_degree).clamp_max(1.0)
-        prior_full = (0.1 + audio_visual_availability * (1.0 - synchrony * missing_degree)).clamp_max(1.0)
+        if self.task == "classification":
+            prior_text = (0.45 + 0.55 * missing_degree).clamp_max(1.0)
+            prior_full = (0.45 + 0.35 * audio_visual_availability * (1.0 - synchrony * missing_degree)).clamp_max(1.0)
+        else:
+            prior_text = (0.15 + missing_degree).clamp_max(1.0)
+            prior_full = (0.1 + audio_visual_availability * (1.0 - synchrony * missing_degree)).clamp_max(1.0)
         prior_missing = (0.1 + missing_degree * (0.5 + synchrony)).clamp_max(1.0)
         prior = torch.stack((prior_text, prior_full, prior_missing), dim=1)
         prior = prior / prior.sum(dim=1, keepdim=True)
@@ -293,7 +300,9 @@ class MRCDNet(nn.Module):
         self.text_expert = ExpertHead(hidden, fusion, classes, dropout)
         self.full_expert = ExpertHead(fusion, fusion, classes, dropout)
         self.missing_expert = ExpertHead(fusion, fusion, classes, dropout)
-        self.router = ExpertRouter(cfg)
+        self.classification_router = ExpertRouter(cfg, "classification")
+        self.regression_router = ExpertRouter(cfg, "regression")
+        self.classification_residual_scale = float(cfg.get("classification_residual_scale", 0.35))
 
     def freeze_text_bottom_layers(self, count: int) -> None:
         self.text_encoder.freeze_bottom_layers(count)
@@ -351,17 +360,30 @@ class MRCDNet(nn.Module):
 
             reliability = reliability_features(batch)
         synchrony = self._synchrony(batch)
-        gates, prior = self.router(reliability, expert_logits, expert_log_variance, synchrony)
+        classification_gates, classification_prior = self.classification_router(
+            reliability, expert_logits, expert_log_variance, synchrony
+        )
+        regression_gates, regression_prior = self.regression_router(
+            reliability, expert_logits, expert_log_variance, synchrony
+        )
         if self.ablation_mode == "uniform_gate":
-            gates = torch.full_like(gates, 1.0 / 3.0)
+            classification_gates = torch.full_like(classification_gates, 1.0 / 3.0)
+            regression_gates = torch.full_like(regression_gates, 1.0 / 3.0)
         elif self.ablation_mode == "text_only":
-            gates = torch.zeros_like(gates)
-            gates[:, 0] = 1.0
+            classification_gates = torch.zeros_like(classification_gates)
+            regression_gates = torch.zeros_like(regression_gates)
+            classification_gates[:, 0] = 1.0
+            regression_gates[:, 0] = 1.0
         elif self.ablation_mode != "none":
             raise ValueError(f"未知消融模式: {self.ablation_mode}")
-        logits = (expert_logits * gates.unsqueeze(-1)).sum(dim=1)
-        regression = (expert_regression * gates).sum(dim=1)
-        log_variance = torch.logsumexp(expert_log_variance + torch.log(gates.clamp_min(1e-8)), dim=1)
+        routed_logits = (expert_logits * classification_gates.unsqueeze(-1)).sum(dim=1)
+        logits = text["logits"] + self.classification_residual_scale * (routed_logits - text["logits"])
+        regression = (expert_regression * regression_gates).sum(dim=1)
+        log_variance = torch.logsumexp(
+            expert_log_variance + torch.log(regression_gates.clamp_min(1e-8)), dim=1
+        )
+        gates = 0.5 * (classification_gates + regression_gates)
+        prior = 0.5 * (classification_prior + regression_prior)
         fused = (features * gates.unsqueeze(-1)).sum(dim=1)
         return {
             "logits": logits,
@@ -370,6 +392,10 @@ class MRCDNet(nn.Module):
             "fused": fused,
             "gates": gates,
             "router_prior": prior,
+            "classification_gates": classification_gates,
+            "regression_gates": regression_gates,
+            "classification_router_prior": classification_prior,
+            "regression_router_prior": regression_prior,
             "expert_logits": expert_logits,
             "expert_regression": expert_regression,
             "expert_log_variance": expert_log_variance,

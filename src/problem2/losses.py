@@ -41,9 +41,15 @@ def supervised_loss(
     expert_regression_loss = torch.stack(
         [F.smooth_l1_loss(expert_regression[:, index], labels_reg, beta=0.5) for index in range(3)]
     ).mean()
-    router_prior = F.kl_div(
-        torch.log(outputs["gates"].clamp_min(1e-8)), outputs["router_prior"].detach(), reduction="batchmean"
+    classification_router_prior = F.kl_div(
+        torch.log(outputs["classification_gates"].clamp_min(1e-8)),
+        outputs["classification_router_prior"].detach(), reduction="batchmean",
     )
+    regression_router_prior = F.kl_div(
+        torch.log(outputs["regression_gates"].clamp_min(1e-8)),
+        outputs["regression_router_prior"].detach(), reduction="batchmean",
+    )
+    router_prior = 0.5 * (classification_router_prior + regression_router_prior)
     total = (
         weights["classification"] * classification
         + weights["regression"] * regression

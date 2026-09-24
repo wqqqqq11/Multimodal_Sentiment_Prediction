@@ -26,6 +26,8 @@ def predict(
     logits: list[np.ndarray] = []
     regressions: list[np.ndarray] = []
     gates: list[np.ndarray] = []
+    classification_gates: list[np.ndarray] = []
+    regression_gates: list[np.ndarray] = []
     uncertainties: list[np.ndarray] = []
     reliabilities: list[np.ndarray] = []
     labels_cls: list[np.ndarray] = []
@@ -41,6 +43,8 @@ def predict(
         logits.append(outputs["logits"].float().cpu().numpy())
         regressions.append(outputs["regression"].float().cpu().numpy())
         gates.append(outputs["gates"].float().cpu().numpy())
+        classification_gates.append(outputs["classification_gates"].float().cpu().numpy())
+        regression_gates.append(outputs["regression_gates"].float().cpu().numpy())
         uncertainties.append(torch.exp(0.5 * outputs["log_variance"]).float().cpu().numpy())
         reliabilities.append(outputs["reliability"].float().cpu().numpy())
         if "classification_labels" in batch:
@@ -59,6 +63,8 @@ def predict(
         "prediction_regression_raw": raw_regression,
         "regression_uncertainty": np.concatenate(uncertainties),
         "gates": np.concatenate(gates),
+        "classification_gates": np.concatenate(classification_gates),
+        "regression_gates": np.concatenate(regression_gates),
         "reliability": np.concatenate(reliabilities),
     }
     if labels_cls:
@@ -88,6 +94,12 @@ def prediction_frame(result: dict[str, Any], include_labels: bool = True) -> pd.
         "gate_text_expert": result["gates"][:, 0],
         "gate_full_expert": result["gates"][:, 1],
         "gate_missing_expert": result["gates"][:, 2],
+        "classification_gate_text": result["classification_gates"][:, 0],
+        "classification_gate_full": result["classification_gates"][:, 1],
+        "classification_gate_missing": result["classification_gates"][:, 2],
+        "regression_gate_text": result["regression_gates"][:, 0],
+        "regression_gate_full": result["regression_gates"][:, 1],
+        "regression_gate_missing": result["regression_gates"][:, 2],
         "regression_uncertainty": result["regression_uncertainty"],
         "observed_text_ratio": result["reliability"][:, 0, 0],
         "observed_audio_ratio": result["reliability"][:, 1, 0],

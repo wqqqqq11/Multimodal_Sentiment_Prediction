@@ -37,14 +37,36 @@ def _stress_scenario(cfg: dict[str, Any]) -> tuple[str, float, str]:
     return _scenario(cfg["evaluation"]["stress_scenario"])
 
 
-def _make_optimizer(model: nn.Module, backbone_lr: float, head_lr: float, weight_decay: float) -> torch.optim.Optimizer:
-    backbone, other = [], []
+def _make_optimizer(
+    model: nn.Module,
+    backbone_lr: float,
+    head_lr: float,
+    weight_decay: float,
+    protect_full_text_path: bool = False,
+) -> torch.optim.Optimizer:
+    low_rate, other = [], []
+    text_prefixes = ("text_encoder.", "text_projection.", "text_pool.", "text_expert.")
     for name, parameter in model.named_parameters():
-        (backbone if name.startswith("text_encoder.backbone") else other).append(parameter)
+        is_low_rate = name.startswith(text_prefixes) if protect_full_text_path else name.startswith("text_encoder.backbone")
+        (low_rate if is_low_rate else other).append(parameter)
     return torch.optim.AdamW(
-        [{"params": backbone, "lr": backbone_lr}, {"params": other, "lr": head_lr}],
+        [{"params": low_rate, "lr": backbone_lr}, {"params": other, "lr": head_lr}],
         weight_decay=weight_decay,
     )
+
+
+def _set_student_text_path(student: MRCDNet, trainable: bool, frozen_bottom_layers: int = 0) -> None:
+    modules = (student.text_encoder, student.text_projection, student.text_pool, student.text_expert)
+    for module in modules:
+        for parameter in module.parameters():
+            parameter.requires_grad_(trainable)
+    if trainable:
+        student.freeze_text_bottom_layers(frozen_bottom_layers)
+
+
+def _set_frozen_text_path_eval(student: MRCDNet) -> None:
+    for module in (student.text_encoder, student.text_projection, student.text_pool, student.text_expert):
+        module.eval()
 
 
 def _selection_score(
@@ -91,9 +113,12 @@ def train_teacher(
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(int(train_cfg["teacher_epochs"]), 1))
     scaler = _scaler(device)
-    best_score, stale = -float("inf"), 0
+    best_composite = best_classification = best_regression = -float("inf")
+    stale = 0
     history: list[dict[str, Any]] = []
     checkpoint_path = run_dir / "checkpoints" / "teacher_best.pt"
+    classification_path = run_dir / "checkpoints" / "teacher_classification_best.pt"
+    regression_path = run_dir / "checkpoints" / "teacher_regression_best.pt"
     for epoch in range(1, int(train_cfg["teacher_epochs"]) + 1):
         started = time.perf_counter()
         model.train()
@@ -127,16 +152,46 @@ def train_teacher(
             epoch, int(train_cfg["teacher_epochs"]), row["train_loss"], metrics["accuracy"], metrics["macro_f1"],
             metrics["mae"], metrics["pearson"], row["seconds"],
         )
-        score = float(metrics["selection_score"])
-        if score > best_score + float(train_cfg["min_delta"]):
-            best_score, stale = score, 0
-            _checkpoint(model, epoch, metrics, checkpoint_path)
-        else:
-            stale += 1
-            if stale >= int(train_cfg["patience"]):
-                logger.info("教师早停：连续 %d 个 epoch 未改善", stale)
-                break
-    load_model_checkpoint(model, checkpoint_path, device)
+        composite_score = float(metrics["selection_score"])
+        classification_score = float(metrics["accuracy"]) + float(metrics["macro_f1"])
+        regression_score = float(metrics["pearson"]) - float(metrics["mae"])
+        improved = False
+        if composite_score > best_composite + float(train_cfg["min_delta"]):
+            best_composite = composite_score
+            improved = True
+        if classification_score > best_classification + float(train_cfg["min_delta"]):
+            best_classification = classification_score
+            _checkpoint(model, epoch, metrics, classification_path)
+            improved = True
+        if regression_score > best_regression + float(train_cfg["min_delta"]):
+            best_regression = regression_score
+            _checkpoint(model, epoch, metrics, regression_path)
+            improved = True
+        stale = 0 if improved else stale + 1
+        if stale >= int(train_cfg["patience"]):
+            logger.info("教师早停：分类与回归检查点连续 %d 个 epoch 均未改善", stale)
+            break
+
+    classification_checkpoint = load_model_checkpoint(model, classification_path, device)
+    regression_checkpoint = torch.load(regression_path, map_location=device, weights_only=False)
+    merged_state = model.state_dict()
+    regression_prefixes = (
+        "text_expert.regressor.", "text_expert.log_variance.",
+        "full_expert.regressor.", "full_expert.log_variance.",
+        "missing_expert.regressor.", "missing_expert.log_variance.",
+        "regression_router.",
+    )
+    for key, value in regression_checkpoint["model_state"].items():
+        if key.startswith(regression_prefixes):
+            merged_state[key] = value
+    model.load_state_dict(merged_state)
+    merged_metrics = predict(model, valid_loader, device)["metrics"]
+    _checkpoint(model, int(classification_checkpoint["epoch"]), merged_metrics, checkpoint_path)
+    logger.info(
+        "教师任务检查点合并：分类epoch=%d，回归epoch=%d | F1=%.4f MAE=%.4f r=%.4f",
+        int(classification_checkpoint["epoch"]), int(regression_checkpoint["epoch"]),
+        merged_metrics["macro_f1"], merged_metrics["mae"], merged_metrics["pearson"],
+    )
     return history
 
 
@@ -184,15 +239,15 @@ def train_text_student(
             batch = move_to_device(source_batch, device)
             optimizer.zero_grad(set_to_none=True)
             with torch.no_grad(), _autocast(device):
-                target = teacher.encode_text_features(batch)
+                target = teacher(batch)
             with _autocast(device):
                 output = student.encode_text_features(batch)
                 mask = batch["attention_mask"].float()
-                token_l1 = F.smooth_l1_loss(output["tokens"], target["tokens"], reduction="none", beta=0.25).mean(-1)
-                token_cos = 1.0 - F.cosine_similarity(output["tokens"], target["tokens"], dim=-1)
+                token_l1 = F.smooth_l1_loss(output["tokens"], target["text_tokens"], reduction="none", beta=0.25).mean(-1)
+                token_cos = 1.0 - F.cosine_similarity(output["tokens"], target["text_tokens"], dim=-1)
                 token = ((token_l1 + token_cos) * mask).sum() / mask.sum().clamp_min(1.0)
-                cls = F.smooth_l1_loss(output["cls"], target["cls"], beta=0.25) + (
-                    1.0 - F.cosine_similarity(output["cls"], target["cls"], dim=-1)
+                cls = F.smooth_l1_loss(output["cls"], target["text_vector"], beta=0.25) + (
+                    1.0 - F.cosine_similarity(output["cls"], target["text_vector"], dim=-1)
                 ).mean()
                 classification = F.cross_entropy(output["logits"], batch["classification_labels"].long(), weight=class_weights)
                 regression = F.smooth_l1_loss(output["regression"], batch["regression_labels"].float(), beta=0.5)
@@ -255,7 +310,11 @@ def train_student(
     weights = train_cfg["loss_weights"]
     class_weights = torch.tensor(train_cfg["class_weights"], device=device, dtype=torch.float32)
     optimizer = _make_optimizer(
-        student, float(train_cfg.get("student_text_lr", 1e-5)), float(train_cfg["student_lr"]), float(train_cfg["weight_decay"])
+        student,
+        float(train_cfg.get("student_text_lr", 1e-5)),
+        float(train_cfg["student_lr"]),
+        float(train_cfg["weight_decay"]),
+        protect_full_text_path=True,
     )
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max(int(train_cfg["student_epochs"]), 1))
     scaler = _scaler(device)
@@ -268,9 +327,16 @@ def train_student(
     mask_generator = torch.Generator(device="cpu").manual_seed(int(cfg["project"]["seed"]) + 17)
     freeze_epochs = int(train_cfg.get("student_text_freeze_epochs", 2))
     for epoch in range(1, int(train_cfg["student_epochs"]) + 1):
-        student.freeze_text_bottom_layers(int(train_cfg.get("student_frozen_bottom_layers", 2)) if epoch <= freeze_epochs else 0)
+        text_path_frozen = epoch <= freeze_epochs
+        _set_student_text_path(
+            student,
+            trainable=not text_path_frozen,
+            frozen_bottom_layers=int(train_cfg.get("student_frozen_bottom_layers", 2)),
+        )
         started = time.perf_counter()
         student.train()
+        if text_path_frozen:
+            _set_frozen_text_path_eval(student)
         sums: dict[str, float] = defaultdict(float)
         batches = 0
         distillation_scale = min(1.0, epoch / max(int(train_cfg["distillation_warmup_epochs"]), 1))
@@ -315,6 +381,7 @@ def train_student(
         robust_score, complete_metrics, missing_metrics = _selection_score(student, valid_loader, device, cfg)
         row = {
             "stage": "student", "epoch": epoch, "lr": optimizer.param_groups[0]["lr"], "distillation_scale": distillation_scale,
+            "text_path_frozen": int(text_path_frozen),
             **{f"train_{key}": value for key, value in _epoch_average(sums, batches).items()},
             **{f"complete_{key}": float(complete_metrics[key]) for key in ("accuracy", "macro_f1", "mae", "pearson", "selection_score")},
             **{f"target30_{key}": float(missing_metrics[key]) for key in ("accuracy", "macro_f1", "mae", "pearson", "selection_score")},
@@ -335,4 +402,5 @@ def train_student(
                 logger.info("学生早停：连续 %d 个 epoch 未改善", stale)
                 break
     load_model_checkpoint(student, checkpoint_path, device)
+    _set_student_text_path(student, trainable=True, frozen_bottom_layers=0)
     return history

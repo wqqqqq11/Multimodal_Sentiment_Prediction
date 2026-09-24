@@ -51,6 +51,9 @@ def validate_config(cfg: dict[str, Any]) -> None:
     ):
         if not str(cfg["model"].get(key, "")).strip():
             raise ConfigError(f"model.{key} 不能为空")
+    residual_scale = float(cfg["model"].get("classification_residual_scale", 0.35))
+    if not 0.0 <= residual_scale <= 1.0:
+        raise ConfigError("model.classification_residual_scale 必须在 [0,1]")
     temperature = float(cfg["training"]["distillation_temperature"])
     if temperature <= 0:
         raise ConfigError("distillation_temperature 必须大于 0")

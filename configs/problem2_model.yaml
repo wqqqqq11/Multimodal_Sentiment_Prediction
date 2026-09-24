@@ -42,7 +42,9 @@
     "modality_intermediate_dim": 256,
     "cross_attention_heads": 4,
     "router_hidden_dim": 64,
-    "router_prior_strength": 1.5,
+    "classification_router_prior_strength": 1.0,
+    "regression_router_prior_strength": 1.5,
+    "classification_residual_scale": 0.35,
     "dropout": 0.20,
     "num_classes": 3,
     "deployment_precision": "float16"
@@ -55,12 +57,12 @@
     "teacher_text_lr": 0.00002,
     "text_distill_lr": 0.00003,
     "student_lr": 0.0001,
-    "student_text_lr": 0.00001,
+    "student_text_lr": 0.000005,
     "teacher_frozen_bottom_layers": 8,
     "text_initial_frozen_layers": 2,
     "text_freeze_epochs": 2,
     "student_frozen_bottom_layers": 2,
-    "student_text_freeze_epochs": 2,
+    "student_text_freeze_epochs": 5,
     "weight_decay": 0.0001,
     "gradient_clip": 1.0,
     "patience": 5,
@@ -92,7 +94,7 @@
       "kd_relation": 0.10
     },
     "distillation_temperature": 2.0,
-    "distillation_warmup_epochs": 8
+    "distillation_warmup_epochs": 5
   },
   "evaluation": {
     "missing_rates": [0.10, 0.20, 0.30, 0.40, 0.48],
