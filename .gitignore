@@ -3,4 +3,5 @@ datasets/
 __pycache__/
 .codex_doc_review
 /models
-/.uv-cache
+/.uv-
+/.pytest_cache
