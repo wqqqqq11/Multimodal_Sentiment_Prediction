@@ -1,0 +1,67 @@
+{
+  "temperature": 1.0,
+  "neutral_bias": 0.8,
+  "neutral_strength": 0.0,
+  "polarity_strength": 0.0,
+  "neutral_scale": 0.65,
+  "regression_slope": 0.941201019204119,
+  "regression_intercept": -0.024034554097256258,
+  "metrics": {
+    "accuracy": 0.5357142857142857,
+    "macro_f1": 0.5358090266175992,
+    "mae": 0.5799480429469863,
+    "pearson": 0.6519700354776266,
+    "neutral_recall": 0.7934782608695652,
+    "per_class_precision": [
+      0.7387387387387387,
+      0.34515366430260047,
+      0.8350515463917526
+    ],
+    "per_class_recall": [
+      0.39805825242718446,
+      0.7934782608695652,
+      0.47928994082840237
+    ],
+    "per_class_f1": [
+      0.5173501577287066,
+      0.48105436573311366,
+      0.6090225563909775
+    ],
+    "confusion_matrix": [
+      [
+        82,
+        116,
+        8
+      ],
+      [
+        14,
+        146,
+        24
+      ],
+      [
+        15,
+        161,
+        162
+      ]
+    ],
+    "selection_score": 0.7326562909636126,
+    "goal_audit": {
+      "targets": {
+        "accuracy": 0.65,
+        "macro_f1": 0.52,
+        "mae": 0.55,
+        "pearson": 0.65,
+        "neutral_recall": 0.65
+      },
+      "met": {
+        "accuracy": false,
+        "macro_f1": true,
+        "mae": false,
+        "pearson": true,
+        "neutral_recall": true
+      },
+      "met_count": 3,
+      "all_met": false
+    }
+  }
+}

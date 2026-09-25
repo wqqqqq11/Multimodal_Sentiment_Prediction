@@ -19,7 +19,7 @@ TENSOR_KEYS = (
 )
 
 
-class Problem3Dataset(Dataset[dict[str, Any]]):
+class BaseProblem3Dataset(Dataset[dict[str, Any]]):
     def __init__(self, path: str | Path) -> None:
         self.path = Path(path)
         if not self.path.is_file():
@@ -60,7 +60,7 @@ class Problem3Dataset(Dataset[dict[str, Any]]):
         return item
 
 
-def class_balanced_weights(dataset: Problem3Dataset) -> torch.Tensor:
+def class_balanced_weights(dataset: BaseProblem3Dataset) -> torch.Tensor:
     if not dataset.has_labels:
         raise ValueError("无标签数据不能构造类别均衡采样器")
     labels = np.asarray(dataset.arrays["classification_labels"], dtype=np.int64)
@@ -69,7 +69,7 @@ def class_balanced_weights(dataset: Problem3Dataset) -> torch.Tensor:
 
 
 def make_loader(
-    dataset: Problem3Dataset,
+    dataset: BaseProblem3Dataset,
     *,
     batch_size: int,
     shuffle: bool,
@@ -113,3 +113,23 @@ def load_baselines(path: str | Path) -> dict[str, torch.Tensor]:
     if not all(torch.isfinite(value).all() for value in result.values()):
         raise ValueError("积分梯度基线包含 NaN 或 Inf")
     return result
+
+
+class Problem3Dataset(BaseProblem3Dataset):
+    """统一加载问题三基础字段和赛方文本表征。"""
+    def __init__(self, path: str | Path, text_feature_path: str | Path) -> None:
+        super().__init__(path)
+        feature_path = Path(text_feature_path)
+        if not feature_path.is_file(): raise FileNotFoundError(f"文本特征不存在: {feature_path}")
+        with np.load(feature_path, allow_pickle=False) as archive:
+            ids = archive["sample_id"].astype(str)
+            features = archive["text_features"].astype(np.float32)
+        if not np.array_equal(ids, self.arrays["sample_id"].astype(str)):
+            raise ValueError(f"文本特征与 {self.path.name} 的ID不一致")
+        if features.shape[:2] != (len(self), 50): raise ValueError("文本特征必须是 (N,50,D)")
+        self.text_features = features
+
+    def __getitem__(self, index: int) -> dict[str, Any]:
+        item = super().__getitem__(index)
+        item["text_features"] = torch.from_numpy(self.text_features[index])
+        return item

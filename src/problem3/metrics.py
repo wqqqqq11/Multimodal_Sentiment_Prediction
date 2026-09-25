@@ -93,58 +93,50 @@ def softmax(values: np.ndarray) -> np.ndarray:
     return exponent / exponent.sum(axis=1, keepdims=True)
 
 
-def fit_calibration(
-    logits: np.ndarray,
-    regression: np.ndarray,
-    labels_cls: np.ndarray,
-    labels_reg: np.ndarray,
-    cfg: dict[str, Any],
-    goals: dict[str, float],
-) -> dict[str, Any]:
-    temperatures = np.linspace(float(cfg["temperature_min"]), float(cfg["temperature_max"]), int(cfg["temperature_steps"]))
-    neutral_biases = np.linspace(float(cfg["neutral_bias_min"]), float(cfg["neutral_bias_max"]), int(cfg["neutral_bias_steps"]))
+def apply_calibration(logits: np.ndarray, regression: np.ndarray,
+                            calibration: dict[str, Any] | None) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    raw_reg = np.asarray(regression, dtype=np.float64)
+    if calibration is None:
+        adjusted, calibrated_reg = np.asarray(logits, dtype=np.float64), np.clip(raw_reg, -3.0, 3.0)
+    else:
+        calibrated_reg = np.clip(float(calibration["regression_slope"]) * raw_reg +
+                                 float(calibration["regression_intercept"]), -3.0, 3.0)
+        adjusted = np.asarray(logits, dtype=np.float64) / float(calibration["temperature"])
+        adjusted = adjusted.copy()
+        adjusted[:, 1] += float(calibration["neutral_bias"])
+        scale = float(calibration["neutral_scale"])
+        adjusted[:, 1] += float(calibration["neutral_strength"]) * np.exp(-np.abs(calibrated_reg) / scale)
+        polarity = float(calibration["polarity_strength"]) * calibrated_reg / 3.0
+        adjusted[:, 0] -= polarity
+        adjusted[:, 2] += polarity
+    probabilities = softmax(adjusted)
+    return probabilities, probabilities.argmax(axis=1), calibrated_reg
+
+
+def fit_calibration(logits: np.ndarray, regression: np.ndarray, labels_cls: np.ndarray,
+                          labels_reg: np.ndarray, cfg: dict[str, Any], goals: dict[str, float]) -> dict[str, Any]:
+    raw_reg = np.asarray(regression, dtype=np.float64)
+    regression_candidates = [(1.0, 0.0)]
+    if np.std(raw_reg) > 1e-8:
+        slope, intercept = np.polyfit(raw_reg, labels_reg.astype(np.float64), 1)
+        regression_candidates.append((float(np.clip(slope, 0.4, 1.8)), float(np.clip(intercept, -0.6, 0.6))))
+    neutral_biases = np.linspace(float(cfg["neutral_bias_min"]), float(cfg["neutral_bias_max"]),
+                                 int(cfg["neutral_bias_steps"]))
     best: dict[str, Any] | None = None
-    raw_regression = np.asarray(regression, dtype=np.float64)
-    candidates = [(1.0, 0.0)]
-    if np.std(raw_regression) > 1e-8:
-        slope, intercept = np.polyfit(raw_regression, labels_reg.astype(np.float64), 1)
-        candidates.append((float(np.clip(slope, 0.5, 1.5)), float(np.clip(intercept, -0.5, 0.5))))
-    for slope, intercept in candidates:
-        calibrated_regression = np.clip(slope * raw_regression + intercept, -3.0, 3.0)
-        for temperature in temperatures:
+    for slope, intercept in regression_candidates:
+        for temperature in cfg["temperature_values"]:
             for neutral_bias in neutral_biases:
-                adjusted = logits / float(temperature)
-                adjusted = adjusted.copy()
-                adjusted[:, 1] += float(neutral_bias)
-                prediction = adjusted.argmax(axis=1)
-                metrics = all_metrics(labels_cls, prediction, labels_reg, calibrated_regression, goals)
-                candidate = {
-                    "temperature": float(temperature),
-                    "class_bias": [0.0, float(neutral_bias), 0.0],
-                    "regression_slope": slope,
-                    "regression_intercept": intercept,
-                    "metrics": metrics,
-                }
-                if best is None or float(metrics["selection_score"]) > float(best["metrics"]["selection_score"]):
-                    best = candidate
+                for neutral_strength in cfg["neutral_strength_values"]:
+                    for polarity_strength in cfg["polarity_strength_values"]:
+                        candidate = {"temperature": float(temperature), "neutral_bias": float(neutral_bias),
+                                     "neutral_strength": float(neutral_strength),
+                                     "polarity_strength": float(polarity_strength),
+                                     "neutral_scale": float(cfg["neutral_scale"]),
+                                     "regression_slope": slope, "regression_intercept": intercept}
+                        _, predicted_cls, predicted_reg = apply_calibration(logits, raw_reg, candidate)
+                        metrics = all_metrics(labels_cls, predicted_cls, labels_reg, predicted_reg, goals)
+                        candidate["metrics"] = metrics
+                        if best is None or metrics["selection_score"] > best["metrics"]["selection_score"]:
+                            best = candidate
     assert best is not None
     return best
-
-
-def apply_calibration(
-    logits: np.ndarray, regression: np.ndarray, calibration: dict[str, Any] | None
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    if calibration is None:
-        adjusted = np.asarray(logits)
-        calibrated_regression = np.clip(regression, -3.0, 3.0)
-    else:
-        adjusted = np.asarray(logits) / float(calibration["temperature"])
-        adjusted = adjusted + np.asarray(calibration["class_bias"], dtype=np.float64)[None, :]
-        calibrated_regression = np.clip(
-            float(calibration["regression_slope"]) * np.asarray(regression)
-            + float(calibration["regression_intercept"]),
-            -3.0,
-            3.0,
-        )
-    probabilities = softmax(adjusted)
-    return probabilities, probabilities.argmax(axis=1), calibrated_regression

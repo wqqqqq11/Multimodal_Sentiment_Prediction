@@ -1,0 +1,16 @@
+2026-09-25 21:21:00,161 | INFO | HSAIG-Net-v2 train=3395 valid=728 test=727 attachment4=20 device=cuda params=1,262,513
+2026-09-25 21:21:10,217 | INFO | Epoch 01/45 mix=0.00 | Acc=0.5893 F1=0.5157 MAE=0.6197 r=0.6284 Neutral-R=0.1848 | goals=0/5
+2026-09-25 21:21:16,655 | INFO | Epoch 02/45 mix=0.00 | Acc=0.6044 F1=0.5891 MAE=0.6238 r=0.6233 Neutral-R=0.4837 | goals=1/5
+2026-09-25 21:21:23,200 | INFO | Epoch 03/45 mix=0.00 | Acc=0.5989 F1=0.5672 MAE=0.5880 r=0.6584 Neutral-R=0.4674 | goals=2/5
+2026-09-25 21:21:29,573 | INFO | Epoch 04/45 mix=0.14 | Acc=0.6209 F1=0.6004 MAE=0.6050 r=0.6307 Neutral-R=0.4565 | goals=1/5
+2026-09-25 21:21:35,849 | INFO | Epoch 05/45 mix=0.29 | Acc=0.6099 F1=0.5892 MAE=0.5819 r=0.6520 Neutral-R=0.4837 | goals=2/5
+2026-09-25 21:21:42,299 | INFO | Epoch 06/45 mix=0.43 | Acc=0.6209 F1=0.5773 MAE=0.6193 r=0.6584 Neutral-R=0.3098 | goals=2/5
+2026-09-25 21:21:48,652 | INFO | Epoch 07/45 mix=0.57 | Acc=0.6085 F1=0.5835 MAE=0.6116 r=0.6546 Neutral-R=0.4185 | goals=2/5
+2026-09-25 21:21:55,461 | INFO | Epoch 08/45 mix=0.71 | Acc=0.6154 F1=0.5930 MAE=0.6350 r=0.6576 Neutral-R=0.4348 | goals=2/5
+2026-09-25 21:22:01,553 | INFO | Epoch 09/45 mix=0.86 | Acc=0.5948 F1=0.5718 MAE=0.6076 r=0.6192 Neutral-R=0.4674 | goals=1/5
+2026-09-25 21:22:07,584 | INFO | Epoch 10/45 mix=1.00 | Acc=0.6126 F1=0.5896 MAE=0.6214 r=0.6352 Neutral-R=0.4239 | goals=1/5
+2026-09-25 21:22:13,776 | INFO | Epoch 11/45 mix=1.00 | Acc=0.6099 F1=0.5771 MAE=0.6215 r=0.6393 Neutral-R=0.3587 | goals=1/5
+2026-09-25 21:22:20,045 | INFO | Epoch 12/45 mix=1.00 | Acc=0.6099 F1=0.5815 MAE=0.6506 r=0.6427 Neutral-R=0.3913 | goals=1/5
+2026-09-25 21:22:26,186 | INFO | Epoch 13/45 mix=1.00 | Acc=0.6113 F1=0.5851 MAE=0.6264 r=0.6272 Neutral-R=0.4022 | goals=1/5
+2026-09-25 21:22:32,149 | INFO | Epoch 14/45 mix=1.00 | Acc=0.6154 F1=0.5861 MAE=0.6368 r=0.6279 Neutral-R=0.3859 | goals=1/5
+2026-09-25 21:24:24,503 | INFO | 验收：Acc=0.5357 F1=0.5358 MAE=0.5799 r=0.6520 Neutral-R=0.7935；3/5，accepted=False

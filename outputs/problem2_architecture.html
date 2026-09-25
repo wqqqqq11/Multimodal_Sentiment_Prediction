@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head><meta charset="UTF-8"><title>MRCD-Net 问题二整体架构图</title></head>
+<body style="margin:0;padding:16px;background:#fff;">
+<svg viewBox="0 0 2200 1340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;font-family:'Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif;">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrT" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748b"/>
+    </marker>
+    <marker id="arrS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0369a1"/>
+    </marker>
+    <marker id="arrD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#d97706"/>
+    </marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+      <rect width="8" height="8" fill="#f1f5f9"/>
+      <line x1="0" y1="0" x2="0" y2="8" stroke="#cbd5e1" stroke-width="2"/>
+    </pattern>
+    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#f0f9ff"/>
+    </linearGradient>
+  </defs>
+
+  <text x="1100" y="42" text-anchor="middle" font-size="26" font-weight="700" fill="#0f172a">MRCD-Net: Mask-aware Reliability-gated Consistency Distillation Network</text>
+  <text x="1100" y="72" text-anchor="middle" font-size="15" fill="#475569">Problem 2 — Robust Multimodal Sentiment Prediction under Local Contiguous Modality Missing</text>
+
+  <g font-size="14" font-weight="700" fill="#0f172a">
+    <text x="200" y="120" text-anchor="middle">1. Aligned Input &amp; Semantic Masks</text>
+    <text x="500" y="120" text-anchor="middle">2. Contiguous Missing Synthesis</text>
+    <text x="850" y="120" text-anchor="middle">3. Modality Encoders</text>
+    <text x="1230" y="120" text-anchor="middle">4. Mask-aware Pooling &amp; Reliability Gate</text>
+    <text x="1600" y="120" text-anchor="middle">5. Dual Prediction Heads</text>
+    <text x="1980" y="120" text-anchor="middle">6. Training Objective &amp; Inference</text>
+  </g>
+
+  <rect x="40" y="150" width="2120" height="380" rx="14" fill="url(#hatch)" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="60" y="178" font-size="14" font-weight="700" fill="#475569">Teacher  Theta_T   ·   frozen after Stage B   ·   full-modality view (no artificial missing)</text>
+
+  <rect x="40" y="620" width="2120" height="400" rx="14" fill="url(#sg)" stroke="#0369a1" stroke-width="1.8"/>
+  <text x="60" y="648" font-size="14" font-weight="700" fill="#0369a1">Student  Theta_S   ·   deployed for inference   ·   contiguous-missing view (30% complete views retained)</text>
+
+  <!-- Col 1 -->
+  <rect x="80" y="210" width="200" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="90" y="232" font-size="13" font-weight="700" fill="#1e40af">text_bert  3x50</text>
+  <text x="90" y="252" font-size="11" fill="#1e40af">token_ids / attn_mask / type_ids</text>
+  <g transform="translate(190,222)">
+    <rect x="0" y="0" width="8" height="8" fill="#2563eb"/><rect x="10" y="0" width="8" height="8" fill="#2563eb"/>
+    <rect x="20" y="0" width="8" height="8" fill="#2563eb"/><rect x="30" y="0" width="8" height="8" fill="#93c5fd"/>
+    <rect x="40" y="0" width="8" height="8" fill="#2563eb"/><rect x="50" y="0" width="8" height="8" fill="#2563eb"/>
+    <rect x="60" y="0" width="8" height="8" fill="#2563eb"/><rect x="70" y="0" width="8" height="8" fill="#93c5fd"/>
+    <rect x="80" y="0" width="8" height="8" fill="#2563eb"/>
+  </g>
+
+  <rect x="80" y="290" width="200" height="60" rx="8" fill="#cffafe" stroke="#0891b2" stroke-width="1.5"/>
+  <text x="90" y="312" font-size="13" font-weight="700" fill="#155e75">audio  50x74</text>
+  <text x="90" y="332" font-size="11" fill="#155e75">robust-scaled  in [-8,8]</text>
+  <polyline points="185,338 195,318 205,344 215,308 225,340 235,322 245,346 255,314 265,338" stroke="#0891b2" stroke-width="1.6" fill="none"/>
+
+  <rect x="80" y="370" width="200" height="60" rx="8" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="90" y="392" font-size="13" font-weight="700" fill="#5b21b6">vision  50x35</text>
+  <text x="90" y="412" font-size="11" fill="#5b21b6">facial blendshape / pose</text>
+  <g transform="translate(190,382)">
+    <circle cx="6" cy="10" r="6" fill="#7c3aed" opacity="0.85"/><circle cx="22" cy="10" r="6" fill="#7c3aed" opacity="0.6"/>
+    <circle cx="38" cy="10" r="6" fill="#c4b5fd"/><circle cx="54" cy="10" r="6" fill="#7c3aed" opacity="0.8"/>
+    <circle cx="70" cy="10" r="6" fill="#7c3aed" opacity="0.5"/><circle cx="86" cy="10" r="6" fill="#c4b5fd"/>
+  </g>
+
+  <rect x="80" y="450" width="200" height="70" rx="8" fill="#ffffff" stroke="#475569" stroke-width="1.2"/>
+  <text x="90" y="470" font-size="12" font-weight="700" fill="#0f172a">Five semantic masks (per step)</text>
+  <g font-size="10.5" fill="#334155">
+    <rect x="90" y="478" width="22" height="12" fill="#16a34a"/><text x="116" y="488">C content</text>
+    <rect x="170" y="478" width="22" height="12" fill="#64748b"/><text x="196" y="488">S CLS/SEP</text>
+    <rect x="90" y="496" width="22" height="12" fill="#e2e8f0" stroke="#94a3b8"/><text x="116" y="506">P padding</text>
+    <rect x="170" y="496" width="22" height="12" fill="#f59e0b"/><text x="196" y="506">Z natural zero</text>
+    <rect x="90" y="514" width="22" height="12" fill="#dc2626"/><text x="116" y="524">M synthetic missing</text>
+  </g>
+
+  <path d="M280,320 L360,320" stroke="#334155" stroke-width="1.6" fill="none" marker-end="url(#arr)"/>
+  <text x="320" y="312" text-anchor="middle" font-size="10.5" fill="#64748b">train split</text>
+
+  <!-- Col 2 -->
+  <rect x="370" y="210" width="240" height="310" rx="12" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="490" y="234" text-anchor="middle" font-size="13" font-weight="700" fill="#92400e">Contiguous Mask Generator</text>
+  <text x="490" y="252" text-anchor="middle" font-size="10.5" fill="#92400e">train-time augmentation only</text>
+
+  <text x="385" y="280" font-size="11.5" font-weight="700" fill="#334155">modality set  G ~ Cat(0.2,0.2,0.6)</text>
+  <g font-size="10.5">
+    <rect x="385" y="288" width="60" height="18" rx="4" fill="#cffafe" stroke="#0891b2"/><text x="415" y="301" text-anchor="middle" fill="#155e75">A only</text>
+    <rect x="452" y="288" width="60" height="18" rx="4" fill="#ede9fe" stroke="#7c3aed"/><text x="482" y="301" text-anchor="middle" fill="#5b21b6">V only</text>
+    <rect x="519" y="288" width="80" height="18" rx="4" fill="#fce7f3" stroke="#db2777"/><text x="559" y="301" text-anchor="middle" fill="#9d174d">A+V</text>
+  </g>
+
+  <text x="385" y="328" font-size="11.5" font-weight="700" fill="#334155">missing ratio  r ~ Beta(2,4) -> [0.05, 0.48]</text>
+  <rect x="385" y="336" width="200" height="10" rx="5" fill="#fde68a"/>
+  <rect x="385" y="336" width="80" height="10" rx="5" fill="#d97706"/>
+  <text x="385" y="360" font-size="10" fill="#92400e">expected r ~ 0.193  (matches A/V ~19.5%)</text>
+
+  <text x="385" y="386" font-size="11.5" font-weight="700" fill="#334155">relative region  begin / middle / end</text>
+  <g>
+    <rect x="385" y="394" width="60" height="16" rx="3" fill="#fef3c7" stroke="#d97706"/><text x="415" y="406" text-anchor="middle" font-size="10">begin</text>
+    <rect x="450" y="394" width="60" height="16" rx="3" fill="#fef3c7" stroke="#d97706"/><text x="480" y="406" text-anchor="middle" font-size="10">middle</text>
+    <rect x="515" y="394" width="60" height="16" rx="3" fill="#fef3c7" stroke="#d97706"/><text x="545" y="406" text-anchor="middle" font-size="10">end</text>
+  </g>
+
+  <text x="385" y="434" font-size="11.5" font-weight="700" fill="#334155">span  Geometric(p=0.70), max 4 steps</text>
+  <text x="385" y="452" font-size="10.5" fill="#334155">M = 1 only on originally-observed O=1 steps</text>
+  <text x="385" y="468" font-size="10.5" fill="#334155">never overwrite natural-zero Z or padding P</text>
+
+  <text x="385" y="494" font-size="11" font-weight="700" fill="#334155">paired views per sample:</text>
+  <circle cx="395" cy="508" r="5" fill="#16a34a"/><text x="406" y="512" font-size="10.5" fill="#166534">complete -> teacher</text>
+  <circle cx="510" cy="508" r="5" fill="#dc2626"/><text x="521" y="512" font-size="10.5" fill="#991b1b">masked -> student</text>
+
+  <path d="M610,290 L660,290 L660,280 L700,280" stroke="#64748b" stroke-width="1.6" fill="none" marker-end="url(#arrT)"/>
+  <text x="635" y="278" font-size="10.5" fill="#475569">complete</text>
+  <path d="M610,440 L660,440 L660,780 L700,780" stroke="#0369a1" stroke-width="1.8" fill="none" marker-end="url(#arrS)"/>
+  <text x="635" y="600" font-size="10.5" fill="#0369a1" transform="rotate(90 635 600)">contiguous masked</text>
+
+  <!-- Col 3 teacher encoders -->
+  <rect x="700" y="210" width="150" height="70" rx="10" fill="#f8fafc" stroke="#2563eb" stroke-width="1.6"/>
+  <text x="775" y="232" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">Compact BERT</text>
+  <text x="775" y="248" text-anchor="middle" font-size="10.5" fill="#1e40af">2-layer, d=128</text>
+  <g transform="translate(715,256)">
+    <rect x="0" y="0" width="120" height="6" fill="#2563eb" opacity="0.9"/>
+    <rect x="0" y="8" width="120" height="6" fill="#2563eb" opacity="0.6"/>
+    <rect x="0" y="16" width="120" height="6" fill="#2563eb" opacity="0.35"/>
+  </g>
+
+  <rect x="700" y="295" width="150" height="70" rx="10" fill="#f8fafc" stroke="#0891b2" stroke-width="1.6"/>
+  <text x="775" y="317" text-anchor="middle" font-size="12" font-weight="700" fill="#155e75">Audio Encoder</text>
+  <text x="775" y="333" text-anchor="middle" font-size="10.5" fill="#155e75">Linear+LN+GELU -> BiGRU</text>
+  <g transform="translate(715,342)">
+    <path d="M0,8 L110,8" stroke="#0891b2" stroke-width="1.6"/>
+    <path d="M110,4 L116,8 L110,12 z" fill="#0891b2"/>
+    <path d="M110,16 L0,16" stroke="#0891b2" stroke-width="1.6"/>
+    <path d="M6,12 L0,16 L6,20 z" fill="#0891b2"/>
+  </g>
+
+  <rect x="700" y="380" width="150" height="70" rx="10" fill="#f8fafc" stroke="#7c3aed" stroke-width="1.6"/>
+  <text x="775" y="402" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">Vision Encoder</text>
+  <text x="775" y="418" text-anchor="middle" font-size="10.5" fill="#5b21b6">Linear+LN+GELU -> BiGRU</text>
+  <g transform="translate(715,427)">
+    <path d="M0,8 L110,8" stroke="#7c3aed" stroke-width="1.6"/>
+    <path d="M110,4 L116,8 L110,12 z" fill="#7c3aed"/>
+    <path d="M110,16 L0,16" stroke="#7c3aed" stroke-width="1.6"/>
+    <path d="M6,12 L0,16 L6,20 z" fill="#7c3aed"/>
+  </g>
+  <text x="775" y="478" text-anchor="middle" font-size="10" fill="#64748b">+ E_state(s)  + E_pos(t)</text>
+
+  <!-- Col 3 student encoders -->
+  <rect x="700" y="710" width="150" height="70" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8"/>
+  <text x="775" y="732" text-anchor="middle" font-size="12" font-weight="700" fill="#1e40af">Compact BERT</text>
+  <text x="775" y="748" text-anchor="middle" font-size="10.5" fill="#1e40af">shared wordpiece vocab</text>
+  <g transform="translate(715,756)">
+    <rect x="0" y="0" width="120" height="6" fill="#2563eb" opacity="0.9"/>
+    <rect x="0" y="8" width="120" height="6" fill="#2563eb" opacity="0.6"/>
+    <rect x="0" y="16" width="120" height="6" fill="#2563eb" opacity="0.35"/>
+  </g>
+
+  <rect x="700" y="795" width="150" height="70" rx="10" fill="#ecfeff" stroke="#0891b2" stroke-width="1.8"/>
+  <text x="775" y="817" text-anchor="middle" font-size="12" font-weight="700" fill="#155e75">Audio Encoder</text>
+  <text x="775" y="833" text-anchor="middle" font-size="10.5" fill="#155e75">BiGRU sees masked spans</text>
+  <g transform="translate(715,842)">
+    <path d="M0,8 L110,8" stroke="#0891b2" stroke-width="1.6"/>
+    <path d="M110,4 L116,8 L110,12 z" fill="#0891b2"/>
+    <path d="M110,16 L0,16" stroke="#0891b2" stroke-width="1.6"/>
+    <path d="M6,12 L0,16 L6,20 z" fill="#0891b2"/>
+  </g>
+  <rect x="730" y="860" width="14" height="5" fill="#dc2626"/>
+  <rect x="760" y="860" width="22" height="5" fill="#dc2626"/>
+
+  <rect x="700" y="880" width="150" height="70" rx="10" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="775" y="902" text-anchor="middle" font-size="12" font-weight="700" fill="#5b21b6">Vision Encoder</text>
+  <text x="775" y="918" text-anchor="middle" font-size="10.5" fill="#5b21b6">BiGRU sees masked spans</text>
+  <g transform="translate(715,927)">
+    <path d="M0,8 L110,8" stroke="#7c3aed" stroke-width="1.6"/>
+    <path d="M110,4 L116,8 L110,12 z" fill="#7c3aed"/>
+    <path d="M110,16 L0,16" stroke="#7c3aed" stroke-width="1.6"/>
+    <path d="M6,12 L0,16 L6,20 z" fill="#7c3aed"/>
+  </g>
+  <rect x="740" y="945" width="18" height="5" fill="#dc2626"/>
+
+  <text x="775" y="978" text-anchor="middle" font-size="10" fill="#0369a1">same zero -> different state embedding (observed / natural-zero / missing)</text>
+
+  <path d="M850,245 L1040,245" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#arrT)"/>
+  <path d="M850,330 L1040,330" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#arrT)"/>
+  <path d="M850,415 L1040,415" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#arrT)"/>
+  <path d="M850,745 L1040,745" stroke="#0369a1" stroke-width="1.6" fill="none" marker-end="url(#arrS)"/>
+  <path d="M850,830 L1040,830" stroke="#0369a1" stroke-width="1.6" fill="none" marker-end="url(#arrS)"/>
+  <path d="M850,915 L1040,915" stroke="#0369a1" stroke-width="1.6" fill="none" marker-end="url(#arrS)"/>
+
+  <!-- Col 4 teacher pooling -->
+  <rect x="1040" y="200" width="240" height="290" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+  <text x="1160" y="222" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a">Masked Attention Pooling</text>
+  <text x="1160" y="238" text-anchor="middle" font-size="10.5" fill="#475569">softmax over O=1 positions only</text>
+
+  <circle cx="1080" cy="268" r="10" fill="#2563eb"/>
+  <text x="1098" y="272" font-size="11" fill="#1e40af">u_L  (text anchor)</text>
+  <circle cx="1080" cy="296" r="10" fill="#0891b2"/>
+  <text x="1098" y="300" font-size="11" fill="#155e75">u_A</text>
+  <circle cx="1080" cy="324" r="10" fill="#7c3aed"/>
+  <text x="1098" y="328" font-size="11" fill="#5b21b6">u_V</text>
+
+  <text x="1055" y="356" font-size="11" font-weight="700" fill="#0f172a">reliability vector q (8 dims)</text>
+  <g transform="translate(1055,362)">
+    <rect x="0" y="0" width="20" height="10" fill="#94a3b8"/><rect x="22" y="0" width="20" height="10" fill="#94a3b8"/>
+    <rect x="44" y="0" width="20" height="10" fill="#f59e0b"/><rect x="66" y="0" width="20" height="10" fill="#dc2626"/>
+    <rect x="88" y="0" width="20" height="10" fill="#cbd5e1"/><rect x="110" y="0" width="20" height="10" fill="#cbd5e1"/>
+    <rect x="132" y="0" width="20" height="10" fill="#cbd5e1"/><rect x="154" y="0" width="30" height="10" fill="#64748b"/>
+  </g>
+  <text x="1055" y="386" font-size="10" fill="#475569">valid / obs / nat / miss / begin / mid / end / longest-span</text>
+
+  <text x="1055" y="410" font-size="11" font-weight="700" fill="#0f172a">dynamic gate  g = softmax( eta(u,q) + gamma log rho_obs )</text>
+  <g transform="translate(1055,418)">
+    <rect x="0" y="0" width="80" height="14" fill="#2563eb"/>
+    <rect x="80" y="0" width="60" height="14" fill="#0891b2"/>
+    <rect x="140" y="0" width="60" height="14" fill="#7c3aed"/>
+  </g>
+  <text x="1055" y="446" font-size="10" fill="#475569">teacher sees full A/V -> balanced weights</text>
+
+  <rect x="1055" y="456" width="210" height="24" rx="6" fill="#e2e8f0" stroke="#334155"/>
+  <text x="1160" y="472" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0f172a">z = LN([g*u_L; g*u_A; g*u_V; u_L*u_A; u_L*u_V; u_A*u_V])</text>
+
+  <!-- Col 4 student pooling -->
+  <rect x="1040" y="690" width="240" height="300" rx="12" fill="#ffffff" stroke="#0369a1" stroke-width="1.8"/>
+  <text x="1160" y="712" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c4a6e">Masked Attention Pooling</text>
+  <text x="1160" y="728" text-anchor="middle" font-size="10.5" fill="#0c4a6e">all-missing learnable vector when u_m = 0</text>
+
+  <circle cx="1080" cy="758" r="10" fill="#2563eb"/>
+  <text x="1098" y="762" font-size="11" fill="#1e40af">u_L  (stable anchor)</text>
+  <circle cx="1080" cy="786" r="10" fill="#0891b2"/>
+  <text x="1098" y="790" font-size="11" fill="#155e75">u_A  (partially observed)</text>
+  <circle cx="1080" cy="814" r="10" fill="#7c3aed"/>
+  <text x="1098" y="818" font-size="11" fill="#5b21b6">u_V  (partially observed)</text>
+
+  <text x="1055" y="846" font-size="11" font-weight="700" fill="#0f172a">reliability vector q (8 dims)</text>
+  <g transform="translate(1055,852)">
+    <rect x="0" y="0" width="20" height="10" fill="#94a3b8"/><rect x="22" y="0" width="20" height="10" fill="#64748b"/>
+    <rect x="44" y="0" width="20" height="10" fill="#f59e0b"/><rect x="66" y="0" width="20" height="10" fill="#dc2626"/>
+    <rect x="88" y="0" width="20" height="10" fill="#cbd5e1"/><rect x="110" y="0" width="20" height="10" fill="#cbd5e1"/>
+    <rect x="132" y="0" width="20" height="10" fill="#cbd5e1"/><rect x="154" y="0" width="30" height="10" fill="#dc2626"/>
+  </g>
+  <text x="1055" y="876" font-size="10" fill="#475569">low rho_obs on A/V -> gate automatically down-weights</text>
+
+  <text x="1055" y="900" font-size="11" font-weight="700" fill="#0f172a">dynamic gate  g shifts weight to observed modalities</text>
+  <g transform="translate(1055,908)">
+    <rect x="0" y="0" width="130" height="14" fill="#2563eb"/>
+    <rect x="130" y="0" width="30" height="14" fill="#0891b2"/>
+    <rect x="160" y="0" width="30" height="14" fill="#7c3aed"/>
+  </g>
+  <text x="1055" y="936" font-size="10" fill="#991b1b">missing -> g_A, g_V decay; g_L rises (not hard-coded)</text>
+
+  <rect x="1055" y="948" width="210" height="24" rx="6" fill="#dbeafe" stroke="#0369a1"/>
+  <text x="1160" y="964" text-anchor="middle" font-size="10.5" font-weight="700" fill="#0c4a6e">z^S  (same fusion form as teacher)</text>
+
+  <path d="M1280,340 L1460,340" stroke="#64748b" stroke-width="1.6" fill="none" marker-end="url(#arrT)"/>
+  <path d="M1280,840 L1460,840" stroke="#0369a1" stroke-width="1.8" fill="none" marker-end="url(#arrS)"/>
+
+  <!-- Col 5 teacher heads -->
+  <rect x="1460" y="200" width="240" height="290" rx="12" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+  <text x="1580" y="222" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a">Dual Heads</text>
+
+  <text x="1475" y="248" font-size="11" font-weight="700" fill="#0f172a">classification  softmax(o) -> 3 classes</text>
+  <g transform="translate(1475,256)">
+    <rect x="0" y="20" width="40" height="20" fill="#dc2626"/><text x="20" y="54" text-anchor="middle" font-size="10">Neg</text>
+    <rect x="50" y="10" width="40" height="30" fill="#64748b"/><text x="70" y="54" text-anchor="middle" font-size="10">Neu</text>
+    <rect x="100" y="0" width="40" height="40" fill="#16a34a"/><text x="120" y="54" text-anchor="middle" font-size="10">Pos</text>
+  </g>
+  <text x="1630" y="288" font-size="10" fill="#475569">class-weighted CE</text>
+  <text x="1630" y="302" font-size="10" fill="#475569">w=(1.17,1.49,0.68)</text>
+
+  <text x="1475" y="340" font-size="11" font-weight="700" fill="#0f172a">regression  y_hat = 3*tanh(w_r*z + b_r)</text>
+  <line x1="1475" y1="360" x2="1695" y2="360" stroke="#334155" stroke-width="1.5"/>
+  <g font-size="10" fill="#334155">
+    <line x1="1475" y1="356" x2="1475" y2="364" stroke="#334155"/><text x="1475" y="378" text-anchor="middle">-3</text>
+    <line x1="1585" y1="356" x2="1585" y2="364" stroke="#334155"/><text x="1585" y="378" text-anchor="middle">0</text>
+    <line x1="1695" y1="356" x2="1695" y2="364" stroke="#334155"/><text x="1695" y="378" text-anchor="middle">+3</text>
+  </g>
+  <circle cx="1620" cy="360" r="5" fill="#0369a1"/>
+  <text x="1620" y="396" text-anchor="middle" font-size="10" fill="#0c4a6e">range guaranteed in [-3,3]</text>
+
+  <rect x="1475" y="410" width="210" height="60" rx="8" fill="#fef9c3" stroke="#ca8a04"/>
+  <text x="1580" y="430" text-anchor="middle" font-size="11" font-weight="700" fill="#854d0e">dual-head consistency</text>
+  <text x="1580" y="448" text-anchor="middle" font-size="10.5" fill="#854d0e">s = p_pos - p_neg</text>
+  <text x="1580" y="463" text-anchor="middle" font-size="10.5" fill="#854d0e">L_coh = SmoothL1(s, y_hat_r/3)</text>
+
+  <!-- Col 5 student heads -->
+  <rect x="1460" y="690" width="240" height="300" rx="12" fill="#ffffff" stroke="#0369a1" stroke-width="1.8"/>
+  <text x="1580" y="712" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c4a6e">Dual Heads (student)</text>
+
+  <text x="1475" y="738" font-size="11" font-weight="700" fill="#0f172a">classification  p^S in [0,1]^3</text>
+  <g transform="translate(1475,746)">
+    <rect x="0" y="20" width="40" height="20" fill="#dc2626"/><text x="20" y="54" text-anchor="middle" font-size="10">Neg</text>
+    <rect x="50" y="14" width="40" height="26" fill="#64748b"/><text x="70" y="54" text-anchor="middle" font-size="10">Neu</text>
+    <rect x="100" y="4" width="40" height="36" fill="#16a34a"/><text x="120" y="54" text-anchor="middle" font-size="10">Pos</text>
+  </g>
+
+  <text x="1475" y="828" font-size="11" font-weight="700" fill="#0f172a">regression  y_hat_r^S in [-3,3]</text>
+  <line x1="1475" y1="848" x2="1695" y2="848" stroke="#334155" stroke-width="1.5"/>
+  <g font-size="10" fill="#334155">
+    <line x1="1475" y1="844" x2="1475" y2="852" stroke="#334155"/><text x="1475" y="866" text-anchor="middle">-3</text>
+    <line x1="1585" y1="844" x2="1585" y2="852" stroke="#334155"/><text x="1585" y="866" text-anchor="middle">0</text>
+    <line x1="1695" y1="844" x2="1695" y2="852" stroke="#334155"/><text x="1695" y="866" text-anchor="middle">+3</text>
+  </g>
+  <circle cx="1610" cy="848" r="5" fill="#0369a1"/>
+
+  <rect x="1475" y="880" width="210" height="90" rx="8" fill="#ecfccb" stroke="#65a30d"/>
+  <text x="1580" y="900" text-anchor="middle" font-size="11" font-weight="700" fill="#3f6212">student output for deployment</text>
+  <text x="1580" y="918" text-anchor="middle" font-size="10.5" fill="#3f6212">polarity  argmax p^S</text>
+  <text x="1580" y="934" text-anchor="middle" font-size="10.5" fill="#3f6212">intensity  y_hat_r^S</text>
+  <text x="1580" y="950" text-anchor="middle" font-size="10.5" fill="#3f6212">gate g^S for diagnosis</text>
+
+  <!-- Distillation arrows -->
+  <g stroke="#d97706" stroke-width="1.8" stroke-dasharray="6,4" fill="none">
+    <path d="M1500,490 L1500,690" marker-end="url(#arrD)"/>
+    <path d="M1560,490 L1560,690" marker-end="url(#arrD)"/>
+    <path d="M1620,490 L1620,690" marker-end="url(#arrD)"/>
+    <path d="M1660,490 L1660,690" marker-end="url(#arrD)"/>
+    <path d="M1700,490 L1700,690" marker-end="url(#arrD)"/>
+  </g>
+  <g font-size="10.5" fill="#92400e" font-weight="600">
+    <text x="1500" y="595" text-anchor="middle" transform="rotate(-90 1500 595)">KL(p^tau_T || p^tau_S)</text>
+    <text x="1560" y="595" text-anchor="middle" transform="rotate(-90 1560 595)">SmoothL1(yT,yS)</text>
+    <text x="1620" y="595" text-anchor="middle" transform="rotate(-90 1620 595)">1-cos(zT,zS)</text>
+    <text x="1660" y="595" text-anchor="middle" transform="rotate(-90 1660 595)">||RT-RS||^2_F</text>
+    <text x="1700" y="595" text-anchor="middle" transform="rotate(-90 1700 595)">KL(gT~ || gS)</text>
+  </g>
+  <rect x="1440" y="555" width="280" height="28" rx="14" fill="#fffbeb" stroke="#d97706"/>
+  <text x="1580" y="574" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">5-layer consistency distillation  ·  confidence omega = 1 - H(pT)/log3  weighted</text>
+
+  <path d="M1700,340 L1780,340 L1780,250" stroke="#64748b" stroke-width="1.6" fill="none" marker-end="url(#arrT)"/>
+  <path d="M1700,840 L1780,840 L1780,500" stroke="#0369a1" stroke-width="1.8" fill="none" marker-end="url(#arrS)"/>
+
+  <!-- Col 6 -->
+  <rect x="1790" y="180" width="360" height="130" rx="12" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+  <text x="1970" y="202" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0f172a">Stage B · Teacher objective</text>
+  <text x="1970" y="224" text-anchor="middle" font-size="11" fill="#334155">L_T = L_cls^T + lr L_reg^T + lc L_coh^T + lw ||Theta_T||^2</text>
+  <text x="1970" y="244" text-anchor="middle" font-size="10.5" fill="#475569">L_reg = SmoothL1 + l_corr*(1 - Corr(y_hat, y))</text>
+  <text x="1970" y="266" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">early-stop on full valid set -> freeze Theta_T</text>
+  <text x="1970" y="288" text-anchor="middle" font-size="10.5" fill="#475569">cached soft targets and hiddens for student</text>
+
+  <rect x="1790" y="330" width="360" height="170" rx="12" fill="#eff6ff" stroke="#0369a1" stroke-width="1.8"/>
+  <text x="1970" y="352" text-anchor="middle" font-size="12.5" font-weight="700" fill="#0c4a6e">Stage C · Student objective</text>
+  <text x="1970" y="374" text-anchor="middle" font-size="10.8" fill="#0c4a6e">L_S = L_sup^S + l_kc L_KD-cls + l_kr L_KD-reg</text>
+  <text x="1970" y="392" text-anchor="middle" font-size="10.8" fill="#0c4a6e">+ l_f L_feat + l_rel L_rel + l_g L_gate</text>
+  <text x="1970" y="414" text-anchor="middle" font-size="10.5" fill="#475569">distill warmup: l_k(e)=l_k*min(1,e/E_warm)</text>
+  <text x="1970" y="434" text-anchor="middle" font-size="10.5" fill="#475569">AdamW · grad-clip 1.0 · batch 64 · 30% complete views</text>
+  <text x="1970" y="458" text-anchor="middle" font-size="11" font-weight="700" fill="#b45309">guard:  J_full^S >= J_T - delta</text>
+  <text x="1970" y="478" text-anchor="middle" font-size="10.5" fill="#475569">multi-metric: Acc / Macro-F1 / MAE / Pearson / Robust-AUC</text>
+
+  <rect x="1790" y="520" width="360" height="80" rx="12" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="1970" y="542" text-anchor="middle" font-size="12" font-weight="700" fill="#92400e">Stage D · Calibrate and Freeze</text>
+  <text x="1970" y="562" text-anchor="middle" font-size="10.5" fill="#92400e">temperature tau on valid set · monotonic regression bias a*y+b</text>
+  <text x="1970" y="580" text-anchor="middle" font-size="10.5" fill="#92400e">freeze student weights, scaler, masks, seeds; no test-set tuning</text>
+
+  <path d="M1970,600 L1970,660" stroke="#334155" stroke-width="1.8" fill="none" marker-end="url(#arr)"/>
+
+  <!-- Bottom row -->
+  <rect x="80" y="1060" width="620" height="240" rx="14" fill="#f8fafc" stroke="#475569" stroke-width="1.5"/>
+  <text x="390" y="1086" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f172a">Robustness Analysis on Fixed Missing Grid (valid/test)</text>
+  <g font-size="11" fill="#334155">
+    <text x="100" y="1112" font-weight="700">modality set:</text><text x="200" y="1112">A / V / A+V  (+diagnostic L, L+A, L+V, all)</text>
+    <text x="100" y="1134" font-weight="700">position:</text><text x="200" y="1134">begin / middle / end / random</text>
+    <text x="100" y="1156" font-weight="700">missing ratio:</text><text x="200" y="1156">0 / 0.10 / 0.20 / 0.30 / 0.40 / 0.48</text>
+    <text x="100" y="1178" font-weight="700">seeds:</text><text x="200" y="1178">2026 / 2027 / 2028 (7*5*4=140 templates + complete control)</text>
+  </g>
+  <g transform="translate(100,1196)">
+    <line x1="0" y1="50" x2="260" y2="50" stroke="#94a3b8"/>
+    <line x1="0" y1="50" x2="0" y2="0" stroke="#94a3b8"/>
+    <text x="-6" y="8" font-size="9" fill="#64748b" text-anchor="end">Q(0)</text>
+    <text x="265" y="54" font-size="9" fill="#64748b">r_max</text>
+    <path d="M0,6 L40,12 L80,20 L120,28 L160,36 L200,42 L260,48" stroke="#dc2626" stroke-width="2" fill="none"/>
+    <path d="M0,6 L40,18 L80,30 L120,40 L160,46 L200,50 L260,52" stroke="#0369a1" stroke-width="2" fill="none" stroke-dasharray="4,3"/>
+    <text x="130" y="-4" font-size="10" fill="#dc2626">MRCD-Net</text>
+    <text x="200" y="-4" font-size="10" fill="#0369a1">naive fusion</text>
+  </g>
+  <text x="400" y="1210" font-size="11" fill="#334155">R_A(Q) = (1/r_max) integral Q(r)/Q(0) dr</text>
+  <text x="400" y="1230" font-size="11" fill="#334155">worst-case Q_worst = min over (g,p,r)</text>
+  <text x="400" y="1250" font-size="11" fill="#334155">mixed-effects: delta ~ b_g + b_p + b1 r + b2 r^2 + b_gp + b_gr r + b_pr r</text>
+  <text x="400" y="1275" font-size="10.5" fill="#64748b">ablation: B0 text-only / B1 naive / B2 fixed-gate / B3 modality-dropout /</text>
+  <text x="400" y="1290" font-size="10.5" fill="#64748b">B6 no-KD / B7 output-KD / B8 no-relation / B9 no-gate-KD / B10 no-confidence</text>
+
+  <rect x="740" y="1060" width="620" height="240" rx="14" fill="#ecfccb" stroke="#65a30d" stroke-width="1.8"/>
+  <text x="1050" y="1086" text-anchor="middle" font-size="13.5" font-weight="700" fill="#3f6212">Attachment 3 · Final Inference (30 unlabeled samples)</text>
+  <g font-size="11.5" fill="#3f6212">
+    <text x="760" y="1116">load frozen student, scaler, tau, calibration, aligned features</text>
+    <text x="760" y="1140">all-zero content positions treated as unavailable state (not natural-zero)</text>
+    <text x="760" y="1164">one forward per sample: no teacher, no label-based tuning</text>
+    <text x="760" y="1188">outputs: polarity in {Neg, Neu, Pos}, intensity in [-3,3], 3 probs</text>
+    <text x="760" y="1212">internal diagnostics: gate_L/A/V, detected A/V missing ratio</text>
+  </g>
+  <g transform="translate(760,1230)">
+    <rect x="0" y="0" width="120" height="50" rx="6" fill="#ffffff" stroke="#65a30d"/>
+    <text x="60" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="#3f6212">submission.csv</text>
+    <text x="60" y="38" text-anchor="middle" font-size="9.5" fill="#65a30d">30 rows in input order</text>
+  </g>
+  <g transform="translate(900,1230)">
+    <rect x="0" y="0" width="180" height="50" rx="6" fill="#ffffff" stroke="#65a30d"/>
+    <text x="90" y="20" text-anchor="middle" font-size="11" font-weight="700" fill="#3f6212">diagnostics.csv</text>
+    <text x="90" y="38" text-anchor="middle" font-size="9.5" fill="#65a30d">gates, missing ratio, drift</text>
+  </g>
+
+  <rect x="1420" y="1060" width="730" height="240" rx="14" fill="#f1f5f9" stroke="#475569" stroke-width="1.5"/>
+  <text x="1785" y="1086" text-anchor="middle" font-size="13.5" font-weight="700" fill="#0f172a">Attachment 2 Test Set · Closed Evaluation</text>
+  <g font-size="11.5" fill="#334155">
+    <text x="1445" y="1116">full-modality baseline: Accuracy / Macro-F1 / per-class F1 / MAE / Pearson</text>
+    <text x="1445" y="1140">missing-view robustness: C_cls prediction agreement, D_reg intensity drift</text>
+    <text x="1445" y="1164">D_gate = mean ||g_full - g_miss||_1 (does weight shift sensibly?)</text>
+    <text x="1445" y="1188">error attribution by label / length / missing type-position-ratio / teacher confidence</text>
+    <text x="1445" y="1212">3-5 random seeds, mean +/- std; paired bootstrap vs strongest baseline</text>
+  </g>
+  <g transform="translate(1445,1230)">
+    <rect x="0" y="0" width="700" height="56" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+    <text x="20" y="22" font-size="11.5" font-weight="700" fill="#0f172a">deployable footprint:</text>
+    <text x="20" y="42" font-size="11" fill="#334155">student only ~ 5-7M params / FP32 ~ 20-28 MB / FP16 ~ 10-14 MB / INT8 optional</text>
+    <text x="450" y="42" font-size="11" fill="#64748b">total submission <= 50 MB</text>
+  </g>
+</svg>
+</body>
+</html>
