@@ -1,0 +1,27 @@
+2026-09-25 23:33:36,340 | INFO | HSAIG-Net-v3 train=3395 valid=728 test=727 attachment4=20 device=cuda params=1,415,729
+2026-09-25 23:33:45,850 | INFO | Epoch 01/40 entmax=0.00 | Acc=0.5824 Macro-F1=0.4539 MAE=0.6605 Pearson=0.5724 | goals=0/4
+2026-09-25 23:33:45,881 | INFO | 保存最优模型 epoch=1 selection_score=0.828711
+2026-09-25 23:33:52,487 | INFO | Epoch 02/40 entmax=0.00 | Acc=0.6181 Macro-F1=0.5927 MAE=0.5971 Pearson=0.6306 | goals=0/4
+2026-09-25 23:33:52,505 | INFO | 保存最优模型 epoch=2 selection_score=0.947857
+2026-09-25 23:33:59,134 | INFO | Epoch 03/40 entmax=0.00 | Acc=0.5975 Macro-F1=0.5601 MAE=0.6023 Pearson=0.6440 | goals=0/4
+2026-09-25 23:34:05,843 | INFO | Epoch 04/40 entmax=0.00 | Acc=0.6332 Macro-F1=0.6180 MAE=0.5953 Pearson=0.6477 | goals=0/4
+2026-09-25 23:34:05,863 | INFO | 保存最优模型 epoch=4 selection_score=0.971712
+2026-09-25 23:34:12,278 | INFO | Epoch 05/40 entmax=0.00 | Acc=0.6126 Macro-F1=0.5828 MAE=0.5845 Pearson=0.6449 | goals=0/4
+2026-09-25 23:34:18,797 | INFO | Epoch 06/40 entmax=0.07 | Acc=0.6181 Macro-F1=0.5889 MAE=0.6033 Pearson=0.6450 | goals=0/4
+2026-09-25 23:34:25,075 | INFO | Epoch 07/40 entmax=0.13 | Acc=0.6140 Macro-F1=0.5852 MAE=0.6015 Pearson=0.6458 | goals=0/4
+2026-09-25 23:34:31,792 | INFO | Epoch 08/40 entmax=0.20 | Acc=0.5962 Macro-F1=0.5811 MAE=0.6090 Pearson=0.6328 | goals=0/4
+2026-09-25 23:34:38,179 | INFO | Epoch 09/40 entmax=0.27 | Acc=0.6277 Macro-F1=0.5926 MAE=0.6031 Pearson=0.6392 | goals=0/4
+2026-09-25 23:34:44,700 | INFO | Epoch 10/40 entmax=0.33 | Acc=0.6044 Macro-F1=0.5657 MAE=0.6110 Pearson=0.6294 | goals=0/4
+2026-09-25 23:34:51,486 | INFO | Epoch 11/40 entmax=0.40 | Acc=0.6113 Macro-F1=0.5786 MAE=0.6269 Pearson=0.6402 | goals=0/4
+2026-09-25 23:34:58,097 | INFO | Epoch 12/40 entmax=0.47 | Acc=0.6085 Macro-F1=0.5759 MAE=0.6756 Pearson=0.6201 | goals=0/4
+2026-09-25 23:35:04,410 | INFO | Epoch 13/40 entmax=0.53 | Acc=0.6236 Macro-F1=0.5995 MAE=0.6166 Pearson=0.6249 | goals=0/4
+2026-09-25 23:35:10,729 | INFO | Epoch 14/40 entmax=0.60 | Acc=0.6058 Macro-F1=0.5746 MAE=0.6391 Pearson=0.6117 | goals=0/4
+2026-09-25 23:35:17,015 | INFO | Epoch 15/40 entmax=0.67 | Acc=0.6044 Macro-F1=0.5782 MAE=0.6223 Pearson=0.6248 | goals=0/4
+2026-09-25 23:35:23,608 | INFO | Epoch 16/40 entmax=0.73 | Acc=0.6016 Macro-F1=0.5761 MAE=0.6149 Pearson=0.6233 | goals=0/4
+2026-09-25 23:35:30,409 | INFO | Epoch 17/40 entmax=0.80 | Acc=0.6154 Macro-F1=0.5686 MAE=0.6549 Pearson=0.6119 | goals=0/4
+2026-09-25 23:35:36,875 | INFO | Epoch 18/40 entmax=0.87 | Acc=0.6044 Macro-F1=0.5546 MAE=0.6625 Pearson=0.6129 | goals=0/4
+2026-09-25 23:35:43,186 | INFO | Epoch 19/40 entmax=0.93 | Acc=0.5948 Macro-F1=0.5697 MAE=0.6478 Pearson=0.6184 | goals=0/4
+2026-09-25 23:35:49,409 | INFO | Epoch 20/40 entmax=1.00 | Acc=0.6085 Macro-F1=0.5772 MAE=0.6417 Pearson=0.6168 | goals=0/4
+2026-09-25 23:35:49,410 | INFO | 正式指标选模分数连续16轮未改善，提前停止
+2026-09-25 23:35:49,444 | INFO | 加载最优单模型 epoch=4 entmax=0.00 | Acc=0.6332 Macro-F1=0.6180 MAE=0.5953 Pearson=0.6477
+2026-09-25 23:37:50,321 | INFO | 验收：Acc=0.6332 Macro-F1=0.6180 MAE=0.5866 Pearson=0.6477；0/4，accepted=False

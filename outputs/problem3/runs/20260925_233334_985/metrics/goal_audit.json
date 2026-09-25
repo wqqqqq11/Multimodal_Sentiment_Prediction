@@ -1,0 +1,95 @@
+{
+  "accepted": false,
+  "submission_exported": false,
+  "reason": "至少一项正式验证指标未满足，拒绝覆盖提交模型",
+  "validation": {
+    "accuracy": 0.6332417582417582,
+    "macro_f1": 0.6179521829521829,
+    "mae": 0.5865932271213291,
+    "pearson": 0.647670956466703,
+    "per_class_f1": [
+      0.6461538461538462,
+      0.505,
+      0.7027027027027026
+    ],
+    "confusion_matrix": [
+      [
+        126,
+        44,
+        36
+      ],
+      [
+        25,
+        101,
+        58
+      ],
+      [
+        33,
+        71,
+        234
+      ]
+    ],
+    "selection_score": 0.9751414190597011,
+    "goal_audit": {
+      "targets": {
+        "accuracy": 0.65,
+        "macro_f1": 0.62,
+        "mae": 0.55,
+        "pearson": 0.65
+      },
+      "met": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false
+      },
+      "met_count": 0,
+      "all_met": false
+    }
+  },
+  "test": {
+    "accuracy": 0.6492434662998624,
+    "macro_f1": 0.6024587704986248,
+    "mae": 0.6534486182612649,
+    "pearson": 0.6429838520920982,
+    "per_class_f1": [
+      0.6666666666666667,
+      0.3973941368078176,
+      0.7433155080213903
+    ],
+    "confusion_matrix": [
+      [
+        133,
+        32,
+        42
+      ],
+      [
+        31,
+        61,
+        66
+      ],
+      [
+        28,
+        56,
+        278
+      ]
+    ],
+    "selection_score": 0.9499660811797673,
+    "goal_audit": {
+      "targets": {
+        "accuracy": 0.65,
+        "macro_f1": 0.62,
+        "mae": 0.55,
+        "pearson": 0.65
+      },
+      "met": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false
+      },
+      "met_count": 0,
+      "all_met": false
+    }
+  }
+}
