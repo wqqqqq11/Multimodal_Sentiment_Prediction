@@ -1,8 +1,8 @@
 {
   "project": {
-    "name": "HSAIG-Net-v2",
+    "name": "HSAIG-Net-v3",
     "seed": 2026,
-    "description": "Hierarchical sparse attention with faithful integrated-gradients verification"
+    "description": "Entmax hierarchical attention with task-specific fusion and checkpoint averaging"
   },
   "paths": {
     "preprocessed_root": "datasets/preprocessed_data/problem3",
@@ -29,7 +29,7 @@
   },
   "model": {
     "max_steps": 50,
-    "text_dim": 128,
+    "text_dim": 256,
     "audio_dim": 74,
     "vision_dim": 35,
     "hidden_dim": 128,
@@ -37,72 +37,59 @@
     "modality_layers": 2,
     "modality_heads": 4,
     "modality_intermediate_dim": 320,
-    "dropout": 0.18,
+    "dropout": 0.25,
     "num_classes": 3,
     "time_attention_temperature": 1.0,
     "modality_gate_temperature": 1.0
   },
   "training": {
-    "epochs": 45,
-    "patience": 9,
+    "epochs": 40,
+    "patience": 5,
     "min_delta": 0.0001,
-    "learning_rate": 0.00028,
-    "weight_decay": 0.0003,
+    "learning_rate": 0.00024,
+    "weight_decay": 0.001,
     "gradient_clip": 1.0,
-    "warmup_epochs": 3,
-    "sparsity_transition_epochs": 7,
+    "warmup_epochs": 5,
+    "sparsity_transition_epochs": 15,
     "class_weights": [
       1.0,
       1.15,
       0.9
     ],
-    "label_smoothing": 0.03,
+    "label_smoothing": 0.05,
     "regression_beta": 0.4,
     "amp": true,
     "loss_weights": {
       "classification": 1.0,
-      "regression": 1.0,
-      "correlation": 0.25,
-      "ccc": 0.15,
-      "coherence": 0.08,
+      "regression": 0.55,
+      "mae": 0.3,
+      "correlation": 0.1,
+      "ccc": 0.05,
+      "coherence": 0.05,
       "aux_classification": 0.12,
-      "aux_regression": 0.08,
-      "temporal_sparsity": 0.008,
-      "modality_sparsity": 0.005
-    }
+      "aux_regression": 0.06,
+      "temporal_sparsity": 0.006,
+      "modality_sparsity": 0.004
+    },
+    "minimum_epochs": 20,
+    "scheduler_warmup_epochs": 2,
+    "minimum_lr_ratio": 0.08,
+    "top_k_checkpoints": 5
   },
   "evaluation": {
     "goals": {
       "accuracy": 0.65,
-      "macro_f1": 0.52,
+      "macro_f1": 0.62,
       "mae": 0.55,
-      "pearson": 0.65,
-      "neutral_recall": 0.65
+      "pearson": 0.65
     },
     "calibration": {
-      "temperature_values": [
-        0.8,
-        1.0,
-        1.2,
-        1.4
-      ],
-      "neutral_bias_min": -0.2,
-      "neutral_bias_max": 0.8,
-      "neutral_bias_steps": 11,
-      "neutral_strength_values": [
-        0.0,
-        0.2,
-        0.4,
-        0.6,
-        0.8
-      ],
-      "polarity_strength_values": [
-        0.0,
-        0.2,
-        0.4,
-        0.6
-      ],
-      "neutral_scale": 0.65
+      "regression_slope_min": 0.75,
+      "regression_slope_max": 1.25,
+      "regression_slope_steps": 11,
+      "regression_intercept_min": -0.3,
+      "regression_intercept_max": 0.3,
+      "regression_intercept_steps": 13
     }
   },
   "explanation": {

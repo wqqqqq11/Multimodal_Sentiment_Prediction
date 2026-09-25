@@ -23,7 +23,7 @@ def _transform(values: np.ndarray, mask: np.ndarray, mean: np.ndarray, component
     return result
 
 
-def build_text_features(root: Path, dimensions: int = 128, overwrite: bool = False) -> Path:
+def build_text_features(root: Path, dimensions: int = 256, overwrite: bool = False) -> Path:
     source_path = root / "datasets/original_data_from_the_competition_organizer/dataset02/aligned_50.pkl"
     p3_root = root / "datasets/preprocessed_data/problem3"
     attachment_dir = root / "datasets/original_data_from_the_competition_organizer/dataset04/aligned"
@@ -95,8 +95,8 @@ def build_text_features(root: Path, dimensions: int = 128, overwrite: bool = Fal
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="构造问题三紧凑PCA文本特征")
-    parser.add_argument("--dimensions", type=int, default=128)
+    parser = argparse.ArgumentParser(description="构造问题三训练集拟合的PCA文本特征")
+    parser.add_argument("--dimensions", type=int, default=256)
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
     output = build_text_features(PROJECT_ROOT, args.dimensions, args.overwrite)

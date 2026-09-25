@@ -8,22 +8,29 @@ from torch import nn
 MODALITIES = ("text", "audio", "vision")
 
 
-def sparsemax(logits: torch.Tensor, dim: int = -1) -> torch.Tensor:
-    shifted = logits - logits.max(dim=dim, keepdim=True).values
-    ordered, _ = torch.sort(shifted, descending=True, dim=dim)
+def entmax15(logits: torch.Tensor, dim: int = -1) -> torch.Tensor:
+    """Exact alpha=1.5 entmax projection, implemented without external dependencies."""
+    dtype = logits.dtype
+    values = logits.float() / 2.0
+    values = values - values.max(dim=dim, keepdim=True).values
+    ordered, _ = torch.sort(values, descending=True, dim=dim)
     size = ordered.size(dim)
-    ranks = torch.arange(1, size + 1, device=logits.device, dtype=logits.dtype)
-    shape = [1] * logits.ndim
+    ranks = torch.arange(1, size + 1, device=values.device, dtype=values.dtype)
+    shape = [1] * values.ndim
     shape[dim] = size
     ranks = ranks.view(shape)
-    cumulative = ordered.cumsum(dim)
-    support = 1 + ranks * ordered > cumulative
+    mean = ordered.cumsum(dim) / ranks
+    mean_square = ordered.square().cumsum(dim) / ranks
+    variance_sum = ranks * (mean_square - mean.square())
+    delta = ((1.0 - variance_sum) / ranks).clamp_min(0.0)
+    taus = mean - torch.sqrt(delta)
+    support = taus <= ordered
     support_size = support.sum(dim=dim, keepdim=True).clamp_min(1)
-    tau = (cumulative.gather(dim, support_size - 1) - 1) / support_size.to(logits.dtype)
-    return torch.clamp(shifted - tau, min=0)
+    tau = taus.gather(dim, support_size - 1)
+    return (values - tau).clamp_min(0.0).square().to(dtype)
 
 
-class ScheduledSparseDistribution(nn.Module):
+class ScheduledEntmaxDistribution(nn.Module):
     def __init__(self, temperature: float = 1.0) -> None:
         super().__init__()
         self.temperature = float(temperature)
@@ -35,11 +42,12 @@ class ScheduledSparseDistribution(nn.Module):
     def forward(self, scores: torch.Tensor, mask: torch.Tensor | None = None) -> torch.Tensor:
         if mask is not None:
             mask = mask.bool()
-            scores = scores.masked_fill(~mask, torch.finfo(scores.dtype).min)
+            scores = scores.masked_fill(~mask, -1e4)
         scaled = scores / self.temperature
         dense = torch.softmax(scaled, dim=-1)
-        sparse = sparsemax(scaled, dim=-1)
-        weights = dense.lerp(sparse, self.sparsity_mix.to(dense.dtype))
+        sparse = entmax15(scaled, dim=-1).to(dtype=dense.dtype)
+        mix = self.sparsity_mix.to(device=dense.device, dtype=dense.dtype)
+        weights = torch.lerp(dense, sparse, mix)
         if mask is not None:
             weights = weights * mask.to(weights.dtype)
             weights = weights / weights.sum(dim=-1, keepdim=True).clamp_min(1e-8)
@@ -79,15 +87,20 @@ class SparseTemporalPool(nn.Module):
         super().__init__()
         self.score = nn.Sequential(nn.LayerNorm(hidden), nn.Linear(hidden, hidden // 2), nn.Tanh(),
                                    nn.Dropout(dropout), nn.Linear(hidden // 2, 1))
-        self.distribution = ScheduledSparseDistribution(temperature)
+        self.distribution = ScheduledEntmaxDistribution(temperature)
 
     def forward(self, sequence: torch.Tensor, mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         weights = self.distribution(self.score(sequence).squeeze(-1), mask)
         return torch.sum(sequence * weights.unsqueeze(-1), dim=1), weights
 
 
+def _task_fusion(input_dim: int, fusion_dim: int, dropout: float) -> nn.Sequential:
+    return nn.Sequential(nn.LayerNorm(input_dim), nn.Linear(input_dim, fusion_dim), nn.GELU(),
+                         nn.Dropout(dropout), nn.Linear(fusion_dim, fusion_dim), nn.GELU(), nn.Dropout(dropout))
+
+
 class HSAIGNet(nn.Module):
-    """Three-modality model whose prediction paths all pass through the gate."""
+    """Entmax three-modality model with task-specific classification and regression fusion."""
     def __init__(self, cfg: dict[str, Any]) -> None:
         super().__init__()
         hidden, fusion, dropout = int(cfg["hidden_dim"]), int(cfg["fusion_dim"]), float(cfg["dropout"])
@@ -97,44 +110,44 @@ class HSAIGNet(nn.Module):
                                     for name in MODALITIES})
         self.gate_score = nn.Sequential(nn.LayerNorm(hidden * 3), nn.Linear(hidden * 3, hidden), nn.GELU(),
                                         nn.Dropout(dropout), nn.Linear(hidden, 3))
-        self.gate_distribution = ScheduledSparseDistribution(float(cfg["modality_gate_temperature"]))
-        self.fusion = nn.Sequential(nn.LayerNorm(hidden * 4), nn.Linear(hidden * 4, fusion), nn.GELU(),
-                                    nn.Dropout(dropout), nn.Linear(fusion, fusion), nn.GELU(), nn.Dropout(dropout))
+        self.gate_distribution = ScheduledEntmaxDistribution(float(cfg["modality_gate_temperature"]))
+        fusion_input = hidden * 4
+        self.classification_fusion = _task_fusion(fusion_input, fusion, dropout)
+        self.regression_fusion = _task_fusion(fusion_input, fusion, dropout)
         self.classifier = nn.Linear(fusion, int(cfg["num_classes"]))
-        self.regressor, self.uncertainty = nn.Linear(fusion, 1), nn.Linear(fusion, 1)
+        self.regressor = nn.Linear(fusion, 1)
+        self.uncertainty = nn.Linear(fusion, 1)
         self.aux_classifiers = nn.ModuleDict({name: nn.Linear(hidden, int(cfg["num_classes"])) for name in MODALITIES})
         self.aux_regressors = nn.ModuleDict({name: nn.Linear(hidden, 1) for name in MODALITIES})
 
     def set_sparsity_mix(self, value: float) -> None:
-        for pool in self.pools.values():
-            pool.distribution.set_mix(value)
+        for pool in self.pools.values(): pool.distribution.set_mix(value)
         self.gate_distribution.set_mix(value)
-
-    def freeze_text_bottom_layers(self, _: int) -> None:
-        return
 
     @staticmethod
     def _mask(batch: dict[str, torch.Tensor], name: str) -> torch.Tensor:
         mask = batch[f"{name}_evidence_candidate_mask"].bool()
         empty = ~mask.any(dim=1)
-        if empty.any():
-            mask = torch.where(empty.unsqueeze(-1), ~batch["padding_mask"].bool(), mask)
+        if empty.any(): mask = torch.where(empty.unsqueeze(-1), ~batch["padding_mask"].bool(), mask)
         return mask
 
     def forward(self, batch: dict[str, Any]) -> dict[str, torch.Tensor]:
         values = {"text": batch["text_features"], "audio": batch["audio"], "vision": batch["vision"]}
-        pooled, attentions = {}, {}
+        pooled: dict[str, torch.Tensor] = {}
+        attentions: dict[str, torch.Tensor] = {}
         for name in MODALITIES:
             mask = self._mask(batch, name)
             pooled[name], attentions[name] = self.pools[name](self.encoders[name](values[name], mask), mask)
         stacked = torch.stack([pooled[name] for name in MODALITIES], dim=1)
         gate = self.gate_distribution(self.gate_score(torch.cat([pooled[name] for name in MODALITIES], dim=-1)))
         gated = stacked * gate.unsqueeze(-1)
-        fused = self.fusion(torch.cat((gated.sum(dim=1), gated.flatten(1)), dim=-1))
+        fusion_input = torch.cat((gated.sum(dim=1), gated.flatten(1)), dim=-1)
+        classification_features = self.classification_fusion(fusion_input)
+        regression_features = self.regression_fusion(fusion_input)
         return {
-            "logits": self.classifier(fused),
-            "regression": 3.0 * torch.tanh(self.regressor(fused).squeeze(-1) / 3.0),
-            "log_variance": self.uncertainty(fused).squeeze(-1).clamp(-5.0, 3.0),
+            "logits": self.classifier(classification_features),
+            "regression": 3.0 * torch.tanh(self.regressor(regression_features).squeeze(-1) / 3.0),
+            "log_variance": self.uncertainty(regression_features).squeeze(-1).clamp(-5.0, 3.0),
             "modality_gate": gate,
             "aux_logits": torch.stack([self.aux_classifiers[n](pooled[n]) for n in MODALITIES], dim=1),
             "aux_regression": torch.stack([3.0 * torch.tanh(self.aux_regressors[n](pooled[n]).squeeze(-1) / 3.0)

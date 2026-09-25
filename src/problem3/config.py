@@ -18,8 +18,8 @@ def load_config(path: str | Path, overrides: dict[str, Any] | None = None) -> di
     if not source.is_file(): raise FileNotFoundError(f"问题三模型配置不存在: {source}")
     cfg = _merge(json.loads(source.read_text(encoding="utf-8")), overrides or {})
     model = cfg["model"]
-    if (int(model["max_steps"]), int(model["text_dim"]), int(model["audio_dim"]), int(model["vision_dim"])) != (50, 128, 74, 35):
-        raise ValueError("问题三模型输入必须为 50 步以及 128/74/35 维")
+    if (int(model["max_steps"]), int(model["text_dim"]), int(model["audio_dim"]), int(model["vision_dim"])) != (50, 256, 74, 35):
+        raise ValueError("问题三模型输入必须为 50 步以及 256/74/35 维")
     if int(model["hidden_dim"]) % int(model["modality_heads"]): raise ValueError("hidden_dim必须整除注意力头数")
     if len(cfg["training"]["class_weights"]) != 3: raise ValueError("class_weights必须有三项")
     if abs(sum(float(v) for v in cfg["explanation"]["contribution_weights"].values()) - 1.0) > 1e-6:

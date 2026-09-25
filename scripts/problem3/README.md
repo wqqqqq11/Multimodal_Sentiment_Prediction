@@ -1,40 +1,34 @@
-# 问题三新版 HSAIG-v2
+# 问题三 HSAIG-Net-v3
 
-## 为什么重构
+新版直接使用赛方 `aligned_50.pkl` 文本表征，并且只在附件2训练集上拟合 PCA。文本维度由
+768 压缩到 256，累计解释方差约 79.46%。附件2验证、测试和附件4不参与 PCA 拟合。
 
-旧版把本地 BERT 放进提交权重，FP16 约 23 MiB，验证集只满足 2/5 项目标。新版直接使用赛方
-`aligned_50.pkl` 中的 768 维文本表征，并且只在附件2训练集上拟合 PCA，压缩到 128 维。
-这消除了 BERT 参数，也避免附件2验证、测试和附件4进入降维拟合。
+模型包含三模态时序编码器、Softmax 到 Entmax-1.5 的渐进稀疏注意力、样本级模态门控、
+分类与回归独立融合层、单模态辅助监督、积分梯度以及删除和保留实验。训练保留正式指标分数
+最高的五个检查点，并生成单个权重平均检查点。
 
-模型使用三路轻量时序编码器、由 Softmax 逐轮过渡到 Sparsemax 的时间注意力和模态门控、三模态辅助监督、
-分类与强度联合损失，以及回归感知的验证集校准。所有融合特征都经过模态门控，使门控、积分梯度和删除实验
-针对同一条预测路径。
+## 训练
 
-## 运行
-
-```powershell
-python data_progressing/problem3_text_features.py
-python scripts/problem3/solve_problem3.py --device cuda
-```
-
-快速检查执行链：
+256维文本特征已经生成。正式训练执行：
 
 ```powershell
-python scripts/problem3/solve_problem3.py --device cuda --smoke
+.\.venv\Scripts\python.exe scripts\problem3\solve_problem3.py --device cuda --run-name hsaig_v3
 ```
 
-若文本特征目录已存在但需要重建：
+如需重新生成文本特征：
 
 ```powershell
-python data_progressing/problem3_text_features.py --overwrite
+.\.venv\Scripts\python.exe data_progressing\problem3_text_features.py --overwrite
 ```
 
-每次运行都会生成独立目录 `outputs/problem3/runs/<run_id>`。关键文件为：
+运行目录中的关键文件：
 
-- `metrics/goal_audit.json`：五项目标和是否通过验收；
-- `metrics/summary.json`：参数量、FP16 估算大小、最佳轮次和完整指标；
+- `checkpoints/candidate_epoch_*.pt`：正式指标分数最高的多个候选检查点；
+- `checkpoints/hsaig_topk_averaged.pt`：用于最终推理的权重平均检查点；
+- `metrics/goal_audit.json`：四项正式目标验收；
+- `metrics/summary.json`：参数量、平均轮次与验证/测试指标；
 - `predictions/problem3_attachment4_predictions_and_explanations.csv`：附件4全量结果；
-- `explanations/attachment4_evidence.csv`：文本片段、语音时段和视觉帧证据。
+- `explanations/attachment4_evidence.csv`：原始文本、语音时段和视觉帧证据。
 
-只有验证集五项目标全部通过，正式运行才会写入 `outputs/problem3/submission`。未达标的模型和结果
-仍留在本次 run 目录用于诊断，不会覆盖可提交版本。
+验收目标为 Accuracy ≥ 0.65、Macro-F1 ≥ 0.62、MAE ≤ 0.55、Pearson ≥ 0.65。
+只有四项全部满足才写入 `outputs/problem3/submission`。

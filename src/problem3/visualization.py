@@ -28,7 +28,6 @@ def plot_training_history(history: list[dict[str, Any]], path: Path) -> None:
     axes[0, 0].set(title="训练损失", xlabel="Epoch", ylabel="Loss")
     axes[0, 1].plot(frame["epoch"], frame["valid_accuracy"], label="Accuracy")
     axes[0, 1].plot(frame["epoch"], frame["valid_macro_f1"], label="Macro-F1")
-    axes[0, 1].plot(frame["epoch"], frame["valid_neutral_recall"], label="Neutral Recall")
     axes[0, 1].set(title="分类指标", xlabel="Epoch", ylabel="Score")
     axes[0, 1].legend()
     axes[1, 0].plot(frame["epoch"], frame["valid_mae"], label="MAE")
@@ -36,7 +35,7 @@ def plot_training_history(history: list[dict[str, Any]], path: Path) -> None:
     axes[1, 0].set(title="回归指标", xlabel="Epoch", ylabel="Score")
     axes[1, 0].legend()
     axes[1, 1].plot(frame["epoch"], frame["valid_selection_score"], label="目标感知选模分数")
-    axes[1, 1].bar(frame["epoch"], frame["goals_met"] / 5.0, alpha=0.25, label="达标比例")
+    axes[1, 1].bar(frame["epoch"], frame["goals_met"] / 4.0, alpha=0.25, label="达标比例")
     axes[1, 1].set(title="选模与目标达成", xlabel="Epoch", ylabel="Score")
     axes[1, 1].legend()
     for axis in axes.flat:
@@ -64,7 +63,7 @@ def plot_validation(result: dict[str, Any], path: Path) -> None:
     metrics = result["metrics"]
     fig.suptitle(
         f"Acc={metrics['accuracy']:.3f}  F1={metrics['macro_f1']:.3f}  MAE={metrics['mae']:.3f}  "
-        f"r={metrics['pearson']:.3f}  Neutral-R={metrics['neutral_recall']:.3f}"
+        f"r={metrics['pearson']:.3f}"
     )
     fig.tight_layout()
     fig.savefig(path, bbox_inches="tight")

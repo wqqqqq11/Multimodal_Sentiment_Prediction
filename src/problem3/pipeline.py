@@ -57,7 +57,7 @@ def _export(model: HSAIGNet, run_dir: Path, output_root: Path, cfg: dict[str, An
     state = {key: value.detach().cpu().half() if value.is_floating_point() else value.detach().cpu()
              for key, value in model.state_dict().items()}
     target = submission / "problem3_hsaig_fp16.pt"
-    atomic_torch_save({"model_state": state, "precision": "float16", "architecture": "HSAIG-Net-v2"}, target)
+    atomic_torch_save({"model_state": state, "precision": "float16", "architecture": "HSAIG-Net-v3"}, target)
     size = target.stat().st_size / 1024 ** 2
     if size > float(cfg["output"]["max_submission_model_mb"]):
         target.unlink(); raise RuntimeError(f"模型权重 {size:.2f} MiB 超过上限")
@@ -83,7 +83,7 @@ def run_solution(project_root: Path, config_path: Path, requested_device: str = 
         loaders = _loaders(datasets, cfg)
         model = HSAIGNet(cfg["model"]).to(device)
         total, trainable = count_parameters(model)
-        logger.info("HSAIG-Net-v2 train=%d valid=%d test=%d attachment4=%d device=%s params=%s",
+        logger.info("HSAIG-Net-v3 train=%d valid=%d test=%d attachment4=%d device=%s params=%s",
                     *(len(datasets[name]) for name in ("train", "valid", "test", "attachment4")), device, f"{total:,}")
         history, checkpoint = train_model(model, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
         raw_valid = predict(model, loaders["valid"], device, goals=cfg["evaluation"]["goals"])
@@ -120,19 +120,19 @@ def run_solution(project_root: Path, config_path: Path, requested_device: str = 
         model_size = None
         if accepted and not smoke: model_size = _export(model, run_dir, output_root, cfg)
         audit = {"accepted": accepted, "submission_exported": model_size is not None,
-                 "reason": "五项验证集目标全部满足" if accepted else "至少一项验证集目标未满足，拒绝覆盖提交模型",
+                 "reason": "四项验证集目标全部满足" if accepted else "至少一项正式验证指标未满足，拒绝覆盖提交模型",
                  "validation": validation["metrics"], "test": test["metrics"]}
         write_json(run_dir / "metrics" / "goal_audit.json", audit)
         write_json(run_dir / "metrics" / "summary.json", {
             "run_id": run_dir.name, "device": str(device), "parameters": total, "trainable_parameters": trainable,
             "estimated_fp16_mib": total * 2 / 1024 ** 2, "exported_model_mib": model_size,
-            "best_epoch": int(checkpoint["epoch"]), "validation": validation["metrics"], "test": test["metrics"],
+            "best_epoch": int(checkpoint["epoch"]), "averaged_epochs": checkpoint.get("averaged_epochs", []), "validation": validation["metrics"], "test": test["metrics"],
             "calibration": calibration, "accepted": accepted, "smoke": smoke})
         write_json(output_root / "latest_model_run.json", {"run_id": run_dir.name, "run_dir": str(run_dir),
                                                                     "status": "accepted" if accepted else "goals_not_met"})
-        logger.info("验收：Acc=%.4f F1=%.4f MAE=%.4f r=%.4f Neutral-R=%.4f；%d/5，accepted=%s",
-                    validation["metrics"]["accuracy"], validation["metrics"]["macro_f1"], validation["metrics"]["mae"],
-                    validation["metrics"]["pearson"], validation["metrics"]["neutral_recall"],
+        logger.info("验收：Acc=%.4f Macro-F1=%.4f MAE=%.4f Pearson=%.4f；%d/4，accepted=%s",
+                    validation["metrics"]["accuracy"], validation["metrics"]["macro_f1"],
+                    validation["metrics"]["mae"], validation["metrics"]["pearson"],
                     validation["metrics"]["goal_audit"]["met_count"], accepted)
         return run_dir
     except Exception as exc:
