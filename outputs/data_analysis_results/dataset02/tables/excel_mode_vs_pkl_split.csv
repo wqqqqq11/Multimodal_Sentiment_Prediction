@@ -1,0 +1,4 @@
+﻿mode,test,train,valid
+test,727,0,0
+train,0,3395,0
+valid,0,0,728

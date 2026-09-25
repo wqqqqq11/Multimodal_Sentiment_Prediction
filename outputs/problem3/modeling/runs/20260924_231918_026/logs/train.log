@@ -1,0 +1,35 @@
+2026-09-24 23:19:18,066 | INFO | Problem 3 pipeline stage=all device=cuda run=20260924_231918_026
+2026-09-24 23:19:23,333 | INFO | 问题二文本骨干热启动: loaded=69 skipped=0
+2026-09-24 23:20:11,653 | INFO | epoch=001 stage=warmup loss=2.43832 acc=0.5769 f1=0.4562 mae=0.7345 r=0.5116 score=0.8661 temp=1.500
+2026-09-24 23:20:19,300 | INFO | epoch=002 stage=warmup loss=2.11994 acc=0.5124 f1=0.4768 mae=0.7566 r=0.4688 score=0.8361 temp=1.421
+2026-09-24 23:20:29,052 | INFO | epoch=003 stage=warmup loss=2.13167 acc=0.5014 f1=0.4141 mae=0.8110 r=0.4643 score=0.7535 temp=1.347
+2026-09-24 23:20:29,260 | INFO | 进入 joint 阶段：重置最优分数与早停计数；warmup 检查点不参与最终模型选择
+2026-09-24 23:20:53,481 | INFO | 初始化 joint 训练原型记忆: {'candidate_evidence': 8402, 'occupied_cells': 15, 'prototypes': 75}
+2026-09-24 23:21:07,669 | INFO | 为 epoch=004 验证重建同源原型记忆: {'candidate_evidence': 6023, 'occupied_cells': 3, 'prototypes': 15}
+2026-09-24 23:21:08,444 | INFO | epoch=004 stage=joint loss=3.25080 acc=0.2527 f1=0.1345 mae=0.6982 r=0.4515 score=0.4486 temp=1.276
+2026-09-24 23:21:27,703 | INFO | 为 epoch=005 验证重建同源原型记忆: {'candidate_evidence': 14617, 'occupied_cells': 15, 'prototypes': 75}
+2026-09-24 23:21:28,718 | INFO | epoch=005 stage=joint loss=4.32155 acc=0.5069 f1=0.3877 mae=0.7856 r=0.4806 score=0.7401 temp=1.209
+2026-09-24 23:21:49,291 | INFO | 为 epoch=006 验证重建同源原型记忆: {'candidate_evidence': 7359, 'occupied_cells': 12, 'prototypes': 57}
+2026-09-24 23:21:50,040 | INFO | epoch=006 stage=joint loss=3.39321 acc=0.2940 f1=0.1934 mae=0.7683 r=0.3805 score=0.4283 temp=1.146
+2026-09-24 23:22:06,359 | INFO | 为 epoch=007 验证重建同源原型记忆: {'candidate_evidence': 11414, 'occupied_cells': 18, 'prototypes': 87}
+2026-09-24 23:22:07,078 | INFO | epoch=007 stage=joint loss=3.45838 acc=0.3791 f1=0.2770 mae=0.7418 r=0.4103 score=0.5495 temp=1.086
+2026-09-24 23:22:22,402 | INFO | 为 epoch=008 验证重建同源原型记忆: {'candidate_evidence': 8511, 'occupied_cells': 12, 'prototypes': 59}
+2026-09-24 23:22:23,078 | INFO | epoch=008 stage=joint loss=3.29976 acc=0.3214 f1=0.2305 mae=0.7255 r=0.4439 score=0.5365 temp=1.029
+2026-09-24 23:22:39,384 | INFO | 为 epoch=009 验证重建同源原型记忆: {'candidate_evidence': 12319, 'occupied_cells': 18, 'prototypes': 90}
+2026-09-24 23:22:40,164 | INFO | epoch=009 stage=joint loss=3.30938 acc=0.4203 f1=0.3176 mae=0.7579 r=0.4375 score=0.6149 temp=0.975
+2026-09-24 23:22:55,829 | INFO | 为 epoch=010 验证重建同源原型记忆: {'candidate_evidence': 8711, 'occupied_cells': 12, 'prototypes': 60}
+2026-09-24 23:22:56,543 | INFO | epoch=010 stage=joint loss=3.26443 acc=0.3187 f1=0.2288 mae=0.7092 r=0.4443 score=0.5392 temp=0.923
+2026-09-24 23:23:12,879 | INFO | 为 epoch=011 验证重建同源原型记忆: {'candidate_evidence': 13271, 'occupied_cells': 18, 'prototypes': 90}
+2026-09-24 23:23:13,619 | INFO | epoch=011 stage=joint loss=3.29274 acc=0.4341 f1=0.3323 mae=0.7487 r=0.4794 score=0.6732 temp=0.875
+2026-09-24 23:23:13,830 | INFO | 验证集连续 6 轮无提升，提前停止
+2026-09-24 23:23:14,209 | INFO | 加载验证阶段成对选中的模型—原型组合: epoch=5 score=0.7401 prototypes=75
+2026-09-24 23:23:14,271 | INFO | 已保存部署模型: D:\PythonWorkplace\Multimodal_Sentiment_Prediction\outputs\problem3\modeling\runs\20260924_231918_026\checkpoints\problem3_sepcnet_best_fp16.pt
+2026-09-24 23:23:14,272 | INFO | 开始 valid 推理与解释计算
+2026-09-24 23:23:18,005 | INFO | valid 原型覆盖: 5802/5802 (1.0000)
+2026-09-24 23:23:18,006 | INFO | valid: Acc=0.5069 F1=0.3877 MAE=0.7856 Pearson=0.4806
+2026-09-24 23:23:18,006 | INFO | 开始 test 推理与解释计算
+2026-09-24 23:23:42,662 | INFO | test 原型覆盖: 5812/5812 (1.0000)
+2026-09-24 23:23:42,662 | INFO | test: Acc=0.5186 F1=0.3876 MAE=0.8880 Pearson=0.4202
+2026-09-24 23:23:42,663 | INFO | 开始 attachment4 推理与解释计算
+2026-09-24 23:24:05,331 | INFO | attachment4 原型覆盖: 160/160 (1.0000)
+2026-09-24 23:24:07,103 | INFO | 问题三求解完成: D:\PythonWorkplace\Multimodal_Sentiment_Prediction\outputs\problem3\modeling\runs\20260924_231918_026

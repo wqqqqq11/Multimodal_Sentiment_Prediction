@@ -1,0 +1,23 @@
+[
+  {
+    "group": "all",
+    "samples": 728,
+    "classification_error_rate": 0.49313186813186816,
+    "intensity_mae": 0.785625647669044,
+    "mean_sufficiency_gap": 0.3184087292833643
+  },
+  {
+    "group": "none",
+    "samples": 684,
+    "classification_error_rate": 0.5043859649122807,
+    "intensity_mae": 0.7728369953464825,
+    "mean_sufficiency_gap": 0.322605748884162
+  },
+  {
+    "group": "text_truncated",
+    "samples": 44,
+    "classification_error_rate": 0.3181818181818182,
+    "intensity_mae": 0.9844310610470447,
+    "mean_sufficiency_gap": 0.2531641518527811
+  }
+]

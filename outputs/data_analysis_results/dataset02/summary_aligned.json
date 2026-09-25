@@ -1,0 +1,330 @@
+{
+  "dataset": "dataset02",
+  "version": "aligned",
+  "file": "aligned_50.pkl",
+  "file_size_mb": 947.8024110794067,
+  "top_level_keys": [
+    "train",
+    "valid",
+    "test"
+  ],
+  "fields_by_split": {
+    "train": [
+      "audio",
+      "classification_labels",
+      "id",
+      "raw_text",
+      "regression_labels",
+      "text",
+      "text_bert",
+      "vision"
+    ],
+    "valid": [
+      "audio",
+      "classification_labels",
+      "id",
+      "raw_text",
+      "regression_labels",
+      "text",
+      "text_bert",
+      "vision"
+    ],
+    "test": [
+      "audio",
+      "classification_labels",
+      "id",
+      "raw_text",
+      "regression_labels",
+      "text",
+      "text_bert",
+      "vision"
+    ]
+  },
+  "split_counts": {
+    "test": 727,
+    "train": 3395,
+    "valid": 728
+  },
+  "sample_count": 4850,
+  "duplicate_ids_within_version": 0,
+  "unique_video_ids": 2148,
+  "regression": {
+    "count": 4850,
+    "mean": 0.1614089366424944,
+    "std": 1.1109889858383002,
+    "min": -3.0,
+    "p05": -2.0,
+    "p25": -0.3333333432674408,
+    "median": 0.0,
+    "p75": 1.0,
+    "p95": 2.0,
+    "max": 3.0,
+    "skewness": -0.3356269526474606
+  },
+  "polarity_counts": {
+    "positive": 2370,
+    "negative": 1380,
+    "neutral": 1100
+  },
+  "classification_counts": {
+    "2": 2370,
+    "0": 1380,
+    "1": 1100
+  },
+  "regression_classification_agreement": 1.0,
+  "attention_mask_internal_zero_samples": 0,
+  "text_bert_cls_101_ratio": 1.0,
+  "audio_bert_length_agreement": 0.9989690721649485,
+  "samples_with_audio_internal_zeros": 5,
+  "samples_with_vision_internal_zeros": 340,
+  "samples_with_text_feature_internal_zeros": 0,
+  "vision_all_zero_samples": 153,
+  "audio_all_zero_samples": 0,
+  "text_word_len": {
+    "count": 4850,
+    "mean": 19.617319587628867,
+    "std": 13.892531147396031,
+    "min": 1.0,
+    "p05": 5.0,
+    "p25": 11.0,
+    "median": 17.0,
+    "p75": 24.0,
+    "p95": 43.0,
+    "max": 309.0,
+    "skewness": 5.742479262314263
+  },
+  "text_bert_valid_len": {
+    "count": 4850,
+    "mean": 24.867835051546393,
+    "std": 11.980932293105043,
+    "min": 3.0,
+    "p05": 9.0,
+    "p25": 16.0,
+    "median": 23.0,
+    "p75": 32.0,
+    "p95": 50.0,
+    "max": 50.0,
+    "skewness": 0.6169011730669199
+  },
+  "audio_valid_length": {
+    "count": 4850,
+    "mean": 23.867835051546393,
+    "std": 11.980932293105043,
+    "min": 2.0,
+    "p05": 8.0,
+    "p25": 15.0,
+    "median": 22.0,
+    "p75": 31.0,
+    "p95": 49.0,
+    "max": 49.0,
+    "skewness": 0.6169011730669199
+  },
+  "vision_valid_length": {
+    "count": 4850,
+    "mean": 23.063711340206186,
+    "std": 12.559411907532425,
+    "min": 0.0,
+    "p05": 5.0,
+    "p25": 14.0,
+    "median": 21.0,
+    "p75": 30.0,
+    "p95": 49.0,
+    "max": 49.0,
+    "skewness": 0.478511398791244
+  },
+  "near_constant_dimension_rows": 0,
+  "schema": [
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "raw_text",
+      "shape": "3395",
+      "dtype": "<U1662",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "audio",
+      "shape": "3395x50x74",
+      "dtype": "float64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "vision",
+      "shape": "3395x50x35",
+      "dtype": "float64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "id",
+      "shape": "3395",
+      "dtype": "<U16",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "text_bert",
+      "shape": "3395x3x50",
+      "dtype": "int64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "classification_labels",
+      "shape": "3395",
+      "dtype": "float64",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "regression_labels",
+      "shape": "3395",
+      "dtype": "float64",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "train",
+      "field": "text",
+      "shape": "3395x50x768",
+      "dtype": "float32",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "raw_text",
+      "shape": "728",
+      "dtype": "<U1570",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "audio",
+      "shape": "728x50x74",
+      "dtype": "float64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "vision",
+      "shape": "728x50x35",
+      "dtype": "float64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "id",
+      "shape": "728",
+      "dtype": "<U16",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "text_bert",
+      "shape": "728x3x50",
+      "dtype": "int64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "classification_labels",
+      "shape": "728",
+      "dtype": "float64",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "regression_labels",
+      "shape": "728",
+      "dtype": "float64",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "valid",
+      "field": "text",
+      "shape": "728x50x768",
+      "dtype": "float32",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "raw_text",
+      "shape": "727",
+      "dtype": "<U1479",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "audio",
+      "shape": "727x50x74",
+      "dtype": "float64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "vision",
+      "shape": "727x50x35",
+      "dtype": "float64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "id",
+      "shape": "727",
+      "dtype": "<U16",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "text_bert",
+      "shape": "727x3x50",
+      "dtype": "int64",
+      "ndim": 3
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "classification_labels",
+      "shape": "727",
+      "dtype": "float64",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "regression_labels",
+      "shape": "727",
+      "dtype": "float64",
+      "ndim": 1
+    },
+    {
+      "version": "aligned",
+      "split": "test",
+      "field": "text",
+      "shape": "727x50x768",
+      "dtype": "float32",
+      "ndim": 3
+    }
+  ]
+}

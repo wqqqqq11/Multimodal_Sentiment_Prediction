@@ -1,0 +1,1968 @@
+{
+  "best_score": 1.0583886485655347,
+  "best_epoch": 13,
+  "best_stage": "selector",
+  "performance_gate_passed": false,
+  "selected_validation_metrics": {
+    "accuracy": 0.592032967032967,
+    "macro_f1": 0.5705756245845099,
+    "mae": 0.6590626213199378,
+    "pearson": 0.5668912480621012,
+    "per_class_precision": [
+      0.6205128205128205,
+      0.39903846153846156,
+      0.6984615384615385
+    ],
+    "per_class_recall": [
+      0.587378640776699,
+      0.45108695652173914,
+      0.6715976331360947
+    ],
+    "per_class_f1": [
+      0.6034912718204489,
+      0.42346938775510207,
+      0.6847662141779789
+    ],
+    "confusion_matrix": [
+      [
+        121,
+        52,
+        33
+      ],
+      [
+        36,
+        83,
+        65
+      ],
+      [
+        38,
+        73,
+        227
+      ]
+    ],
+    "bootstrap_95": {
+      "accuracy": {
+        "lower_95": 0.5563186813186813,
+        "upper_95": 0.6257211538461538
+      },
+      "macro_f1": {
+        "lower_95": 0.5324237682760281,
+        "upper_95": 0.6045509654797062
+      },
+      "mae": {
+        "lower_95": 0.6218881929692253,
+        "upper_95": 0.6994926871684064
+      },
+      "pearson": {
+        "lower_95": 0.5169705040860278,
+        "upper_95": 0.6207600849158893
+      }
+    },
+    "selection_score": 1.0583886485655347
+  },
+  "selected_gate_checks": {
+    "accuracy": false,
+    "macro_f1": false,
+    "mae": false,
+    "pearson": false,
+    "neutral_recall": true
+  },
+  "prototype_stats": {
+    "candidate_evidence": 19259,
+    "occupied_cells": 21,
+    "prototypes": 103
+  },
+  "prototype_count": 103,
+  "history": [
+    {
+      "epoch": 1,
+      "stage": "warmup",
+      "temperature": 1.5,
+      "noise_scale": 1.0,
+      "learning_rate": 0.00014969807204964292,
+      "train": {
+        "total": 2.605349729598408,
+        "classification": 1.0084306715239941,
+        "regression": 0.4555092984941644,
+        "correlation": 0.5509080471287311,
+        "coherence": 0.01536496126250377,
+        "ordinal_consistency": 1.6310145943097665,
+        "teacher_classification": 0.30303520829954617,
+        "teacher_regression": 0.24574334861736902,
+        "dense_auxiliary": 2.613200345509489,
+        "modality_auxiliary": 1.7024252893219531,
+        "selector_auxiliary": 1.4284461719889037,
+        "prototype": 0.0,
+        "sufficiency": 0.304661715691778,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.022223505316323496
+      },
+      "validation": {
+        "accuracy": 0.48626373626373626,
+        "macro_f1": 0.4911589217599426,
+        "mae": 0.7581657280849298,
+        "pearson": 0.5089972452805525,
+        "per_class_precision": [
+          0.6035242290748899,
+          0.28523489932885904,
+          0.6502463054187192
+        ],
+        "per_class_recall": [
+          0.6650485436893204,
+          0.46195652173913043,
+          0.3905325443786982
+        ],
+        "per_class_f1": [
+          0.6327944572748269,
+          0.3526970954356846,
+          0.48798521256931615
+        ],
+        "confusion_matrix": [
+          [
+            137,
+            45,
+            24
+          ],
+          [
+            52,
+            85,
+            47
+          ],
+          [
+            38,
+            168,
+            132
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.45054945054945056,
+            "upper_95": 0.5247252747252747
+          },
+          "macro_f1": {
+            "lower_95": 0.4559178690098191,
+            "upper_95": 0.5279962027190204
+          },
+          "mae": {
+            "lower_95": 0.7104200703287891,
+            "upper_95": 0.8062143394934458
+          },
+          "pearson": {
+            "lower_95": 0.4442203607669102,
+            "upper_95": 0.5640265539453009
+          }
+        },
+        "selection_score": 0.8920103388789165
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 2,
+      "stage": "warmup",
+      "temperature": 1.4371508000047197,
+      "noise_scale": 0.9720588235294118,
+      "learning_rate": 0.0001487947191448972,
+      "train": {
+        "total": 2.1966466324430116,
+        "classification": 0.9191551422569114,
+        "regression": 0.3769105143950019,
+        "correlation": 0.41422574117150107,
+        "coherence": 0.035672554864325155,
+        "ordinal_consistency": 1.2941371937033157,
+        "teacher_classification": 0.1928287264431866,
+        "teacher_regression": 0.15658030580257026,
+        "dense_auxiliary": 2.527484095432389,
+        "modality_auxiliary": 1.6154409294397059,
+        "selector_auxiliary": 1.2207737447510303,
+        "prototype": 0.0,
+        "sufficiency": 0.19465863169498845,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.022826801034503838
+      },
+      "validation": {
+        "accuracy": 0.5947802197802198,
+        "macro_f1": 0.5133625136280298,
+        "mae": 0.7117667585226917,
+        "pearson": 0.5213962757695959,
+        "per_class_precision": [
+          0.6105769230769231,
+          0.358974358974359,
+          0.6289592760180995
+        ],
+        "per_class_recall": [
+          0.616504854368932,
+          0.15217391304347827,
+          0.8224852071005917
+        ],
+        "per_class_f1": [
+          0.6135265700483092,
+          0.21374045801526717,
+          0.7128205128205128
+        ],
+        "confusion_matrix": [
+          [
+            127,
+            26,
+            53
+          ],
+          [
+            45,
+            28,
+            111
+          ],
+          [
+            36,
+            24,
+            278
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5604395604395604,
+            "upper_95": 0.6298420329670329
+          },
+          "macro_f1": {
+            "lower_95": 0.4796542450705137,
+            "upper_95": 0.547282067201527
+          },
+          "mae": {
+            "lower_95": 0.6750867463953989,
+            "upper_95": 0.7524160054837501
+          },
+          "pearson": {
+            "lower_95": 0.4631360569399515,
+            "upper_95": 0.5735162923868403
+          }
+        },
+        "selection_score": 0.9397178583110382
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 3,
+      "stage": "warmup",
+      "temperature": 1.3769349479694708,
+      "noise_scale": 0.9441176470588235,
+      "learning_rate": 0.00014729721455218896,
+      "train": {
+        "total": 2.1485326298525638,
+        "classification": 0.9120534213495927,
+        "regression": 0.37403022130610236,
+        "correlation": 0.39899755741508913,
+        "coherence": 0.03748154935335189,
+        "ordinal_consistency": 1.2502280133710781,
+        "teacher_classification": 0.18738177151117527,
+        "teacher_regression": 0.14311932751410444,
+        "dense_auxiliary": 2.4962165355682373,
+        "modality_auxiliary": 1.5975567681688658,
+        "selector_auxiliary": 1.1578183002035383,
+        "prototype": 0.0,
+        "sufficiency": 0.1800613868456911,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.02539294486550588
+      },
+      "validation": {
+        "accuracy": 0.6085164835164835,
+        "macro_f1": 0.5300992550649009,
+        "mae": 0.6898909832842157,
+        "pearson": 0.5437514014910748,
+        "per_class_precision": [
+          0.6186046511627907,
+          0.4246575342465753,
+          0.634090909090909
+        ],
+        "per_class_recall": [
+          0.6456310679611651,
+          0.16847826086956522,
+          0.8254437869822485
+        ],
+        "per_class_f1": [
+          0.6318289786223279,
+          0.2412451361867704,
+          0.7172236503856042
+        ],
+        "confusion_matrix": [
+          [
+            133,
+            23,
+            50
+          ],
+          [
+            42,
+            31,
+            111
+          ],
+          [
+            40,
+            19,
+            279
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5762019230769231,
+            "upper_95": 0.6422046703296703
+          },
+          "macro_f1": {
+            "lower_95": 0.49448550338584496,
+            "upper_95": 0.5628392326108238
+          },
+          "mae": {
+            "lower_95": 0.6486761295986311,
+            "upper_95": 0.7327923407364294
+          },
+          "pearson": {
+            "lower_95": 0.4817370919658503,
+            "upper_95": 0.5994400591086412
+          }
+        },
+        "selection_score": 0.9849639881536321
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": true,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 4,
+      "stage": "warmup",
+      "temperature": 1.319242108019188,
+      "noise_scale": 0.9161764705882353,
+      "learning_rate": 0.00014521761529798027,
+      "train": {
+        "total": 2.0799224746059366,
+        "classification": 0.8901106979645473,
+        "regression": 0.36131957865936654,
+        "correlation": 0.3640755826318768,
+        "coherence": 0.04087541887248066,
+        "ordinal_consistency": 1.2255501459601899,
+        "teacher_classification": 0.17751415535597734,
+        "teacher_regression": 0.141675341034859,
+        "dense_auxiliary": 2.4738928801576856,
+        "modality_auxiliary": 1.58643085352132,
+        "selector_auxiliary": 1.1007361739454136,
+        "prototype": 0.0,
+        "sufficiency": 0.17662902302305464,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.023028399847762684
+      },
+      "validation": {
+        "accuracy": 0.6043956043956044,
+        "macro_f1": 0.572892042456362,
+        "mae": 0.703448977971745,
+        "pearson": 0.5606002699999655,
+        "per_class_precision": [
+          0.5897435897435898,
+          0.4146341463414634,
+          0.7090909090909091
+        ],
+        "per_class_recall": [
+          0.6699029126213593,
+          0.3695652173913043,
+          0.6923076923076923
+        ],
+        "per_class_f1": [
+          0.6272727272727273,
+          0.3908045977011494,
+          0.7005988023952096
+        ],
+        "confusion_matrix": [
+          [
+            138,
+            40,
+            28
+          ],
+          [
+            48,
+            68,
+            68
+          ],
+          [
+            48,
+            56,
+            234
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.570054945054945,
+            "upper_95": 0.6387362637362637
+          },
+          "macro_f1": {
+            "lower_95": 0.5377562791329513,
+            "upper_95": 0.6095840744386012
+          },
+          "mae": {
+            "lower_95": 0.6621177259911017,
+            "upper_95": 0.749286772902653
+          },
+          "pearson": {
+            "lower_95": 0.501726734664467,
+            "upper_95": 0.6162490133675216
+          }
+        },
+        "selection_score": 1.042198392928908
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": true,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 5,
+      "stage": "warmup",
+      "temperature": 1.2639665672931262,
+      "noise_scale": 0.888235294117647,
+      "learning_rate": 0.0001425726650926814,
+      "train": {
+        "total": 1.953998518661714,
+        "classification": 0.8712352883647865,
+        "regression": 0.32612674725307544,
+        "correlation": 0.3462852008745704,
+        "coherence": 0.041837135618421395,
+        "ordinal_consistency": 1.108088226175644,
+        "teacher_classification": 0.14539368038760944,
+        "teacher_regression": 0.10172008410830732,
+        "dense_auxiliary": 2.476454861567054,
+        "modality_auxiliary": 1.5721251880618887,
+        "selector_auxiliary": 1.0503756794291483,
+        "prototype": 0.0,
+        "sufficiency": 0.13025354830102182,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.02563074681560286
+      },
+      "validation": {
+        "accuracy": 0.5906593406593407,
+        "macro_f1": 0.5212350536013122,
+        "mae": 0.6740518665025305,
+        "pearson": 0.5479170629157919,
+        "per_class_precision": [
+          0.7066666666666667,
+          0.3392857142857143,
+          0.6137339055793991
+        ],
+        "per_class_recall": [
+          0.5145631067961165,
+          0.20652173913043478,
+          0.8461538461538461
+        ],
+        "per_class_f1": [
+          0.5955056179775281,
+          0.25675675675675674,
+          0.7114427860696517
+        ],
+        "confusion_matrix": [
+          [
+            106,
+            41,
+            59
+          ],
+          [
+            25,
+            38,
+            121
+          ],
+          [
+            19,
+            33,
+            286
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.55625,
+            "upper_95": 0.6270947802197802
+          },
+          "macro_f1": {
+            "lower_95": 0.48624844725157884,
+            "upper_95": 0.5587824733786111
+          },
+          "mae": {
+            "lower_95": 0.636217893484542,
+            "upper_95": 0.7137110624541522
+          },
+          "pearson": {
+            "lower_95": 0.48849626862352297,
+            "upper_95": 0.6034193670974847
+          }
+        },
+        "selection_score": 0.9847294346592674
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 6,
+      "stage": "selector",
+      "temperature": 1.2110070422430237,
+      "noise_scale": 0.8602941176470589,
+      "learning_rate": 0.00013938365952013995,
+      "train": {
+        "total": 1.8344456964815166,
+        "classification": 0.8174093038263456,
+        "regression": 0.3010298692634408,
+        "correlation": 0.3148804458094315,
+        "coherence": 0.045689947129240335,
+        "ordinal_consistency": 0.9916639984913276,
+        "teacher_classification": 0.1480012492499721,
+        "teacher_regression": 0.09677243941056897,
+        "dense_auxiliary": 2.4916376513494574,
+        "modality_auxiliary": 1.5579298012693163,
+        "selector_auxiliary": 0.9979610627805683,
+        "prototype": 0.0,
+        "sufficiency": 0.12535236563376137,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.029589258849253536
+      },
+      "validation": {
+        "accuracy": 0.5975274725274725,
+        "macro_f1": 0.5514418382485095,
+        "mae": 0.689502140100288,
+        "pearson": 0.5663563960681594,
+        "per_class_precision": [
+          0.5645161290322581,
+          0.3851851851851852,
+          0.7043478260869566
+        ],
+        "per_class_recall": [
+          0.6796116504854369,
+          0.2826086956521739,
+          0.7189349112426036
+        ],
+        "per_class_f1": [
+          0.616740088105727,
+          0.3260188087774294,
+          0.711566617862372
+        ],
+        "confusion_matrix": [
+          [
+            140,
+            31,
+            35
+          ],
+          [
+            65,
+            52,
+            67
+          ],
+          [
+            43,
+            52,
+            243
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5618131868131868,
+            "upper_95": 0.6346153846153846
+          },
+          "macro_f1": {
+            "lower_95": 0.5130133860037643,
+            "upper_95": 0.5892306714299193
+          },
+          "mae": {
+            "lower_95": 0.6508834466218544,
+            "upper_95": 0.728697477906634
+          },
+          "pearson": {
+            "lower_95": 0.5127539341441666,
+            "upper_95": 0.6169236252592203
+          }
+        },
+        "selection_score": 1.0300922452947125
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": true,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 7,
+      "stage": "selector",
+      "temperature": 1.1602664930472741,
+      "noise_scale": 0.8323529411764705,
+      "learning_rate": 0.00013567627457812106,
+      "train": {
+        "total": 1.78065803101365,
+        "classification": 0.78915729489125,
+        "regression": 0.29130746140866215,
+        "correlation": 0.2914940954094202,
+        "coherence": 0.04718969458005798,
+        "ordinal_consistency": 0.9771566865309863,
+        "teacher_classification": 0.15470737979655536,
+        "teacher_regression": 0.10213704756133153,
+        "dense_auxiliary": 2.455124233809995,
+        "modality_auxiliary": 1.5405302668961,
+        "selector_auxiliary": 0.9507987566397224,
+        "prototype": 0.0,
+        "sufficiency": 0.13177569994939045,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.028733471700344498
+      },
+      "validation": {
+        "accuracy": 0.5989010989010989,
+        "macro_f1": 0.5620748209541947,
+        "mae": 0.7213966929348017,
+        "pearson": 0.5701650839768438,
+        "per_class_precision": [
+          0.5648854961832062,
+          0.4125874125874126,
+          0.7089783281733746
+        ],
+        "per_class_recall": [
+          0.7184466019417476,
+          0.32065217391304346,
+          0.6775147928994083
+        ],
+        "per_class_f1": [
+          0.6324786324786326,
+          0.36085626911314983,
+          0.6928895612708018
+        ],
+        "confusion_matrix": [
+          [
+            148,
+            30,
+            28
+          ],
+          [
+            59,
+            59,
+            66
+          ],
+          [
+            55,
+            54,
+            229
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5604395604395604,
+            "upper_95": 0.6373626373626373
+          },
+          "macro_f1": {
+            "lower_95": 0.523677885374055,
+            "upper_95": 0.6017755061544563
+          },
+          "mae": {
+            "lower_95": 0.6761407010483799,
+            "upper_95": 0.76436871332874
+          },
+          "pearson": {
+            "lower_95": 0.5179448634235942,
+            "upper_95": 0.6220030313258904
+          }
+        },
+        "selection_score": 1.0361767371177644
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": true,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 8,
+      "stage": "selector",
+      "temperature": 1.1116519458010403,
+      "noise_scale": 0.8044117647058824,
+      "learning_rate": 0.00013148035995027082,
+      "train": {
+        "total": 1.6935480237007141,
+        "classification": 0.7553327247290544,
+        "regression": 0.2712408034524447,
+        "correlation": 0.25826682339251883,
+        "coherence": 0.049189827890253404,
+        "ordinal_consistency": 0.90763425470238,
+        "teacher_classification": 0.1583582062116811,
+        "teacher_regression": 0.09973813821627221,
+        "dense_auxiliary": 2.4325788617134094,
+        "modality_auxiliary": 1.5211004631620058,
+        "selector_auxiliary": 0.8968575794092366,
+        "prototype": 0.0,
+        "sufficiency": 0.12943394626425186,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.031452202815300145
+      },
+      "validation": {
+        "accuracy": 0.5879120879120879,
+        "macro_f1": 0.5390923296419593,
+        "mae": 0.6800422127778222,
+        "pearson": 0.5769072667991085,
+        "per_class_precision": [
+          0.6078431372549019,
+          0.3472222222222222,
+          0.6684210526315789
+        ],
+        "per_class_recall": [
+          0.6019417475728155,
+          0.2717391304347826,
+          0.7514792899408284
+        ],
+        "per_class_f1": [
+          0.6048780487804878,
+          0.3048780487804878,
+          0.7075208913649024
+        ],
+        "confusion_matrix": [
+          [
+            124,
+            46,
+            36
+          ],
+          [
+            44,
+            50,
+            90
+          ],
+          [
+            36,
+            48,
+            254
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5521978021978022,
+            "upper_95": 0.622973901098901
+          },
+          "macro_f1": {
+            "lower_95": 0.5042236928052528,
+            "upper_95": 0.5748448469732828
+          },
+          "mae": {
+            "lower_95": 0.6417675010951915,
+            "upper_95": 0.7176509184278145
+          },
+          "pearson": {
+            "lower_95": 0.5268353509086244,
+            "upper_95": 0.6291864653339236
+          }
+        },
+        "selection_score": 1.0315653281178545
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 9,
+      "stage": "selector",
+      "temperature": 1.0650743221565124,
+      "noise_scale": 0.7764705882352941,
+      "learning_rate": 0.00012682969867401484,
+      "train": {
+        "total": 1.6731521806246799,
+        "classification": 0.7460701845481362,
+        "regression": 0.2650117915595921,
+        "correlation": 0.25391321870642647,
+        "coherence": 0.04932131485777422,
+        "ordinal_consistency": 0.9114335813152958,
+        "teacher_classification": 0.161510668694973,
+        "teacher_regression": 0.1058725660640589,
+        "dense_auxiliary": 2.3842914423472443,
+        "modality_auxiliary": 1.506372889162789,
+        "selector_auxiliary": 0.8691325032375228,
+        "prototype": 0.0,
+        "sufficiency": 0.1361780553846292,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.031907308005160506
+      },
+      "validation": {
+        "accuracy": 0.5673076923076923,
+        "macro_f1": 0.5361996628079069,
+        "mae": 0.6926846431084054,
+        "pearson": 0.5651707268477149,
+        "per_class_precision": [
+          0.5545851528384279,
+          0.36,
+          0.6882716049382716
+        ],
+        "per_class_recall": [
+          0.616504854368932,
+          0.3423913043478261,
+          0.6597633136094675
+        ],
+        "per_class_f1": [
+          0.5839080459770114,
+          0.350974930362117,
+          0.6737160120845922
+        ],
+        "confusion_matrix": [
+          [
+            127,
+            47,
+            32
+          ],
+          [
+            52,
+            63,
+            69
+          ],
+          [
+            50,
+            65,
+            223
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5349931318681319,
+            "upper_95": 0.6017170329670328
+          },
+          "macro_f1": {
+            "lower_95": 0.5028694634515746,
+            "upper_95": 0.5697954407012377
+          },
+          "mae": {
+            "lower_95": 0.6530422227191154,
+            "upper_95": 0.7325211983834918
+          },
+          "pearson": {
+            "lower_95": 0.5146486102109005,
+            "upper_95": 0.6170094319734232
+          }
+        },
+        "selection_score": 1.0136313193188964
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 10,
+      "stage": "selector",
+      "temperature": 1.0204482761011444,
+      "noise_scale": 0.7485294117647059,
+      "learning_rate": 0.00012176173513940501,
+      "train": {
+        "total": 1.5622164968033911,
+        "classification": 0.7049087355254402,
+        "regression": 0.24028660231073137,
+        "correlation": 0.23123937467454184,
+        "coherence": 0.05004760468195022,
+        "ordinal_consistency": 0.7980292336621755,
+        "teacher_classification": 0.1608063280582428,
+        "teacher_regression": 0.09911619313061237,
+        "dense_auxiliary": 2.392253987386193,
+        "modality_auxiliary": 1.487053008986191,
+        "selector_auxiliary": 0.8047043225714858,
+        "prototype": 0.0,
+        "sufficiency": 0.12956017156092214,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.036406443552704344
+      },
+      "validation": {
+        "accuracy": 0.5755494505494505,
+        "macro_f1": 0.5426492362889007,
+        "mae": 0.7232731846871192,
+        "pearson": 0.5537232017001255,
+        "per_class_precision": [
+          0.5174825174825175,
+          0.4013605442176871,
+          0.7186440677966102
+        ],
+        "per_class_recall": [
+          0.7184466019417476,
+          0.32065217391304346,
+          0.6272189349112426
+        ],
+        "per_class_f1": [
+          0.6016260162601625,
+          0.35649546827794565,
+          0.6698262243285941
+        ],
+        "confusion_matrix": [
+          [
+            148,
+            30,
+            28
+          ],
+          [
+            70,
+            59,
+            55
+          ],
+          [
+            68,
+            58,
+            212
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5398351648351648,
+            "upper_95": 0.6161744505494505
+          },
+          "macro_f1": {
+            "lower_95": 0.505304408550514,
+            "upper_95": 0.5820342284574778
+          },
+          "mae": {
+            "lower_95": 0.680634583823065,
+            "upper_95": 0.7671520913397486
+          },
+          "pearson": {
+            "lower_95": 0.5029670886274868,
+            "upper_95": 0.602839240760407
+          }
+        },
+        "selection_score": 0.9989256650814278
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 11,
+      "stage": "selector",
+      "temperature": 0.9776920375747977,
+      "noise_scale": 0.7205882352941176,
+      "learning_rate": 0.00011631727360890768,
+      "train": {
+        "total": 1.529740251285929,
+        "classification": 0.6843455492610663,
+        "regression": 0.2356629174884776,
+        "correlation": 0.22686935268657307,
+        "coherence": 0.05162915727779479,
+        "ordinal_consistency": 0.7818371187633192,
+        "teacher_classification": 0.16989322788488698,
+        "teacher_regression": 0.10147525250754307,
+        "dense_auxiliary": 2.394111891027907,
+        "modality_auxiliary": 1.4742786195916189,
+        "selector_auxiliary": 0.7738249310305421,
+        "prototype": 0.0,
+        "sufficiency": 0.13300544296351957,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.03589955206081586
+      },
+      "validation": {
+        "accuracy": 0.5782967032967034,
+        "macro_f1": 0.5447624437419216,
+        "mae": 0.7019221831549978,
+        "pearson": 0.5634714351408199,
+        "per_class_precision": [
+          0.579185520361991,
+          0.36257309941520466,
+          0.6875
+        ],
+        "per_class_recall": [
+          0.6213592233009708,
+          0.33695652173913043,
+          0.6834319526627219
+        ],
+        "per_class_f1": [
+          0.5995316159250585,
+          0.34929577464788725,
+          0.685459940652819
+        ],
+        "confusion_matrix": [
+          [
+            128,
+            45,
+            33
+          ],
+          [
+            50,
+            62,
+            72
+          ],
+          [
+            43,
+            64,
+            231
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5412087912087912,
+            "upper_95": 0.6119848901098901
+          },
+          "macro_f1": {
+            "lower_95": 0.5095499850675436,
+            "upper_95": 0.579915351489418
+          },
+          "mae": {
+            "lower_95": 0.663815139586806,
+            "upper_95": 0.7415812467810571
+          },
+          "pearson": {
+            "lower_95": 0.5164473757207726,
+            "upper_95": 0.6148948166896102
+          }
+        },
+        "selection_score": 1.0168911342609026
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 12,
+      "stage": "selector",
+      "temperature": 0.9367272626392433,
+      "noise_scale": 0.6926470588235294,
+      "learning_rate": 0.0001105401496854749,
+      "train": {
+        "total": 1.4488658837869133,
+        "classification": 0.6461120063150433,
+        "regression": 0.22103861199928002,
+        "correlation": 0.21091388984465262,
+        "coherence": 0.054096694655296665,
+        "ordinal_consistency": 0.716347374022007,
+        "teacher_classification": 0.17138970422912653,
+        "teacher_regression": 0.10151181467087336,
+        "dense_auxiliary": 2.4080702612097835,
+        "modality_auxiliary": 1.4648725894135488,
+        "selector_auxiliary": 0.722010935696078,
+        "prototype": 0.0,
+        "sufficiency": 0.13314062684879335,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.035215036143404495
+      },
+      "validation": {
+        "accuracy": 0.5989010989010989,
+        "macro_f1": 0.556879994865204,
+        "mae": 0.6965942305066894,
+        "pearson": 0.5623635131336817,
+        "per_class_precision": [
+          0.640625,
+          0.4084507042253521,
+          0.6472081218274112
+        ],
+        "per_class_recall": [
+          0.5970873786407767,
+          0.31521739130434784,
+          0.7544378698224852
+        ],
+        "per_class_f1": [
+          0.6180904522613064,
+          0.35582822085889576,
+          0.6967213114754098
+        ],
+        "confusion_matrix": [
+          [
+            123,
+            34,
+            49
+          ],
+          [
+            36,
+            58,
+            90
+          ],
+          [
+            33,
+            50,
+            255
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5631868131868132,
+            "upper_95": 0.635989010989011
+          },
+          "macro_f1": {
+            "lower_95": 0.5189856622692565,
+            "upper_95": 0.5918545241554646
+          },
+          "mae": {
+            "lower_95": 0.6559361019407643,
+            "upper_95": 0.7348360941496279
+          },
+          "pearson": {
+            "lower_95": 0.5108738345314409,
+            "upper_95": 0.6174520735510923
+          }
+        },
+        "selection_score": 1.0283456785398886
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": true,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 13,
+      "stage": "selector",
+      "temperature": 0.89747888992548,
+      "noise_scale": 0.6647058823529411,
+      "learning_rate": 0.00010447687737404427,
+      "train": {
+        "total": 1.410615839169059,
+        "classification": 0.613784091153615,
+        "regression": 0.21434118981722375,
+        "correlation": 0.18487631980801972,
+        "coherence": 0.056404992177242964,
+        "ordinal_consistency": 0.7052972371309576,
+        "teacher_classification": 0.1965891161382618,
+        "teacher_regression": 0.11452943894644858,
+        "dense_auxiliary": 2.3893913786176224,
+        "modality_auxiliary": 1.4509792940717348,
+        "selector_auxiliary": 0.6851513559969378,
+        "prototype": 0.0,
+        "sufficiency": 0.15056148433769254,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.03741065661495053
+      },
+      "validation": {
+        "accuracy": 0.592032967032967,
+        "macro_f1": 0.5705756245845099,
+        "mae": 0.6590626213199378,
+        "pearson": 0.5668912480621012,
+        "per_class_precision": [
+          0.6205128205128205,
+          0.39903846153846156,
+          0.6984615384615385
+        ],
+        "per_class_recall": [
+          0.587378640776699,
+          0.45108695652173914,
+          0.6715976331360947
+        ],
+        "per_class_f1": [
+          0.6034912718204489,
+          0.42346938775510207,
+          0.6847662141779789
+        ],
+        "confusion_matrix": [
+          [
+            121,
+            52,
+            33
+          ],
+          [
+            36,
+            83,
+            65
+          ],
+          [
+            38,
+            73,
+            227
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5563186813186813,
+            "upper_95": 0.6257211538461538
+          },
+          "macro_f1": {
+            "lower_95": 0.5324237682760281,
+            "upper_95": 0.6045509654797062
+          },
+          "mae": {
+            "lower_95": 0.6218881929692253,
+            "upper_95": 0.6994926871684064
+          },
+          "pearson": {
+            "lower_95": 0.5169705040860278,
+            "upper_95": 0.6207600849158893
+          }
+        },
+        "selection_score": 1.0583886485655347
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 14,
+      "stage": "selector",
+      "temperature": 0.8598750030958343,
+      "noise_scale": 0.636764705882353,
+      "learning_rate": 9.817627457812105e-05,
+      "train": {
+        "total": 1.3492691861072057,
+        "classification": 0.5938097444218648,
+        "regression": 0.20249413121754015,
+        "correlation": 0.18296168135925078,
+        "coherence": 0.057048769431634686,
+        "ordinal_consistency": 0.6427645028476984,
+        "teacher_classification": 0.1861942746269871,
+        "teacher_regression": 0.10299391573636045,
+        "dense_auxiliary": 2.3797048296726926,
+        "modality_auxiliary": 1.444365961450926,
+        "selector_auxiliary": 0.6552234898570558,
+        "prototype": 0.0,
+        "sufficiency": 0.1378018925832191,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.04012330695921162
+      },
+      "validation": {
+        "accuracy": 0.5618131868131868,
+        "macro_f1": 0.5350226865645368,
+        "mae": 0.7120390331553638,
+        "pearson": 0.5358569203680242,
+        "per_class_precision": [
+          0.6089385474860335,
+          0.34951456310679613,
+          0.6647230320699709
+        ],
+        "per_class_recall": [
+          0.529126213592233,
+          0.391304347826087,
+          0.6745562130177515
+        ],
+        "per_class_f1": [
+          0.5662337662337662,
+          0.36923076923076925,
+          0.6696035242290749
+        ],
+        "confusion_matrix": [
+          [
+            109,
+            58,
+            39
+          ],
+          [
+            36,
+            72,
+            76
+          ],
+          [
+            34,
+            76,
+            228
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5247252747252747,
+            "upper_95": 0.5968749999999999
+          },
+          "macro_f1": {
+            "lower_95": 0.4975837763781863,
+            "upper_95": 0.5732176548055935
+          },
+          "mae": {
+            "lower_95": 0.6707687176580993,
+            "upper_95": 0.753383839885782
+          },
+          "pearson": {
+            "lower_95": 0.4816988776793279,
+            "upper_95": 0.5892540552416504
+          }
+        },
+        "selection_score": 0.9760172005418912
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 15,
+      "stage": "selector",
+      "temperature": 0.8238466990688261,
+      "noise_scale": 0.6088235294117648,
+      "learning_rate": 9.168907004672357e-05,
+      "train": {
+        "total": 1.2884670563147103,
+        "classification": 0.5526156671030421,
+        "regression": 0.19009034472032332,
+        "correlation": 0.17410307828809174,
+        "coherence": 0.05912635976474889,
+        "ordinal_consistency": 0.6005760561412489,
+        "teacher_classification": 0.2094838183215806,
+        "teacher_regression": 0.10979066230356693,
+        "dense_auxiliary": 2.3484170084268277,
+        "modality_auxiliary": 1.4349968802761024,
+        "selector_auxiliary": 0.6081875587852907,
+        "prototype": 0.0,
+        "sufficiency": 0.14821777568841485,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.04117422631587571
+      },
+      "validation": {
+        "accuracy": 0.5714285714285714,
+        "macro_f1": 0.546853801547044,
+        "mae": 0.6945073253321296,
+        "pearson": 0.5499325350274826,
+        "per_class_precision": [
+          0.5551020408163265,
+          0.3812154696132597,
+          0.6986754966887417
+        ],
+        "per_class_recall": [
+          0.6601941747572816,
+          0.375,
+          0.6242603550295858
+        ],
+        "per_class_f1": [
+          0.6031042128603104,
+          0.3780821917808219,
+          0.6593749999999999
+        ],
+        "confusion_matrix": [
+          [
+            136,
+            38,
+            32
+          ],
+          [
+            56,
+            69,
+            59
+          ],
+          [
+            53,
+            74,
+            211
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5357142857142857,
+            "upper_95": 0.6113324175824175
+          },
+          "macro_f1": {
+            "lower_95": 0.5108504666977846,
+            "upper_95": 0.5840259292766454
+          },
+          "mae": {
+            "lower_95": 0.6544616166535379,
+            "upper_95": 0.7357560103173655
+          },
+          "pearson": {
+            "lower_95": 0.5003569866751988,
+            "upper_95": 0.6033143436164261
+          }
+        },
+        "selection_score": 1.0068451579996427
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 16,
+      "stage": "selector",
+      "temperature": 0.7893279617653408,
+      "noise_scale": 0.5808823529411765,
+      "learning_rate": 8.506749493632416e-05,
+      "train": {
+        "total": 1.2620193219520677,
+        "classification": 0.5400394613684063,
+        "regression": 0.185164766727199,
+        "correlation": 0.16276866995112996,
+        "coherence": 0.0579980583730298,
+        "ordinal_consistency": 0.594563730585743,
+        "teacher_classification": 0.21421670640858126,
+        "teacher_regression": 0.11701606072380509,
+        "dense_auxiliary": 2.350685357207983,
+        "modality_auxiliary": 1.4209296333957726,
+        "selector_auxiliary": 0.5722614763907983,
+        "prototype": 0.0,
+        "sufficiency": 0.15668030455708504,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.0418422267391858
+      },
+      "validation": {
+        "accuracy": 0.5686813186813187,
+        "macro_f1": 0.5529655063584888,
+        "mae": 0.697650422479965,
+        "pearson": 0.5501225669001841,
+        "per_class_precision": [
+          0.5796460176991151,
+          0.3767441860465116,
+          0.7038327526132404
+        ],
+        "per_class_recall": [
+          0.6359223300970874,
+          0.44021739130434784,
+          0.5976331360946746
+        ],
+        "per_class_f1": [
+          0.6064814814814815,
+          0.406015037593985,
+          0.6464
+        ],
+        "confusion_matrix": [
+          [
+            131,
+            46,
+            29
+          ],
+          [
+            47,
+            81,
+            56
+          ],
+          [
+            48,
+            88,
+            202
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5349931318681319,
+            "upper_95": 0.603021978021978
+          },
+          "macro_f1": {
+            "lower_95": 0.519138782849265,
+            "upper_95": 0.5885543328271075
+          },
+          "mae": {
+            "lower_95": 0.6571287997105992,
+            "upper_95": 0.734720280548808
+          },
+          "pearson": {
+            "lower_95": 0.5012450138197153,
+            "upper_95": 0.6020875621633064
+          }
+        },
+        "selection_score": 1.011856281070667
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 17,
+      "stage": "selector",
+      "temperature": 0.7562555411447696,
+      "noise_scale": 0.5529411764705883,
+      "learning_rate": 7.836486227628862e-05,
+      "train": {
+        "total": 1.2144497259401938,
+        "classification": 0.5147584913901879,
+        "regression": 0.17775363480331194,
+        "correlation": 0.15470528728525404,
+        "coherence": 0.06082390705254716,
+        "ordinal_consistency": 0.5442588951596072,
+        "teacher_classification": 0.21913241442870085,
+        "teacher_regression": 0.11322856794150782,
+        "dense_auxiliary": 2.390074570414046,
+        "modality_auxiliary": 1.413589144256753,
+        "selector_auxiliary": 0.5507552157825147,
+        "prototype": 0.0,
+        "sufficiency": 0.15346566537841105,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.04073286663025985
+      },
+      "validation": {
+        "accuracy": 0.570054945054945,
+        "macro_f1": 0.53762071801369,
+        "mae": 0.7092017674830469,
+        "pearson": 0.5547063208713798,
+        "per_class_precision": [
+          0.585,
+          0.3551912568306011,
+          0.6753623188405797
+        ],
+        "per_class_recall": [
+          0.5679611650485437,
+          0.3532608695652174,
+          0.6893491124260355
+        ],
+        "per_class_f1": [
+          0.5763546798029556,
+          0.3542234332425068,
+          0.6822840409956077
+        ],
+        "confusion_matrix": [
+          [
+            117,
+            53,
+            36
+          ],
+          [
+            43,
+            65,
+            76
+          ],
+          [
+            40,
+            65,
+            233
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5315934065934066,
+            "upper_95": 0.6057692307692307
+          },
+          "macro_f1": {
+            "lower_95": 0.49958828987548026,
+            "upper_95": 0.5722548736788463
+          },
+          "mae": {
+            "lower_95": 0.6678878279885344,
+            "upper_95": 0.7469345788811972
+          },
+          "pearson": {
+            "lower_95": 0.503191239514255,
+            "upper_95": 0.6068980760035174
+          }
+        },
+        "selection_score": 0.9965717605109
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 18,
+      "stage": "selector",
+      "temperature": 0.7245688373094719,
+      "noise_scale": 0.525,
+      "learning_rate": 7.163513772371138e-05,
+      "train": {
+        "total": 1.2043762060118393,
+        "classification": 0.5063037647747658,
+        "regression": 0.18011457294645444,
+        "correlation": 0.1593955138199766,
+        "coherence": 0.06065148634599968,
+        "ordinal_consistency": 0.5440226410266379,
+        "teacher_classification": 0.22290775526157566,
+        "teacher_regression": 0.11639697435246386,
+        "dense_auxiliary": 2.3669984592518336,
+        "modality_auxiliary": 1.4071373654083468,
+        "selector_auxiliary": 0.5239367302454693,
+        "prototype": 0.0,
+        "sufficiency": 0.15763722732663155,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.042688544583834816
+      },
+      "validation": {
+        "accuracy": 0.570054945054945,
+        "macro_f1": 0.530332000548332,
+        "mae": 0.7096027295290016,
+        "pearson": 0.5507952207635669,
+        "per_class_precision": [
+          0.5825242718446602,
+          0.34782608695652173,
+          0.6620498614958449
+        ],
+        "per_class_recall": [
+          0.5825242718446602,
+          0.30434782608695654,
+          0.7071005917159763
+        ],
+        "per_class_f1": [
+          0.5825242718446602,
+          0.32463768115942027,
+          0.6838340486409156
+        ],
+        "confusion_matrix": [
+          [
+            120,
+            46,
+            40
+          ],
+          [
+            46,
+            56,
+            82
+          ],
+          [
+            40,
+            59,
+            239
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5336195054945055,
+            "upper_95": 0.6051167582417581
+          },
+          "macro_f1": {
+            "lower_95": 0.4954205219407378,
+            "upper_95": 0.565331568878866
+          },
+          "mae": {
+            "lower_95": 0.6669983425838787,
+            "upper_95": 0.752937837677474
+          },
+          "pearson": {
+            "lower_95": 0.49997991115001844,
+            "upper_95": 0.603469011404072
+          }
+        },
+        "selection_score": 0.9848372338788465
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 19,
+      "stage": "selector",
+      "temperature": 0.6942097894651982,
+      "noise_scale": 0.4970588235294118,
+      "learning_rate": 6.493250506367584e-05,
+      "train": {
+        "total": 1.1646084395092977,
+        "classification": 0.4803871071674454,
+        "regression": 0.16946699808705862,
+        "correlation": 0.14328287940629772,
+        "coherence": 0.06307385040735694,
+        "ordinal_consistency": 0.5092960845836452,
+        "teacher_classification": 0.24020594305975337,
+        "teacher_regression": 0.12113702259170757,
+        "dense_auxiliary": 2.3455116732019774,
+        "modality_auxiliary": 1.4004716873168945,
+        "selector_auxiliary": 0.5039546848602698,
+        "prototype": 0.0,
+        "sufficiency": 0.1660098331180257,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.04202042921105216
+      },
+      "validation": {
+        "accuracy": 0.5645604395604396,
+        "macro_f1": 0.5439307204535414,
+        "mae": 0.6913280298653223,
+        "pearson": 0.549063889654583,
+        "per_class_precision": [
+          0.5821596244131455,
+          0.3712871287128713,
+          0.6773162939297125
+        ],
+        "per_class_recall": [
+          0.6019417475728155,
+          0.4076086956521739,
+          0.6272189349112426
+        ],
+        "per_class_f1": [
+          0.5918854415274463,
+          0.38860103626943,
+          0.6513056835637481
+        ],
+        "confusion_matrix": [
+          [
+            124,
+            46,
+            36
+          ],
+          [
+            44,
+            75,
+            65
+          ],
+          [
+            45,
+            81,
+            212
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5294986263736264,
+            "upper_95": 0.5975274725274725
+          },
+          "macro_f1": {
+            "lower_95": 0.5093262806887249,
+            "upper_95": 0.5773876155591361
+          },
+          "mae": {
+            "lower_95": 0.6493196382064975,
+            "upper_95": 0.7315107518998947
+          },
+          "pearson": {
+            "lower_95": 0.4997724844571198,
+            "upper_95": 0.6034838043900734
+          }
+        },
+        "selection_score": 1.0008839813509733
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 20,
+      "stage": "selector",
+      "temperature": 0.6651227695340117,
+      "noise_scale": 0.46911764705882353,
+      "learning_rate": 5.831092995327642e-05,
+      "train": {
+        "total": 1.1086919215363515,
+        "classification": 0.44935922849346216,
+        "regression": 0.16270363970961368,
+        "correlation": 0.14031122142160443,
+        "coherence": 0.06351891818495703,
+        "ordinal_consistency": 0.4583573368653445,
+        "teacher_classification": 0.2436912965921449,
+        "teacher_regression": 0.11891497912960992,
+        "dense_auxiliary": 2.352542153546508,
+        "modality_auxiliary": 1.3880077852329737,
+        "selector_auxiliary": 0.47019328649195147,
+        "prototype": 0.0,
+        "sufficiency": 0.16399109903985346,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.04420546663951286
+      },
+      "validation": {
+        "accuracy": 0.5714285714285714,
+        "macro_f1": 0.541198814399224,
+        "mae": 0.694908486633142,
+        "pearson": 0.5493498708728957,
+        "per_class_precision": [
+          0.5675675675675675,
+          0.37790697674418605,
+          0.6736526946107785
+        ],
+        "per_class_recall": [
+          0.6116504854368932,
+          0.3532608695652174,
+          0.665680473372781
+        ],
+        "per_class_f1": [
+          0.5887850467289719,
+          0.3651685393258427,
+          0.6696428571428572
+        ],
+        "confusion_matrix": [
+          [
+            126,
+            41,
+            39
+          ],
+          [
+            49,
+            65,
+            70
+          ],
+          [
+            47,
+            66,
+            225
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5363667582417583,
+            "upper_95": 0.6057692307692307
+          },
+          "macro_f1": {
+            "lower_95": 0.5056132321949837,
+            "upper_95": 0.5752900064442426
+          },
+          "mae": {
+            "lower_95": 0.6538396181057928,
+            "upper_95": 0.734267572974444
+          },
+          "pearson": {
+            "lower_95": 0.4995521948543507,
+            "upper_95": 0.6058034649632787
+          }
+        },
+        "selection_score": 0.99769918147505
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    },
+    {
+      "epoch": 21,
+      "stage": "selector",
+      "temperature": 0.6372544802247732,
+      "noise_scale": 0.4411764705882353,
+      "learning_rate": 5.182372542187895e-05,
+      "train": {
+        "total": 1.069391020586793,
+        "classification": 0.42501674592494965,
+        "regression": 0.15391971504079624,
+        "correlation": 0.1300144094816396,
+        "coherence": 0.0647278805591271,
+        "ordinal_consistency": 0.435233919868167,
+        "teacher_classification": 0.2512478337846172,
+        "teacher_regression": 0.12191063914657899,
+        "dense_auxiliary": 2.360515654926569,
+        "modality_auxiliary": 1.3823625621661333,
+        "selector_auxiliary": 0.4505983381204202,
+        "prototype": 0.0,
+        "sufficiency": 0.1685691778088959,
+        "comprehensiveness": 0.0,
+        "stability": 0.0,
+        "sparsity_balance": 0.04568409225509935
+      },
+      "validation": {
+        "accuracy": 0.5631868131868132,
+        "macro_f1": 0.5301009596833955,
+        "mae": 0.718937156604255,
+        "pearson": 0.5515830463366486,
+        "per_class_precision": [
+          0.5765765765765766,
+          0.3515151515151515,
+          0.656891495601173
+        ],
+        "per_class_recall": [
+          0.6213592233009708,
+          0.31521739130434784,
+          0.6627218934911243
+        ],
+        "per_class_f1": [
+          0.5981308411214952,
+          0.332378223495702,
+          0.6597938144329897
+        ],
+        "confusion_matrix": [
+          [
+            128,
+            40,
+            38
+          ],
+          [
+            47,
+            58,
+            79
+          ],
+          [
+            47,
+            67,
+            224
+          ]
+        ],
+        "bootstrap_95": {
+          "accuracy": {
+            "lower_95": 0.5274725274725275,
+            "upper_95": 0.5968749999999999
+          },
+          "macro_f1": {
+            "lower_95": 0.49669580649877904,
+            "upper_95": 0.5654130414267445
+          },
+          "mae": {
+            "lower_95": 0.6769100619247583,
+            "upper_95": 0.7580357798934159
+          },
+          "pearson": {
+            "lower_95": 0.5016340150235473,
+            "upper_95": 0.6049448069301353
+          }
+        },
+        "selection_score": 0.9817149727942363
+      },
+      "performance_gate_passed": false,
+      "performance_gate_checks": {
+        "accuracy": false,
+        "macro_f1": false,
+        "mae": false,
+        "pearson": false,
+        "neutral_recall": true
+      }
+    }
+  ]
+}

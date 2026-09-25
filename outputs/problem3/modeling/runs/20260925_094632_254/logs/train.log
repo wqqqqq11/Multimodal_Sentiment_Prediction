@@ -1,0 +1,39 @@
+2026-09-25 09:46:32,300 | INFO | Problem 3 pipeline stage=all device=cuda run=20260925_094632_254
+2026-09-25 09:46:38,181 | INFO | 已加载并冻结问题二完整教师: D:\PythonWorkplace\Multimodal_Sentiment_Prediction\outputs\problem2\submission\problem2_student_best_fp16.pt
+2026-09-25 09:46:38,238 | INFO | 问题二文本骨干热启动: loaded=69 skipped=0
+2026-09-25 09:47:34,445 | INFO | epoch=001 stage=warmup loss=2.60535 acc=0.4863 f1=0.4912 mae=0.7582 r=0.5090 score=0.8920 gate=False temp=1.500 noise=1.000
+2026-09-25 09:47:48,245 | INFO | epoch=002 stage=warmup loss=2.19665 acc=0.5948 f1=0.5134 mae=0.7118 r=0.5214 score=0.9397 gate=False temp=1.437 noise=0.972
+2026-09-25 09:48:02,908 | INFO | epoch=003 stage=warmup loss=2.14853 acc=0.6085 f1=0.5301 mae=0.6899 r=0.5438 score=0.9850 gate=False temp=1.377 noise=0.944
+2026-09-25 09:48:18,800 | INFO | epoch=004 stage=warmup loss=2.07992 acc=0.6044 f1=0.5729 mae=0.7034 r=0.5606 score=1.0422 gate=False temp=1.319 noise=0.916
+2026-09-25 09:48:34,516 | INFO | epoch=005 stage=warmup loss=1.95400 acc=0.5907 f1=0.5212 mae=0.6741 r=0.5479 score=0.9847 gate=False temp=1.264 noise=0.888
+2026-09-25 09:48:34,752 | INFO | 进入 selector 阶段：保留全阶段最优模型，继续退火稀疏选择器
+2026-09-25 09:48:49,246 | INFO | epoch=006 stage=selector loss=1.83445 acc=0.5975 f1=0.5514 mae=0.6895 r=0.5664 score=1.0301 gate=False temp=1.211 noise=0.860
+2026-09-25 09:49:04,326 | INFO | epoch=007 stage=selector loss=1.78066 acc=0.5989 f1=0.5621 mae=0.7214 r=0.5702 score=1.0362 gate=False temp=1.160 noise=0.832
+2026-09-25 09:49:19,212 | INFO | epoch=008 stage=selector loss=1.69355 acc=0.5879 f1=0.5391 mae=0.6800 r=0.5769 score=1.0316 gate=False temp=1.112 noise=0.804
+2026-09-25 09:49:33,744 | INFO | epoch=009 stage=selector loss=1.67315 acc=0.5673 f1=0.5362 mae=0.6927 r=0.5652 score=1.0136 gate=False temp=1.065 noise=0.776
+2026-09-25 09:49:48,516 | INFO | epoch=010 stage=selector loss=1.56222 acc=0.5755 f1=0.5426 mae=0.7233 r=0.5537 score=0.9989 gate=False temp=1.020 noise=0.749
+2026-09-25 09:50:02,798 | INFO | epoch=011 stage=selector loss=1.52974 acc=0.5783 f1=0.5448 mae=0.7019 r=0.5635 score=1.0169 gate=False temp=0.978 noise=0.721
+2026-09-25 09:50:17,877 | INFO | epoch=012 stage=selector loss=1.44887 acc=0.5989 f1=0.5569 mae=0.6966 r=0.5624 score=1.0283 gate=False temp=0.937 noise=0.693
+2026-09-25 09:50:32,632 | INFO | epoch=013 stage=selector loss=1.41062 acc=0.5920 f1=0.5706 mae=0.6591 r=0.5669 score=1.0584 gate=False temp=0.897 noise=0.665
+2026-09-25 09:50:47,652 | INFO | epoch=014 stage=selector loss=1.34927 acc=0.5618 f1=0.5350 mae=0.7120 r=0.5359 score=0.9760 gate=False temp=0.860 noise=0.637
+2026-09-25 09:51:03,038 | INFO | epoch=015 stage=selector loss=1.28847 acc=0.5714 f1=0.5469 mae=0.6945 r=0.5499 score=1.0068 gate=False temp=0.824 noise=0.609
+2026-09-25 09:51:18,054 | INFO | epoch=016 stage=selector loss=1.26202 acc=0.5687 f1=0.5530 mae=0.6977 r=0.5501 score=1.0119 gate=False temp=0.789 noise=0.581
+2026-09-25 09:51:33,063 | INFO | epoch=017 stage=selector loss=1.21445 acc=0.5701 f1=0.5376 mae=0.7092 r=0.5547 score=0.9966 gate=False temp=0.756 noise=0.553
+2026-09-25 09:51:48,197 | INFO | epoch=018 stage=selector loss=1.20438 acc=0.5701 f1=0.5303 mae=0.7096 r=0.5508 score=0.9848 gate=False temp=0.725 noise=0.525
+2026-09-25 09:52:03,291 | INFO | epoch=019 stage=selector loss=1.16461 acc=0.5646 f1=0.5439 mae=0.6913 r=0.5491 score=1.0009 gate=False temp=0.694 noise=0.497
+2026-09-25 09:52:17,968 | INFO | epoch=020 stage=selector loss=1.10869 acc=0.5714 f1=0.5412 mae=0.6949 r=0.5493 score=0.9977 gate=False temp=0.665 noise=0.469
+2026-09-25 09:52:32,691 | INFO | epoch=021 stage=selector loss=1.06939 acc=0.5632 f1=0.5301 mae=0.7189 r=0.5516 score=0.9817 gate=False temp=0.637 noise=0.441
+2026-09-25 09:52:33,122 | INFO | 验证集连续 8 轮无提升，提前停止
+2026-09-25 09:52:59,203 | INFO | 训练后构建只读解释原型库: {'candidate_evidence': 19259, 'occupied_cells': 21, 'prototypes': 103}
+2026-09-25 09:52:59,482 | INFO | 加载全阶段最优模型: epoch=13 stage=selector score=1.0584 gate=False
+2026-09-25 09:52:59,483 | WARNING | 最优模型未通过 P0 性能门槛，不应作为最终国奖方案提交；失败项={'accuracy': False, 'macro_f1': False, 'mae': False, 'pearson': False, 'neutral_recall': True}
+2026-09-25 09:52:59,566 | INFO | 已保存部署模型: D:\PythonWorkplace\Multimodal_Sentiment_Prediction\outputs\problem3\modeling\runs\20260925_094632_254\checkpoints\problem3_sepcnet_best_fp16.pt
+2026-09-25 09:52:59,566 | INFO | 开始 valid 推理与解释计算
+2026-09-25 09:53:04,034 | INFO | valid 原型覆盖: 4221/4221 (1.0000)
+2026-09-25 09:53:04,034 | INFO | valid: Acc=0.5920 F1=0.5706 MAE=0.6591 Pearson=0.5669
+2026-09-25 09:53:04,034 | INFO | 开始 test 推理与解释计算
+2026-09-25 09:53:28,341 | INFO | test 原型覆盖: 4189/4189 (1.0000)
+2026-09-25 09:53:28,341 | INFO | test: Acc=0.6162 F1=0.5830 MAE=0.7239 Pearson=0.5678
+2026-09-25 09:53:28,341 | INFO | 开始 attachment4 推理与解释计算
+2026-09-25 09:53:49,468 | INFO | attachment4 原型覆盖: 128/128 (1.0000)
+2026-09-25 09:53:51,805 | INFO | 问题三求解完成: D:\PythonWorkplace\Multimodal_Sentiment_Prediction\outputs\problem3\modeling\runs\20260925_094632_254

@@ -1,0 +1,73 @@
+{
+  "metrics": {
+    "accuracy": 0.5068681318681318,
+    "macro_f1": 0.38770434161788186,
+    "mae": 0.785625647669044,
+    "pearson": 0.4806156485521382,
+    "per_class_precision": [
+      0.37697516930022573,
+      0.0,
+      0.7087719298245614
+    ],
+    "per_class_recall": [
+      0.8106796116504854,
+      0.0,
+      0.5976331360946746
+    ],
+    "per_class_f1": [
+      0.514637904468413,
+      0.0,
+      0.6484751203852327
+    ],
+    "confusion_matrix": [
+      [
+        167,
+        0,
+        39
+      ],
+      [
+        140,
+        0,
+        44
+      ],
+      [
+        136,
+        0,
+        202
+      ]
+    ],
+    "bootstrap_95": {
+      "accuracy": {
+        "lower_95": 0.47115384615384615,
+        "upper_95": 0.5453296703296703
+      },
+      "macro_f1": {
+        "lower_95": 0.36345993332311527,
+        "upper_95": 0.4128242913541247
+      },
+      "mae": {
+        "lower_95": 0.7385749157585951,
+        "upper_95": 0.8251996531218397
+      },
+      "pearson": {
+        "lower_95": 0.42677897420688504,
+        "upper_95": 0.5335100411447623
+      }
+    },
+    "selection_score": 0.7400727053244226
+  },
+  "fidelity_metrics": {
+    "sufficiency_probability_gap": 0.3184087292833643,
+    "sufficiency_regression_gap": 0.62966297879549,
+    "comprehensiveness_probability_drop": 0.3602367163031966,
+    "comprehensiveness_regression_change": 1.2860156564594625,
+    "selection_stability_jaccard": 0.9429442011638657
+  },
+  "prototype_metrics": {
+    "memory_enabled": true,
+    "prototype_count": 75,
+    "evidence_total": 5802,
+    "evidence_matched": 5802,
+    "evidence_coverage": 1.0
+  }
+}
