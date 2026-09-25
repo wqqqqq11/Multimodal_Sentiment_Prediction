@@ -1,0 +1,5 @@
+﻿dataset,role,samples,labeled
+dataset01,原始视频，问题1,100,True
+dataset02,训练/验证/测试特征,4850,True
+dataset03,局部缺失测试，问题2,30,False
+dataset04,完整模态解释测试，问题3,20,False
