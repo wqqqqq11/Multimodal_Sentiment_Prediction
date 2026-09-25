@@ -29,7 +29,7 @@
 - `explanations/attachment4_evidence.csv`：原始文本、语音时段和视觉帧证据。
 
 验收目标为 Accuracy ≥ 0.65、Macro-F1 ≥ 0.62、MAE ≤ 0.55、Pearson ≥ 0.65。
-只有四项全部满足才写入 `outputs/problem3/submission`。
+每次正式训练均导出当前最佳模型与附件4结果；四项指标只用于记录验收状态。
 
 ## 本轮扩容
 

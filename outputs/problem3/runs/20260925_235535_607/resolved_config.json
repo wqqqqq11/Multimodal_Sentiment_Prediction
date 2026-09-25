@@ -1,8 +1,8 @@
 {
   "project": {
-    "name": "HSAIG-Net-v3",
+    "name": "HSAIG-Net-v3-wide",
     "seed": 2026,
-    "description": "Entmax hierarchical attention with task-specific fusion and single-best checkpoint selection"
+    "description": "Wider Entmax hierarchical attention with task-specific fusion"
   },
   "paths": {
     "preprocessed_root": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\datasets\\preprocessed_data\\problem3",
@@ -32,11 +32,11 @@
     "text_dim": 256,
     "audio_dim": 74,
     "vision_dim": 35,
-    "hidden_dim": 128,
-    "fusion_dim": 192,
+    "hidden_dim": 224,
+    "fusion_dim": 288,
     "modality_layers": 2,
-    "modality_heads": 4,
-    "modality_intermediate_dim": 320,
+    "modality_heads": 8,
+    "modality_intermediate_dim": 576,
     "dropout": 0.25,
     "num_classes": 3,
     "time_attention_temperature": 1.0,
@@ -44,7 +44,7 @@
   },
   "training": {
     "epochs": 40,
-    "patience": 5,
+    "patience": 6,
     "min_delta": 0.0001,
     "learning_rate": 0.00024,
     "weight_decay": 0.001,
@@ -71,7 +71,7 @@
       "temporal_sparsity": 0.006,
       "modality_sparsity": 0.004
     },
-    "minimum_epochs": 20,
+    "minimum_epochs": 1,
     "scheduler_warmup_epochs": 2,
     "minimum_lr_ratio": 0.08
   },

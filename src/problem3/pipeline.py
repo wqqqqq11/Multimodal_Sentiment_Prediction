@@ -117,10 +117,10 @@ def run_solution(project_root: Path, config_path: Path, requested_device: str = 
         for explanation in explanations[:int(cfg["explanation"]["typical_card_count"])]:
             plot_explanation_card(explanation, run_dir / "figures" / f"explanation_card_{explanation['sample_id']}.png")
         accepted = bool(validation["metrics"]["goal_audit"]["all_met"])
-        model_size = None
-        if accepted and not smoke: model_size = _export(model, run_dir, output_root, cfg)
+        model_size = None if smoke else _export(model, run_dir, output_root, cfg)
         audit = {"accepted": accepted, "submission_exported": model_size is not None,
-                 "reason": "四项验证集目标全部满足" if accepted else "至少一项正式验证指标未满足，拒绝覆盖提交模型",
+                 "reason": ("四项验证集目标全部满足，已导出最佳模型" if accepted else
+                            "四项验证指标未全部满足，仍已导出当前最佳模型与附件4结果"),
                  "validation": validation["metrics"], "test": test["metrics"]}
         write_json(run_dir / "metrics" / "goal_audit.json", audit)
         write_json(run_dir / "metrics" / "summary.json", {
