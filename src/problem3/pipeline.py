@@ -126,7 +126,7 @@ def run_solution(project_root: Path, config_path: Path, requested_device: str = 
         write_json(run_dir / "metrics" / "summary.json", {
             "run_id": run_dir.name, "device": str(device), "parameters": total, "trainable_parameters": trainable,
             "estimated_fp16_mib": total * 2 / 1024 ** 2, "exported_model_mib": model_size,
-            "best_epoch": int(checkpoint["epoch"]), "averaged_epochs": checkpoint.get("averaged_epochs", []), "validation": validation["metrics"], "test": test["metrics"],
+            "best_epoch": int(checkpoint["epoch"]), "validation": validation["metrics"], "test": test["metrics"],
             "calibration": calibration, "accepted": accepted, "smoke": smoke})
         write_json(output_root / "latest_model_run.json", {"run_id": run_dir.name, "run_dir": str(run_dir),
                                                                     "status": "accepted" if accepted else "goals_not_met"})

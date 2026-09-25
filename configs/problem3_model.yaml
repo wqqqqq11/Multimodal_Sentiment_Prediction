@@ -2,7 +2,7 @@
   "project": {
     "name": "HSAIG-Net-v3",
     "seed": 2026,
-    "description": "Entmax hierarchical attention with task-specific fusion and checkpoint averaging"
+    "description": "Entmax hierarchical attention with task-specific fusion and single-best checkpoint selection"
   },
   "paths": {
     "preprocessed_root": "datasets/preprocessed_data/problem3",
@@ -73,8 +73,7 @@
     },
     "minimum_epochs": 20,
     "scheduler_warmup_epochs": 2,
-    "minimum_lr_ratio": 0.08,
-    "top_k_checkpoints": 5
+    "minimum_lr_ratio": 0.08
   },
   "evaluation": {
     "goals": {

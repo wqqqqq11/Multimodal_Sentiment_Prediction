@@ -4,8 +4,7 @@
 768 压缩到 256，累计解释方差约 79.46%。附件2验证、测试和附件4不参与 PCA 拟合。
 
 模型包含三模态时序编码器、Softmax 到 Entmax-1.5 的渐进稀疏注意力、样本级模态门控、
-分类与回归独立融合层、单模态辅助监督、积分梯度以及删除和保留实验。训练保留正式指标分数
-最高的五个检查点，并生成单个权重平均检查点。
+分类与回归独立融合层、单模态辅助监督、积分梯度以及删除和保留实验。训练只保留四项正式指标综合分数最高的单个检查点。
 
 ## 训练
 
@@ -23,8 +22,7 @@
 
 运行目录中的关键文件：
 
-- `checkpoints/candidate_epoch_*.pt`：正式指标分数最高的多个候选检查点；
-- `checkpoints/hsaig_topk_averaged.pt`：用于最终推理的权重平均检查点；
+- `checkpoints/hsaig_best.pt`：用于验证、测试、附件4推理和解释的最优单模型；
 - `metrics/goal_audit.json`：四项正式目标验收；
 - `metrics/summary.json`：参数量、平均轮次与验证/测试指标；
 - `predictions/problem3_attachment4_predictions_and_explanations.csv`：附件4全量结果；
