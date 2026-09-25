@@ -1,4 +1,4 @@
-# 问题三 HSAIG-Net-v3
+# 问题三 HSAIG-Net-v3-wide
 
 新版直接使用赛方 `aligned_50.pkl` 文本表征，并且只在附件2训练集上拟合 PCA。文本维度由
 768 压缩到 256，累计解释方差约 79.46%。附件2验证、测试和附件4不参与 PCA 拟合。
@@ -11,7 +11,7 @@
 256维文本特征已经生成。正式训练执行：
 
 ```powershell
-.\.venv\Scripts\python.exe scripts\problem3\solve_problem3.py --device cuda --run-name hsaig_v3
+.\.venv\Scripts\python.exe scripts\problem3\solve_problem3.py --device cuda --run-name hsaig_v3_wide
 ```
 
 如需重新生成文本特征：
@@ -30,3 +30,7 @@
 
 验收目标为 Accuracy ≥ 0.65、Macro-F1 ≥ 0.62、MAE ≤ 0.55、Pearson ≥ 0.65。
 只有四项全部满足才写入 `outputs/problem3/submission`。
+
+## 本轮扩容
+
+隐藏维度为224、融合维度为288、模态前馈维度为576，FP16权重预计约7.85 MiB。综合选模分数连续6轮没有改善时立即早停。

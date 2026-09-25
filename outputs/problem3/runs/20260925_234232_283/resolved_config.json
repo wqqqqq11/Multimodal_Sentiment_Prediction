@@ -5,9 +5,9 @@
     "description": "Wider Entmax hierarchical attention with task-specific fusion"
   },
   "paths": {
-    "preprocessed_root": "datasets/preprocessed_data/problem3",
-    "output_root": "outputs/problem3",
-    "feature_root": "datasets/preprocessed_data/problem3/text_features"
+    "preprocessed_root": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\datasets\\preprocessed_data\\problem3",
+    "output_root": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem3",
+    "feature_root": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\datasets\\preprocessed_data\\problem3\\text_features"
   },
   "data": {
     "train_file": "train.npz",
@@ -108,5 +108,6 @@
     "deployment_precision": "float16",
     "max_submission_model_mb": 12.0,
     "require_all_goals": true
-  }
+  },
+  "_config_path": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\configs\\problem3_model.yaml"
 }

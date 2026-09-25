@@ -57,7 +57,7 @@ def _export(model: HSAIGNet, run_dir: Path, output_root: Path, cfg: dict[str, An
     state = {key: value.detach().cpu().half() if value.is_floating_point() else value.detach().cpu()
              for key, value in model.state_dict().items()}
     target = submission / "problem3_hsaig_fp16.pt"
-    atomic_torch_save({"model_state": state, "precision": "float16", "architecture": "HSAIG-Net-v3"}, target)
+    atomic_torch_save({"model_state": state, "precision": "float16", "architecture": "HSAIG-Net-v3-wide"}, target)
     size = target.stat().st_size / 1024 ** 2
     if size > float(cfg["output"]["max_submission_model_mb"]):
         target.unlink(); raise RuntimeError(f"模型权重 {size:.2f} MiB 超过上限")
@@ -83,7 +83,7 @@ def run_solution(project_root: Path, config_path: Path, requested_device: str = 
         loaders = _loaders(datasets, cfg)
         model = HSAIGNet(cfg["model"]).to(device)
         total, trainable = count_parameters(model)
-        logger.info("HSAIG-Net-v3 train=%d valid=%d test=%d attachment4=%d device=%s params=%s",
+        logger.info("HSAIG-Net-v3-wide train=%d valid=%d test=%d attachment4=%d device=%s params=%s",
                     *(len(datasets[name]) for name in ("train", "valid", "test", "attachment4")), device, f"{total:,}")
         history, checkpoint = train_model(model, loaders["train"], loaders["valid"], cfg, device, run_dir, logger)
         raw_valid = predict(model, loaders["valid"], device, goals=cfg["evaluation"]["goals"])
