@@ -1,0 +1,99 @@
+{
+  "project": {
+    "name": "HSAIG-Net",
+    "seed": 2026,
+    "description": "Hierarchical Sparse Attention with Integrated-Gradients Verification"
+  },
+  "paths": {
+    "preprocessed_root": "datasets/preprocessed_data/problem3",
+    "output_root": "outputs/problem3",
+    "text_pretrained_model": "models/bert-mini"
+  },
+  "data": {
+    "train_file": "train.npz",
+    "valid_file": "valid.npz",
+    "test_file": "test.npz",
+    "attachment4_file": "attachment4_aligned.npz",
+    "baseline_file": "counterfactual/baseline_statistics.npz",
+    "token_mapping_file": "mappings/token_offsets.csv",
+    "time_mapping_file": "mappings/attachment4_time_mapping.csv",
+    "batch_size": 24,
+    "eval_batch_size": 64,
+    "num_workers": 0,
+    "pin_memory": true,
+    "class_balanced_sampler": true
+  },
+  "model": {
+    "max_steps": 50,
+    "audio_dim": 74,
+    "vision_dim": 35,
+    "hidden_dim": 128,
+    "fusion_dim": 192,
+    "modality_layers": 2,
+    "modality_heads": 4,
+    "modality_intermediate_dim": 384,
+    "dropout": 0.20,
+    "num_classes": 3,
+    "text_local_files_only": true,
+    "time_attention_temperature": 1.0,
+    "modality_gate_temperature": 1.0
+  },
+  "training": {
+    "epochs": 35,
+    "patience": 7,
+    "min_delta": 0.0001,
+    "text_lr": 0.000008,
+    "head_lr": 0.00018,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1.0,
+    "freeze_text_bottom_layers": 2,
+    "unfreeze_text_epoch": 4,
+    "class_weights": [1.1703, 1.4930, 0.6776],
+    "label_smoothing": 0.04,
+    "regression_beta": 0.50,
+    "amp": true,
+    "loss_weights": {
+      "classification": 1.15,
+      "regression": 1.00,
+      "correlation": 0.20,
+      "coherence": 0.10,
+      "temporal_sparsity": 0.015,
+      "modality_sparsity": 0.010
+    }
+  },
+  "evaluation": {
+    "goals": {
+      "accuracy": 0.65,
+      "macro_f1": 0.52,
+      "mae": 0.55,
+      "pearson": 0.65,
+      "neutral_recall": 0.65
+    },
+    "calibration": {
+      "temperature_min": 0.70,
+      "temperature_max": 1.60,
+      "temperature_steps": 10,
+      "neutral_bias_min": -0.30,
+      "neutral_bias_max": 1.20,
+      "neutral_bias_steps": 31
+    }
+  },
+  "explanation": {
+    "integrated_gradient_steps": 24,
+    "text_baseline_token_ids": [103, 100],
+    "classification_weight": 0.60,
+    "regression_weight": 0.40,
+    "top_k_ratio": 0.20,
+    "max_evidence_per_modality": 5,
+    "contribution_weights": {
+      "gate": 0.35,
+      "integrated_gradients": 0.35,
+      "deletion": 0.30
+    },
+    "typical_card_count": 6
+  },
+  "output": {
+    "deployment_precision": "float16",
+    "max_submission_model_mb": 48.0
+  }
+}
