@@ -106,17 +106,11 @@ def _heatmap_chart(cfg: Problem1Config, sample_id: str, path: Path) -> None:
     figure, axes = plt.subplots(3, 1, figsize=(13, 10), sharex=True)
     maximum = max(float(plan.max()) for plan in plans)
     for axis, plan, label in zip(axes, plans, labels):
-        sns.heatmap(plan, ax=axis, cmap="viridis", vmin=0.0, vmax=maximum,
-                    cbar=axis is axes[-1], cbar_kws={"label": "Transport mass"})
+        sns.heatmap(plan, ax=axis, cmap="Blues", vmin=0.0, vmax=maximum, cbar=False)
         axis.set_ylabel(label)
         axis.set_xlabel("")
     axes[-1].set_xlabel("Consensus time index")
-    display_sample_id = _matplotlib_plain_text(sample_id)
-    figure.suptitle(f"Representative Alignment Plans: {display_sample_id}", weight="bold", y=0.98)
-    figure.subplots_adjust(bottom=0.10, top=0.93, hspace=0.23)
-    figure.text(0.5, 0.025,
-                "Conclusion: diagonal transport bands show that chronological evidence is preserved across modalities.",
-                ha="center", fontsize=11)
+    figure.subplots_adjust(bottom=0.09, top=0.98, left=0.09, right=0.98, hspace=0.23)
     figure.savefig(path, dpi=220, bbox_inches="tight")
     plt.close(figure)
 
