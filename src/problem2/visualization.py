@@ -20,9 +20,8 @@ def configure_matplotlib() -> None:
     plt.rcParams["savefig.dpi"] = 180
 
 
-def _save(fig: plt.Figure, path: Path, conclusion: str) -> None:
-    fig.text(0.5, 0.012, f"关键结论：{conclusion}", ha="center", va="bottom", fontsize=9)
-    fig.tight_layout(rect=(0, 0.055, 1, 1))
+def _save(fig: plt.Figure, path: Path) -> None:
+    fig.tight_layout()
     fig.savefig(path, bbox_inches="tight")
     plt.close(fig)
 
@@ -48,9 +47,9 @@ def plot_training_history(history: pd.DataFrame, path: Path) -> None:
     axes[1, 0].legend()
     axes[1, 1].plot(student["epoch"], student["train_supervised"], label="监督损失")
     axes[1, 1].plot(student["epoch"], student["train_distillation"], label="蒸馏损失")
-    axes[1, 1].set(title="学生损失分解", xlabel="Epoch", ylabel="Loss")
+    axes[1, 1].set(title="学生监督与蒸馏损失", xlabel="Epoch", ylabel="损失分量")
     axes[1, 1].legend()
-    _save(fig, path, "完整性能与缺失性能共同用于早停，防止仅优化无缺失样本。")
+    _save(fig, path)
 
 
 def plot_robustness_curves(frame: pd.DataFrame, path: Path, primary_position: str = "middle") -> None:
@@ -67,8 +66,7 @@ def plot_robustness_curves(frame: pd.DataFrame, path: Path, primary_position: st
     for axis in axes:
         axis.grid(alpha=0.25)
         axis.legend()
-    worst = data.loc[data["macro_f1"].idxmin()]
-    _save(fig, path, f"最弱分类场景为 {worst['pattern']}、缺失率 {worst['missing_rate']:.0%}，Macro-F1={worst['macro_f1']:.3f}。")
+    _save(fig, path)
 
 
 def plot_position_effect(frame: pd.DataFrame, path: Path) -> None:
@@ -84,8 +82,7 @@ def plot_position_effect(frame: pd.DataFrame, path: Path) -> None:
         axis.set_xticks(x, data["position"])
         axis.set(title=title, xlabel="连续缺失位置", ylabel=ylabel)
         axis.grid(axis="y", alpha=0.25)
-    worst = data.loc[data["macro_f1_drop"].idxmax()]
-    _save(fig, path, f"平均而言 {worst['position']} 缺失对分类影响最大，F1 平均下降 {worst['macro_f1_drop']:.3f}。")
+    _save(fig, path)
 
 
 def plot_ablation(frame: pd.DataFrame, path: Path) -> None:
@@ -107,8 +104,7 @@ def plot_ablation(frame: pd.DataFrame, path: Path) -> None:
         axis.set_xticks(x, tick_labels, rotation=18, ha="right")
         axis.set(title=title, xlabel="模型变体", ylabel=ylabel)
         axis.grid(axis="y", alpha=0.25)
-    full = data[data["variant"] == "student_full"].iloc[0]
-    _save(fig, path, f"完整学生在代表性缺失场景下取得 F1={full['macro_f1']:.3f}、MAE={full['mae']:.3f}。")
+    _save(fig, path)
 
 
 def plot_confusion_and_regression(result: dict[str, Any], path: Path, split_name: str) -> None:
@@ -127,8 +123,7 @@ def plot_confusion_and_regression(result: dict[str, Any], path: Path, split_name
     axes[1].plot([-3, 3], [-3, 3], linestyle="--", color="#D1495B", label="理想预测")
     axes[1].set(title=f"{split_name}情感强度预测", xlabel="真实情感强度", ylabel="预测情感强度", xlim=(-3.1, 3.1), ylim=(-3.1, 3.1))
     axes[1].legend()
-    metrics = result["metrics"]
-    _save(fig, path, f"{split_name} Accuracy={metrics['accuracy']:.3f}、F1={metrics['macro_f1']:.3f}、MAE={metrics['mae']:.3f}、Pearson={metrics['pearson']:.3f}。")
+    _save(fig, path)
 
 
 def plot_challenge_predictions(frame: pd.DataFrame, path: Path) -> None:
@@ -143,8 +138,7 @@ def plot_challenge_predictions(frame: pd.DataFrame, path: Path) -> None:
     for key, label, color in (("gate_text_expert", "文本专家", COLORS["text"]), ("gate_full_expert", "完整专家", COLORS["audio"]), ("gate_missing_expert", "缺失专家", COLORS["vision"])):
         axes[1].bar(x, frame[key], bottom=bottom, label=label, color=color)
         bottom += frame[key].to_numpy()
-    axes[1].set(title="附件3样本级专家路由权重", xlabel="附件3样本序号", ylabel="路由权重")
+    axes[1].set(ylabel="路由权重")
     axes[1].legend(ncol=3)
     axes[1].set_xticks(x, frame["sample_id"], rotation=90, fontsize=7)
-    text_dominance = float(frame["gate_text_expert"].mean())
-    _save(fig, path, f"附件3共 {len(frame)} 条预测，平均文本专家权重为 {text_dominance:.3f}，模型会随缺失程度动态重分配权重。")
+    _save(fig, path)
