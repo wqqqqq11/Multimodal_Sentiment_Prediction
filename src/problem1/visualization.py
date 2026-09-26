@@ -166,8 +166,8 @@ def _select_representative(cfg: Problem1Config, successful: list[dict[str, Any]]
 
 def _representative_validation(cfg: Problem1Config, sample_id: str, figure_path: Path,
                                table_path: Path, report_path: Path, selection_rule: str) -> None:
-    """Create an auditable text/audio/video correspondence card for one typical sample."""
-    plt, sns = _plot_modules()
+    """Create an auditable, reader-facing correspondence chart for one typical sample."""
+    plt, _ = _plot_modules()
     sample_dir = cfg.path("aligned_root") / "samples" / safe_id(sample_id)
     mappings = json.loads((sample_dir / "mapping.json").read_text(encoding="utf-8"))
     sequences = {
@@ -225,9 +225,19 @@ def _representative_validation(cfg: Problem1Config, sample_id: str, figure_path:
 
     anchor_count = min(5, len(rows))
     anchors = np.unique(np.linspace(0, len(rows) - 1, anchor_count).round().astype(int))
-    figure = plt.figure(figsize=(18, 14), constrained_layout=False)
-    grid = figure.add_gridspec(6, len(anchors), height_ratios=[2.6, 0.18, 1.05, 1.05, 1.05, 0.9],
-                              hspace=0.58, wspace=0.16)
+    displayed = [rows[int(index)] for index in anchors]
+    aligned_dimensions = {name: int(values.shape[1]) for name, values in aligned.items()}
+    colors = plt.get_cmap("tab10")(np.linspace(0.0, 0.8, len(anchors)))
+
+    plt.rcParams["font.sans-serif"] = [
+        "Microsoft YaHei", "SimHei", "Noto Sans CJK SC", "Arial Unicode MS", "DejaVu Sans"
+    ]
+    plt.rcParams["axes.unicode_minus"] = False
+
+    figure = plt.figure(figsize=(18, 9.2), constrained_layout=False)
+    grid = figure.add_gridspec(
+        3, len(anchors), height_ratios=[2.75, 0.98, 2.25], hspace=0.035, wspace=0.15
+    )
     for position, column in enumerate(anchors):
         row = rows[int(column)]
         axis = figure.add_subplot(grid[0, position])
@@ -237,42 +247,79 @@ def _representative_validation(cfg: Problem1Config, sample_id: str, figure_path:
         else:
             axis.text(0.5, 0.5, "Frame unavailable", ha="center", va="center")
         axis.axis("off")
+        axis.set_anchor("S")
+
+        info_axis = figure.add_subplot(grid[1, position])
+        info_axis.axis("off")
         snippet = str(row["text_fragment"])
-        if len(snippet) > 34:
-            snippet = snippet[:31] + "..."
-        axis.set_title(
-            f"t={row['consensus_time_sec']:.2f}s  U={row['uncertainty']:.2f}\n"
+        if len(snippet) > 30:
+            snippet = snippet[:27] + "..."
+        info_axis.text(
+            0.5, 0.98,
+            f"Aligned step {row['consensus_index']}  ·  t={row['consensus_time_sec']:.2f} s\n"
             f"Text: {snippet}\n"
-            f"Audio: {row['audio_peak_start_sec']:.2f}-{row['audio_peak_end_sec']:.2f}s\n"
-            f"Video: frame {row['video_peak_frame_index']} "
-            f"({row['video_peak_start_sec']:.2f}-{row['video_peak_end_sec']:.2f}s)",
-            fontsize=10, pad=8,
+            f"Audio: {row['audio_peak_start_sec']:.2f}–{row['audio_peak_end_sec']:.2f} s\n"
+            f"Video: frame {row['video_peak_frame_index']}, "
+            f"{row['video_peak_start_sec']:.2f}–{row['video_peak_end_sec']:.2f} s\n"
+            f"Aligned features: T{aligned_dimensions['text']} / A{aligned_dimensions['audio']} / "
+            f"V{aligned_dimensions['vision']} → step {row['consensus_index']}",
+            ha="center", va="top", fontsize=9.2, linespacing=1.22,
+            bbox={"boxstyle": "round,pad=0.35", "facecolor": colors[position],
+                  "alpha": 0.10, "edgecolor": colors[position], "linewidth": 1.5},
         )
 
-    maximum = max(float(np.max(np.abs(values))) for values in aligned.values())
-    for grid_row, name, label in zip((2, 3, 4), ("text", "audio", "vision"),
-                                     ("Text features", "Audio features", "Visual features")):
-        axis = figure.add_subplot(grid[grid_row, :])
-        sns.heatmap(aligned[name].T, ax=axis, cmap="coolwarm", center=0.0,
-                    vmin=-maximum, vmax=maximum, cbar=False)
-        axis.set_ylabel(label)
-        axis.set_xlabel("")
-    axes_uncertainty = figure.add_subplot(grid[5, :])
-    axes_uncertainty.plot(np.arange(len(uncertainty)), uncertainty, marker="o", linewidth=2.2)
-    axes_uncertainty.set_xlabel("Consensus time index")
-    axes_uncertainty.set_ylabel("Uncertainty")
-    axes_uncertainty.set_ylim(0, 1)
-    axes_uncertainty.grid(alpha=0.3)
-    figure.suptitle(f"Typical-sample Multimodal Alignment Validation: {_matplotlib_plain_text(sample_id)}",
-                    fontsize=20, weight="bold", y=0.985)
-    figure.text(0.5, 0.012,
-                "Top: traceable text/audio/video anchors and source frames. Bottom: the three aligned feature sequences on the same consensus axis.",
-                ha="center", fontsize=11)
-    figure.subplots_adjust(top=0.91, bottom=0.09, left=0.09, right=0.98)
+    chart_grid = grid[2, :].subgridspec(
+        2, 1, height_ratios=[1.25, 0.90], hspace=0.34
+    )
+    feature_axis = figure.add_subplot(chart_grid[0, 0])
+    audio_sequence = sequences["audio"]
+    consensus_times = np.asarray([float(row["consensus_time_sec"]) for row in rows])
+    modality_styles = {
+        "text": ("文本特征", "#4c78a8"),
+        "audio": ("音频特征", "#f58518"),
+        "vision": ("视觉特征", "#54a24b"),
+    }
+    for name, (label, color) in modality_styles.items():
+        strength = np.linalg.norm(aligned[name], axis=1)
+        minimum, maximum = float(strength.min()), float(strength.max())
+        normalized = (strength - minimum) / max(maximum - minimum, 1e-12)
+        feature_axis.plot(
+            consensus_times, normalized, color=color, marker="o", markersize=4.5,
+            linewidth=2.0, label=label,
+        )
+    for position, row in enumerate(displayed):
+        feature_axis.axvline(row["consensus_time_sec"], color=colors[position],
+                             linestyle="--", linewidth=1.3, alpha=0.72)
+        feature_axis.text(row["consensus_time_sec"], 1.04, f"Step {row['consensus_index']}",
+                          color=colors[position], ha="center", va="bottom", fontsize=9)
+    timeline_start = min(float(audio_sequence.start.min()), float(consensus_times.min()))
+    timeline_end = max(float(audio_sequence.end.max()), float(consensus_times.max()))
+    feature_axis.set_ylabel("三模态特征强度", fontsize=10, labelpad=8)
+    feature_axis.set_xlim(timeline_start, timeline_end)
+    feature_axis.set_ylim(0.0, 1.18)
+    feature_axis.tick_params(axis="x", labelbottom=False)
+    feature_axis.legend(loc="lower right", ncol=3, frameon=True, fontsize=9)
+    feature_axis.grid(alpha=0.25)
+
+    confidence = 1.0 - np.clip(uncertainty, 0.0, 1.0)
+    confidence_axis = figure.add_subplot(chart_grid[1, 0])
+    confidence_axis.plot(consensus_times, confidence, color="#315f9e", marker="o", linewidth=2.0,
+                         label="Alignment confidence (1 - uncertainty)")
+    for position, row in enumerate(displayed):
+        index = int(row["consensus_index"])
+        confidence_axis.scatter(row["consensus_time_sec"], confidence[index], s=75,
+                                color=colors[position], edgecolor="white", linewidth=1.0, zorder=3)
+    confidence_axis.set_xlabel("对齐时间（秒）")
+    confidence_axis.set_ylabel("对齐置信度", fontsize=10, labelpad=8)
+    confidence_axis.set_xlim(timeline_start, timeline_end)
+    confidence_axis.set_ylim(0.0, 1.0)
+    confidence_axis.legend(loc="lower right", frameon=True, fontsize=9)
+    confidence_axis.grid(alpha=0.25)
+
+    figure.subplots_adjust(top=0.99, bottom=0.09, left=0.075, right=0.985)
     figure.savefig(figure_path, dpi=220, bbox_inches="tight")
     plt.close(figure)
 
-    displayed = [rows[int(index)] for index in anchors]
     lines = [
         "# 问题一典型样本时序对齐验证", "",
         f"- 样本编号：`{sample_id}`", f"- 选择规则：{selection_rule}",
