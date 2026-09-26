@@ -68,11 +68,7 @@ def _quality_chart(cfg: Problem1Config, records: list[dict[str, Any]], audit: di
     axes[1].set_title("Time-aware alignment uncertainty", pad=14, weight="bold")
     axes[1].set_ylabel("Temporal std / consensus interval [0, 1]")
     axes[1].set_ylim(0, 1)
-    figure.suptitle("Problem 1 Acceptance and Alignment Diagnostics", weight="bold", y=0.99)
-    figure.subplots_adjust(bottom=0.22, top=0.86, wspace=0.25)
-    figure.text(0.5, 0.045,
-                "Time-aware uncertainty is measured in seconds before normalization, avoiding bias from modality sequence length.",
-                ha="center", fontsize=11)
+    figure.subplots_adjust(bottom=0.18, top=0.90, wspace=0.25)
     figure.savefig(path, dpi=220, bbox_inches="tight")
     plt.close(figure)
 
@@ -92,16 +88,11 @@ def _convergence_chart(histories: list[list[dict[str, float]]], path: Path) -> N
     figure, axis = plt.subplots(figsize=(12, 7))
     axis.plot(iteration, median, marker="o", linewidth=2.5, label="Median normalized objective")
     axis.fill_between(iteration, lower, upper, alpha=0.22, label="Interquartile range")
-    axis.set_title("Consensus Optimization Convergence", pad=16, weight="bold")
     axis.set_xlabel("Iteration")
     axis.set_ylabel("Normalized objective")
     axis.set_xticks(iteration)
     axis.legend()
-    figure.subplots_adjust(bottom=0.20)
-    change = 100.0 * (median[-1] - median[0])
-    figure.text(0.5, 0.04,
-                f"Conclusion: median normalized objective changed by {change:+.2f}% after {maximum} iterations.",
-                ha="center", fontsize=11)
+    figure.subplots_adjust(bottom=0.14, top=0.96)
     figure.savefig(path, dpi=220, bbox_inches="tight")
     plt.close(figure)
 
