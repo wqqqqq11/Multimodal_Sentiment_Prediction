@@ -22,5 +22,5 @@
   "resolved_config_fingerprint_match": true,
   "feature_config_fingerprint_match": true,
   "overall_passed": true,
-  "feature_summary_table": "outputs/problem1/reports/problem1_feature_summary.csv"
+  "feature_summary_table": "问题1-100条样本多模态特征汇总.csv"
 }

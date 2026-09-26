@@ -29,7 +29,7 @@ def _datasets(cfg: dict[str, Any]) -> dict[str, Problem3Dataset]:
              "attachment4": ("attachment4_file", "attachment4_text_file")}
     missing = [features / data[text_key] for _, text_key in pairs.values() if not (features / data[text_key]).is_file()]
     if missing:
-        raise FileNotFoundError("缺少文本特征，请先运行 python data_progressing/problem3_text_features.py：" +
+        raise FileNotFoundError("缺少文本特征，请先运行 python -m data_progressing.problem3.build_text_features：" +
                                 ", ".join(str(path) for path in missing))
     return {name: Problem3Dataset(base / data[base_key], features / data[text_key])
             for name, (base_key, text_key) in pairs.items()}
