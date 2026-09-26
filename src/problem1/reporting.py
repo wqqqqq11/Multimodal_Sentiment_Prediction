@@ -2,11 +2,140 @@
 
 from __future__ import annotations
 
+import csv
+import json
+from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 import numpy as np
 
 from .config import Problem1Config
-from .io import atomic_text
+from .io import atomic_csv, atomic_text, safe_id
+
+
+FEATURE_SUMMARY_FIELDS = [
+    "样本编号",
+    "模态类型",
+    "原始有效时长",
+    "文本特征维度",
+    "音频特征维度",
+    "视频特征维度",
+    "对齐粒度",
+    "原始有效步数",
+    "对齐后有效步数",
+]
+
+
+def _read_csv(path: Path) -> list[dict[str, str]]:
+    with path.open("r", encoding="utf-8-sig", newline="") as stream:
+        return list(csv.DictReader(stream))
+
+
+def _index_unique(rows: Sequence[Mapping[str, Any]], source_name: str) -> dict[str, Mapping[str, Any]]:
+    indexed: dict[str, Mapping[str, Any]] = {}
+    for row in rows:
+        sample_id = str(row.get("sample_id", ""))
+        if not sample_id:
+            raise ValueError(f"{source_name}包含空sample_id")
+        if sample_id in indexed:
+            raise ValueError(f"{source_name}包含重复sample_id: {sample_id}")
+        indexed[sample_id] = row
+    return indexed
+
+
+def _truthy(value: Any) -> bool:
+    return value is True or str(value).strip().lower() in {"true", "1", "yes"}
+
+
+def build_feature_summary_rows(
+    sample_ids: Sequence[str],
+    feature_records: Sequence[Mapping[str, Any]],
+    alignment_records: Sequence[Mapping[str, Any]],
+    audit_records: Sequence[Mapping[str, Any]],
+    metrics_by_sample: Mapping[str, Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    """Build the organizer-facing full-sample table from one consistent run."""
+    feature_by_id = _index_unique(feature_records, "feature_manifest.csv")
+    alignment_by_id = _index_unique(alignment_records, "alignment_manifest.csv")
+    audit_by_id = _index_unique(audit_records, "acceptance_audit.csv")
+    ordered_ids = [str(sample_id) for sample_id in sample_ids]
+    if len(ordered_ids) != len(set(ordered_ids)):
+        raise ValueError("汇总目标包含重复sample_id")
+
+    missing_features = [sample_id for sample_id in ordered_ids if sample_id not in feature_by_id]
+    missing_alignments = [sample_id for sample_id in ordered_ids if sample_id not in alignment_by_id]
+    if missing_features or missing_alignments:
+        raise ValueError(
+            "无法生成问题一全量汇总表: "
+            f"特征清单缺失{missing_features}，对齐清单缺失{missing_alignments}"
+        )
+
+    rows: list[dict[str, Any]] = []
+    for sample_id in ordered_ids:
+        feature = feature_by_id[sample_id]
+        alignment = alignment_by_id[sample_id]
+        audit = audit_by_id.get(sample_id, {})
+        metrics = metrics_by_sample.get(sample_id, {})
+        duration = metrics.get("duration_sec", "")
+        aligned_steps = alignment.get("consensus_steps", "")
+        actual_granularity: float | str = ""
+        if duration != "" and aligned_steps != "" and int(aligned_steps) > 1:
+            actual_granularity = round(float(duration) / (int(aligned_steps) - 1), 6)
+
+        audit_passed = bool(audit) and all(
+            _truthy(audit.get(key, False))
+            for key in (
+                "feature_files_complete",
+                "result_files_complete",
+                "mapping_audit_passed",
+                "padding_audit_passed",
+            )
+        ) and int(audit.get("error_count", 0)) == 0
+        passed = (
+            str(feature.get("status", "failed")) != "failed"
+            and str(alignment.get("status", "failed")) != "failed"
+            and bool(metrics)
+            and audit_passed
+        )
+        if not passed:
+            raise ValueError(f"{sample_id}未通过特征、对齐或验收校验，不能写入正式汇总表")
+        rows.append({
+            "样本编号": sample_id,
+            "模态类型": "文本/音频/视频",
+            "原始有效时长": round(float(duration), 6),
+            "文本特征维度": int(feature["text_dimension"]),
+            "音频特征维度": int(feature["audio_dimension"]),
+            "视频特征维度": int(feature["vision_dimension"]),
+            "对齐粒度": actual_granularity,
+            "原始有效步数": "/".join(
+                str(int(feature[f"{modality}_steps"]))
+                for modality in ("text", "audio", "vision")
+            ),
+            "对齐后有效步数": int(aligned_steps),
+        })
+    return rows
+
+
+def write_feature_summary_table(
+    cfg: Problem1Config,
+    alignment_records: Sequence[Mapping[str, Any]],
+    audit_records: Sequence[Mapping[str, Any]],
+) -> Path:
+    """Write the official Problem 1 full-result summary table."""
+    feature_records = _read_csv(cfg.path("feature_root") / "feature_manifest.csv")
+    sample_ids = [str(row["sample_id"]) for row in alignment_records]
+    metrics_by_sample: dict[str, Mapping[str, Any]] = {}
+    for sample_id in sample_ids:
+        metrics_path = cfg.path("aligned_root") / "samples" / safe_id(sample_id) / "metrics.json"
+        if metrics_path.exists():
+            payload = json.loads(metrics_path.read_text(encoding="utf-8"))
+            metrics_by_sample[sample_id] = payload.get("metrics", {})
+    rows = build_feature_summary_rows(
+        sample_ids, feature_records, alignment_records, audit_records, metrics_by_sample
+    )
+    output = cfg.path("output_root") / "reports" / "problem1_feature_summary.csv"
+    atomic_csv(output, rows, FEATURE_SUMMARY_FIELDS)
+    return output
 
 
 def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], summary: dict[str, Any]) -> None:
@@ -73,7 +202,7 @@ def write_solution_report(cfg: Problem1Config, records: list[dict[str, Any]], su
 
 `aligned_dataset.npz` 是可直接用于后续情感预测的定长张量；每个样本目录中的 `mapping.json` 用于回溯词元、音频窗和视频帧，`metrics.json` 用于论文消融与误差分析。
 
-`acceptance_audit.csv/json` 给出100条样本的覆盖、映射、有效长度和零填充验收结果。原始残差用于判断迭代求解是否收敛；修正后残差用于确认最终传输计划严格满足边缘约束，两者不再混用。
+`acceptance_audit.csv/json` 给出100条样本的覆盖、映射、有效长度和零填充验收结果。`problem1_feature_summary.csv` 使用中文表头，按样本汇总模态类型、原始有效时长、三模态特征维度、对齐粒度、原始有效步数和对齐后有效步数，可直接作为论文全量结果表的数据源。原始有效时长和对齐粒度的单位均为秒；原始有效步数按“文本/音频/视频”顺序记录；对齐粒度按“有效时长/(对齐后有效步数-1)”计算。原始残差用于判断迭代求解是否收敛；修正后残差用于确认最终传输计划严格满足边缘约束，两者不再混用。
 
 ## 5. 图表结论口径
 

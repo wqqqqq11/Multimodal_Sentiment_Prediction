@@ -126,6 +126,7 @@ python scripts/problem1/solve_problem1.py --skip-features --overwrite-alignment
 - `datasets/preprocessed_data/problem1/aligned/samples/<sample_id>/mapping.json`：共识点至三模态源证据的映射。
 - `outputs/problem1/alignment/alignment_manifest.csv`：问题一模型求解状态、收敛性和对齐质量指标。
 - `outputs/problem1/alignment/acceptance_audit.csv/json`：100条样本覆盖、映射、有效长度和零填充验收结果。
+- `outputs/problem1/reports/problem1_feature_summary.csv`：赛方要求的100条样本全量汇总表，使用中文表头，字段为样本编号、模态类型、原始有效时长、三模态特征维度、对齐粒度、原始有效步数和对齐后有效步数；时长与粒度单位为秒，原始步数按“文本/音频/视频”顺序记录。
 - `outputs/problem1/alignment/alignment_errors.json`：模型求解失败样本及异常信息。
 - `outputs/problem1/reports/model_solution.md`：参数、步骤、诊断指标和论文结论素材。
 - `outputs/problem1/reports/representative_sample_alignment.csv`：典型样本逐共识位置的文本、语音和视频对应关系。

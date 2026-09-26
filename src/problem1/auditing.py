@@ -11,6 +11,7 @@ import numpy as np
 from .alignment.consensus_timeline import MODALITIES
 from .config import Problem1Config
 from .io import atomic_csv, atomic_json, load_feature, safe_id
+from .reporting import write_feature_summary_table
 
 
 def _read_csv(path: Any) -> list[dict[str, str]]:
@@ -195,5 +196,11 @@ def audit_problem1(cfg: Problem1Config, records: list[dict[str, Any]]) -> dict[s
     }
     report_root = cfg.path("alignment_output_root")
     atomic_csv(report_root / "acceptance_audit.csv", audit_rows)
+    feature_summary_path = write_feature_summary_table(cfg, records, audit_rows)
+    try:
+        feature_summary_display = feature_summary_path.relative_to(cfg.project_root).as_posix()
+    except ValueError:
+        feature_summary_display = str(feature_summary_path)
+    summary["feature_summary_table"] = feature_summary_display
     atomic_json(report_root / "acceptance_audit.json", summary)
     return summary

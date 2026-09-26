@@ -67,7 +67,8 @@
     "config_fingerprint": "e34cbeebe32846dbda19b1f0553c4c030d2eed75a455e3e69a2ca7f6bbb870a0",
     "resolved_config_fingerprint_match": true,
     "feature_config_fingerprint_match": true,
-    "overall_passed": true
+    "overall_passed": true,
+    "feature_summary_table": "outputs/problem1/reports/problem1_feature_summary.csv"
   },
   "figures": {
     "quality_overview": "D:\\PythonWorkplace\\Multimodal_Sentiment_Prediction\\outputs\\problem1\\figures\\01_alignment_quality_overview.png",
